@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #FBFBF9; color: #1C1C1A; font-family: Pretendard, -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-wrap: pretty; }
+  a { color: #1C1C1A; text-decoration: none; }
+  a:hover { color: #6E6E64; }
+  .ph { background-image: repeating-linear-gradient(135deg, #EAEAE3 0 10px, #F4F4F0 10px 20px); }
+  .gnb-nav { display: none; }
+  .eq-link:hover .eq-arrow { transform: translateX(5px); }
+  @media (min-width: 860px) { .why-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+  @media (min-width: 640px) { .space-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (min-width: 1024px) { .space-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+  @media (min-width: 900px) { .gnb-nav { display: flex; } .m-only { display: none !important; } }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#FBFBF9">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#FBFBF9"></rect>
+    <rect x="120" y="120" width="960" height="560" fill="#F4F4F0" stroke="#E5E5E0" stroke-width="4"></rect>
+    <text x="600" y="430" text-anchor="middle" font-family="serif" font-size="200" font-weight="600" fill="#1C1C1A">이씀</text>
+    <text x="600" y="505" text-anchor="middle" font-family="sans-serif" font-size="40" letter-spacing="20" fill="#8A8A7E">ISSEUM</text>
+  </svg>
+</template>
+
+<header style="position: sticky; top: 0; z-index: 50; background: rgba(251,251,249,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid #E5E5E0;">
+  <div style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); height: 100px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <a href="#top" style="display: flex; align-items: baseline; gap: 9px;">
+      <img src="./assets/isseum-logo.png" alt="이씀 ISSEUM" style="height: 64px; width: auto; display: block;">
+    </a>
+    <nav class="gnb-nav" style="align-items: center; gap: clamp(20px, 2.6vw, 40px);">
+      <a href="#space" style="font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; border-bottom: 1.5px solid #1C1C1A; padding-bottom: 3px;">공간 소개</a>
+      <a href="./ISSEUM Equipment.dc.html" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">보유 장비</a>
+      <a href="./ISSEUM Rules.dc.html" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">대관 규정</a>
+      <a href="./ISSEUM Events.dc.html" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">지난 행사</a>
+    </nav>
+    <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="flex: none; background: #1C1C1A; color: #fff; font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; padding: 13px 24px; border-radius: 2px; transition: background .2s;" style-hover="background: #3D3D38; color: #fff;">대관 예약하기</a>
+  </div>
+  <div class="m-only" style="display: flex; border-top: 1px solid #E5E5E0; overflow-x: auto;">
+    <a href="#space" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: #F4F4F0;">공간 소개</a>
+    <a href="./ISSEUM Equipment.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap; border-left: 1px solid #E5E5E0;">보유 장비</a>
+    <a href="./ISSEUM Rules.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap; border-left: 1px solid #E5E5E0;">대관 규정</a>
+    <a href="./ISSEUM Events.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap; border-left: 1px solid #E5E5E0;">지난 행사</a>
+  </div>
+</header>
+
+<main id="top">
+  <section style="max-width: 1440px; margin: 0 auto; padding: clamp(20px, 3vw, 40px) clamp(20px, 4vw, 64px) 0;">
+    <div class="ph" style="position: relative; aspect-ratio: 16 / 7.6; border-left: 1px solid #E5E5E0; border-right: 1px solid #E5E5E0; border-bottom: 1px solid #E5E5E0; display: flex; align-items: center; justify-content: center;">
+      <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; letter-spacing: 0.14em; color: #8A8A7E; background: #FBFBF9; padding: 9px 16px; border: 1px solid #E5E5E0;">HERO — 메인 홀 와이드 전경 (2400×1140)</span>
+    </div>
+    <div style="padding-top: clamp(34px, 5vw, 72px);">
+      <p style="margin: 0 0 clamp(20px, 3vw, 34px); font-size: 11.5px; letter-spacing: 0.24em; color: #8A8A7E; font-weight: 500;">PREMIUM MULTI CULTURE SPACE</p>
+      <h1 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(24px, 3.2vw, 44px); line-height: 1.35; letter-spacing: -0.03em; max-width: 24em;">모든 존재에는 저마다의 아름다움이 있다. <em style="font-style: normal; color: rgb(45, 45, 42);">“이씀”</em></h1>
+      <div style="display: flex; flex-direction: column; gap: clamp(16px, 1.8vw, 24px); margin-top: clamp(22px, 3vw, 36px); max-width: 62em;">
+        <p style="margin: 0; font-size: clamp(15px, 1.4vw, 17.5px); line-height: 1.85; color: #55554C; letter-spacing: -0.015em;">이씀(Isseum)은 홍대입구역 1번 출구 라인, 차분하고 프라이빗한 동교동에 위치한 약 68평(실 가용 면적 60평) 규모의 가변형 복합문화공간입니다.<br><span style="letter-spacing: -0.24885px;">기업의 비전을 쌓아 올리는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드의 팬덤을 형성하는 팝업스토어와 팬미팅까지 — 주최자가 원하는 모든 형태의 이야기를 완벽한 무대로 구현해 드립니다.</span></p>
+        
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width: 1440px; margin: 0 auto; padding: clamp(28px, 4vw, 52px) clamp(20px, 4vw, 64px) 0;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); border-top: 1px solid #E5E5E0;">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width: 1440px; margin: 0 auto; padding: clamp(70px, 10vw, 140px) clamp(20px, 4vw, 64px) 0;">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 26px; border-bottom: 1px solid #1C1C1A;">
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11.5px; letter-spacing: 0.24em; color: #8A8A7E; font-weight: 500;">WHY ISSEUM</p>
+        <h2 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(28px, 4vw, 52px); letter-spacing: -0.03em; line-height: 1.2;">공간 특징</h2>
+      </div>
+    </div>
+    <div class="why-grid" style="display: grid; grid-template-columns: 1fr; gap: 1px; background: #E5E5E0; border: 1px solid #E5E5E0; margin-top: clamp(28px, 3.6vw, 52px);">
+      <div style="background: #FBFBF9; padding: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px) clamp(32px, 3.6vw, 50px); display: flex; flex-direction: column; gap: 18px;">
+        
+        <div>
+          <h3 style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(19px, 2vw, 24px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.35;">역세권 스타벅스 건물</h3>
+          <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.8; color: #55554C; letter-spacing: -0.015em;">홍대입구역 도보 9분, 1층 스타벅스 건물로 찾아오시는 모든 참석자분들께 접근 편의성을 제공합니다.</p>
+        </div>
+      </div>
+      <div style="background: #FBFBF9; padding: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px) clamp(32px, 3.6vw, 50px); display: flex; flex-direction: column; gap: 18px;">
+        
+        <div>
+          <h3 style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(19px, 2vw, 24px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.35;">스마트 공조 시스템</h3>
+          <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.8; color: #55554C; letter-spacing: -0.015em;">지하 특유의 답답함과 습도를 지워낸 급배기 시스템으로, 행사 내내 지상보다 좋은 공기를 선사합니다.</p>
+        </div>
+      </div>
+      <div style="background: #FBFBF9; padding: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px) clamp(32px, 3.6vw, 50px); display: flex; flex-direction: column; gap: 18px;">
+        
+        <div>
+          <h3 style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(19px, 2vw, 24px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.35;">편리한 빌딩 내 주차</h3>
+          <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.8; color: #55554C; letter-spacing: -0.015em;">홍대 인근에서 보기 드문 빌딩 내 기계식 주차 <span data-path-to-node="5,2" data-index-in-node="26" style="">최대 5대 무료 지원.</span>
+행사용 대형 짐이나 촬영 장비는 <span data-path-to-node="5,2" data-index-in-node="57" style="">건물 앞 지정 주차 공간</span>을 활용해 <span data-path-to-node="5,2" data-index-in-node="76" style="">단 5m 이동만으로</span> 편리하게 상하차하실 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="space" style="max-width: 1440px; margin: 0 auto; padding: clamp(70px, 10vw, 140px) clamp(20px, 4vw, 64px) 0; scroll-margin-top: 90px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 26px; border-bottom: 1px solid #1C1C1A;">
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11.5px; letter-spacing: 0.24em; color: #8A8A7E; font-weight: 500;">SPACE &amp; EQUIPMENT</p>
+        <h2 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(28px, 4vw, 52px); letter-spacing: -0.03em; line-height: 1.2;">공간 안내</h2>
+      </div>
+      
+    </div>
+
+    <div class="space-grid" style="display: grid; grid-template-columns: 1fr; gap: clamp(20px, 2.4vw, 30px); margin-top: clamp(28px, 3.6vw, 52px);">
+      <sc-for list="{{ spaces }}" as="sp" hint-placeholder-count="4">
+        <article style="display: flex; flex-direction: column;">
+          <div class="ph" style="aspect-ratio: 4 / 5; border: 1px solid #E5E5E0; display: flex; align-items: flex-end; padding: 18px;">
+            <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #8A8A7E; background: #FBFBF9; padding: 7px 12px; border: 1px solid #E5E5E0;">{{ sp.slot }}</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 20px;">
+            <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #A5A599;">{{ sp.num }}</span>
+            <h3 style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(19px, 2vw, 25px); font-weight: 500; letter-spacing: -0.025em;">{{ sp.name }}</h3>
+          </div>
+          <p style="margin: 11px 0 0; font-size: 14.5px; line-height: 1.75; color: #55554C; letter-spacing: -0.015em;">{{ sp.desc }}</p>
+          <p style="margin: 14px 0 0; padding-top: 14px; border-top: 1px solid #E5E5E0; font-size: 12.5px; color: #8A8A7E; letter-spacing: 0.01em;">{{ sp.meta }}</p>
+        </article>
+      </sc-for>
+    </div>
+
+    <div style="margin-top: clamp(48px, 6vw, 92px); border-top: 1px solid #1C1C1A;">
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; padding: clamp(22px, 2.6vw, 34px) 0 clamp(18px, 2vw, 26px);">
+        <h3 style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(20px, 2.2vw, 28px); font-weight: 500; letter-spacing: -0.025em; color: #1C1C1A;">보유 장비</h3>
+        <a href="./ISSEUM Equipment.dc.html" class="eq-link" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.015em; color: #1C1C1A;">전체 장비 자세히 보기<span class="eq-arrow" style="display: inline-block; transition: transform .25s;">→</span></a>
+      </div>
+      <ul style="margin: 0; padding: 0; list-style: none; border-top: 1px solid #E5E5E0;">
+        <sc-for list="{{ equipment }}" as="eq" hint-placeholder-count="6">
+          <li style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; padding: 15px 0; border-bottom: 1px solid #E5E5E0;">
+            <span style="flex: none; font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #A5A599; letter-spacing: 0.1em; width: 26px;">{{ eq.num }}</span>
+            <span style="flex: 1 1 260px; font-size: clamp(15px, 1.5vw, 17px); font-weight: 600; letter-spacing: -0.025em; color: #1C1C1A;">{{ eq.name }}</span>
+            <span style="flex: 1 1 200px; font-size: 13.5px; color: #8A8A7E; letter-spacing: -0.01em;">{{ eq.spec }}</span>
+          </li>
+        </sc-for>
+      </ul>
+      <p style="margin: 16px 0 0; font-size: 12.5px; color: #8A8A7E; letter-spacing: 0.02em;">전 장비 대관료에 포함 · 사전 요청 시 세팅 지원</p>
+    </div>
+  </section>
+
+  <section style="max-width: 1440px; margin: clamp(70px, 10vw, 140px) auto 0; padding: 0 clamp(20px, 4vw, 64px);">
+    <div style="padding-bottom: 26px; border-bottom: 1px solid #1C1C1A;">
+      <p style="margin: 0 0 14px; font-size: 11.5px; letter-spacing: 0.24em; color: #8A8A7E; font-weight: 500;">RENTAL PROCESS</p>
+      <h2 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(28px, 4vw, 52px); letter-spacing: -0.03em;">대관 절차</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: #E5E5E0; margin-top: clamp(28px, 3.6vw, 52px); border-bottom: 1px solid #E5E5E0;">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+        <div style="background: #FBFBF9; padding: clamp(24px, 2.6vw, 38px) clamp(20px, 2vw, 30px) clamp(30px, 3.4vw, 48px); display: flex; flex-direction: column; gap: 16px; transition: background .25s;" style-hover="background: #F4F4F0;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-family: 'Noto Serif KR', serif; font-size: clamp(30px, 3.4vw, 46px); font-weight: 400; line-height: 1; color: #1C1C1A;">{{ st.num }}</span>
+            <span style="font-size: 11px; letter-spacing: 0.18em; color: #A5A599; font-weight: 500;">{{ st.en }}</span>
+          </div>
+          <h3 style="margin: 22px 0 0; font-size: 18px; font-weight: 600; letter-spacing: -0.025em;">{{ st.title }}</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.75; color: #55554C; letter-spacing: -0.015em;">{{ st.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; margin-top: clamp(32px, 4vw, 56px); background: #1C1C1A; padding: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 44px);">
+      <div>
+        <p style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(20px, 2.4vw, 30px); font-weight: 500; color: #FBFBF9; letter-spacing: -0.025em;">원하시는 날짜가 비어 있는지 먼저 확인해 보세요.</p>
+        <p style="margin: 10px 0 0; font-size: 13.5px; color: #A5A599; letter-spacing: -0.01em;">신청서 접수 후 영업일 기준 1일 내 회신드립니다.</p>
+      </div>
+      <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="background: #FBFBF9; color: #1C1C1A; font-size: 14.5px; font-weight: 600; padding: 17px 32px; border-radius: 2px; letter-spacing: -0.01em; transition: background .2s;" style-hover="background: #E5E5E0; color: #1C1C1A;">대관 예약하기</a>
+    </div>
+  </section>
+</main>
+
+<footer style="margin-top: clamp(70px, 10vw, 140px); border-top: 1px solid #E5E5E0; background: #F4F4F0;">
+  <div style="max-width: 1440px; margin: 0 auto; padding: clamp(48px, 6vw, 90px) clamp(20px, 4vw, 64px) clamp(28px, 3vw, 44px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(32px, 4vw, 64px);">
+    <div>
+      <div style="display: flex; align-items: baseline; gap: 9px;">
+        <img src="./assets/isseum-logo.png" alt="이씀 ISSEUM" style="height: 40px; width: auto; display: block;">
+      </div>
+      <dl style="margin: 26px 0 0; display: grid; grid-template-columns: 92px 1fr; gap: 11px 0; font-size: 13.5px; letter-spacing: -0.01em;">
+        <dt style="color: #8A8A7E;">상호명</dt><dd style="margin: 0; color: #2D2D2A;">영준피엠씨(YOUNGJUN PMC)</dd>
+        <dt style="color: #8A8A7E;">대표자명</dt><dd style="margin: 0; color: #2D2D2A;">정용철</dd>
+        <dt style="color: #8A8A7E;">주소</dt><dd style="margin: 0; color: #2D2D2A;">서울특별시 마포구 월드컵북로 22, 지하 1층</dd>
+        <dt style="color: #8A8A7E;">연락처</dt><dd style="margin: 0; color: #2D2D2A;"><a href="tel:010-3099-0334">010-3099-0334</a></dd>
+        <dt style="color: #8A8A7E;">이메일</dt><dd style="margin: 0; color: #2D2D2A;"><a href="mailto:isseumspace@gmail.com">isseumspace@gmail.com</a></dd>
+        <dt style="color: #8A8A7E;">사업자등록번호</dt><dd style="margin: 0; color: #2D2D2A;">105-04-11192</dd>
+      </dl>
+    </div>
+
+    <div>
+      <p style="margin: 0 0 16px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">LOCATION</p>
+      <div class="ph" style="aspect-ratio: 16 / 10; border: 1px solid #E5E5E0; display: flex; align-items: center; justify-content: center;">
+        <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #8A8A7E; background: #FBFBF9; padding: 8px 14px; border: 1px solid #E5E5E0;">MAP EMBED — 네이버 / 카카오맵</span>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <a href="#" style="flex: 1; text-align: center; border: 1px solid #1C1C1A; padding: 12px 6px; font-size: 12.5px; font-weight: 600; border-radius: 2px; transition: background .2s, color .2s;" style-hover="background: #1C1C1A; color: #fff;">네이버 지도</a>
+        <a href="#" style="flex: 1; text-align: center; border: 1px solid #1C1C1A; padding: 12px 6px; font-size: 12.5px; font-weight: 600; border-radius: 2px; transition: background .2s, color .2s;" style-hover="background: #1C1C1A; color: #fff;">카카오맵</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 32px;">
+      <div>
+        <p style="margin: 0 0 16px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">주요 안내</p>
+        <div style="display: flex; flex-direction: column; border-top: 1px solid #E5E5E0;">
+          <a href="./ISSEUM Equipment.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">보유 장비 안내<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="./ISSEUM Rules.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">대관 규정 및 이용 안내<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="./ISSEUM Events.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">지난 행사 아카이브<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">대관 예약하기<span style="color: #A5A599; font-size: 12px;">↗</span></a>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">공식 채널</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="#" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid #E5E5E0; background: #FBFBF9; padding: 11px 16px; border-radius: 2px; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; transition: border-color .2s;" style-hover="border-color: #1C1C1A;"><span style="width: 15px; height: 15px; border: 1.5px solid #1C1C1A; border-radius: 4px;"></span>인스타그램</a>
+          <a href="#" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid #E5E5E0; background: #FBFBF9; padding: 11px 16px; border-radius: 2px; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; transition: border-color .2s;" style-hover="border-color: #1C1C1A;"><span style="width: 15px; height: 15px; border: 1.5px solid #1C1C1A; border-radius: 50%;"></span>스페이스클라우드</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #E5E5E0;">
+    <div style="max-width: 1440px; margin: 0 auto; padding: 20px clamp(20px, 4vw, 64px); display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; font-size: 12px; color: #8A8A7E; letter-spacing: 0.01em;">
+      <span>© 2026 ISSEUM. All rights reserved.</span>
+      <span style="letter-spacing: 0.18em;">SEOUL · KOREA</span>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;bookingUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://forms.gle/&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;외부 링크&quot;},&quot;rulesUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;./ISSEUM Rules.dc.html&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;외부 링크&quot;},&quot;showEquipment&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;섹션 표시&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    return {
+      bookingUrl: p.bookingUrl ?? "https://forms.gle/",
+      rulesUrl: p.rulesUrl ?? "./ISSEUM Rules.dc.html",
+      showEquipment: p.showEquipment ?? true,
+      stats: [
+        { value: "132㎡", label: "메인 홀 면적" },
+        { value: "최대 60인", label: "동시 수용 인원" },
+        { value: "4개 영역", label: "메인 홀 · 프로젝트 룸 · 분장실 · 바" },
+        { value: "09–24시", label: "대관 가능 시간" },
+      ],
+      spaces: [
+        { num: "01", name: "메인 홀", slot: "메인 홀 (1200×1500)", desc: "대형 TV와 자유로운 가구 배치가 가능한 메인 행사 공간. 공연, 상영, 브랜드 쇼케이스까지 폭넓게 소화합니다.", meta: "132㎡ · 최대 90인 · 독립 공조" },
+        { num: "02", name: "프로젝트 룸", slot: "프로젝트 룸 (1200×1500)", desc: "미팅, 소모임, 출연자 대기실로 활용 가능한 프라이빗 룸. 독립 조명과 도어록으로 분리 운영됩니다.", meta: "26㎡ · 최대 10인 · 독립 공조" },
+        { num: "03", name: "파우더 룸", slot: "분장실 (1200×1500)", desc: "거울과 조명이 갖춰진 준비 공간. 연사와 출연자의 메이크업, 의상 교체, 리허설 대기 용도로 사용합니다.", meta: "12㎡ · 조명 거울 · 행거 비치" },
+        { num: "04", name: "바(Bar)", slot: "바 영역 (1200×1500)", desc: "음료 제공 및 네트워킹을 위한 오픈 바 공간. 케이터링 반입과 간단한 조주 세팅이 가능합니다.", meta: "18㎡ · 싱크 · 냉장 설비" },
+      ],
+      equipment: [
+        { num: "01", name: "JBL 6채널 입체 음향 시스템", spec: "SHURE 무선 마이크 포함" },
+        { num: "02", name: "100인치 삼성 4K 스마트 TV", spec: "미러링 & HDMI 지원" },
+        { num: "03", name: "기본형 의자", spec: "등·좌판 패딩 · 자유로운 레이아웃 구성" },
+        { num: "04", name: "이동식 다목적 테이블", spec: "퍼시스 2인·3인용 접이식 · 바퀴 이동" },
+        { num: "05", name: "3인용 소파 & 1인용 라운지 체어", spec: "톤앤매너 맞춤 커버 교체 가능" },
+        { num: "06", name: "강연대", spec: "이동식 · 노트북 거치 가능" },
+        { num: "07", name: "초고속 기가 Wi-Fi", spec: "행사 전용 분리 회선" },
+      ],
+      steps: [
+        { num: "1", en: "STEP 01", title: "예약 신청", desc: "구글 폼을 통해 원하는 날짜와 일정, 행사 성격을 남겨 주세요." },
+        { num: "2", en: "STEP 02", title: "승인 및 결제", desc: "호스트가 일정을 확인한 뒤 대관을 확정하고 결제를 안내드립니다." },
+        { num: "3", en: "STEP 03", title: "이용 매뉴얼 전송", desc: "입·퇴실 방법과 출입 비밀번호, 장비 사용 안내를 전달드립니다." },
+        { num: "4", en: "STEP 04", title: "입실 및 이용", desc: "이씀 공간을 이용하신 후 원상복구를 마치고 퇴실하시면 됩니다." },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

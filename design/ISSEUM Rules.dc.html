@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #FBFBF9; color: #1C1C1A; font-family: Pretendard, -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-wrap: pretty; }
+  a { color: #1C1C1A; text-decoration: none; }
+  a:hover { color: #6E6E64; }
+  .ph { background-image: repeating-linear-gradient(135deg, #EAEAE3 0 10px, #F4F4F0 10px 20px); }
+  .gnb-nav { display: none; }
+  .toc { display: none; }
+  @media (min-width: 900px) { .gnb-nav { display: flex; } .m-only { display: none !important; } }
+  @media (min-width: 1100px) { .toc { display: block; } .doc-grid { grid-template-columns: 236px 1fr !important; } }
+</style>
+</helmet>
+
+<header style="position: sticky; top: 0; z-index: 50; background: rgba(251,251,249,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid #E5E5E0;">
+  <div style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); height: 100px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <a href="./ISSEUM Main.dc.html" style="display: flex; align-items: baseline; gap: 9px;">
+      <img src="./assets/isseum-logo.png" alt="이씀 ISSEUM" style="height: 64px; width: auto; display: block;">
+    </a>
+    <nav class="gnb-nav" style="align-items: center; gap: clamp(20px, 2.6vw, 40px);">
+      <a href="./ISSEUM Main.dc.html#space" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">공간 소개</a>
+      <a href="./ISSEUM Equipment.dc.html" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">보유 장비</a>
+      <a href="./ISSEUM Rules.dc.html" style="font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; border-bottom: 1.5px solid #1C1C1A; padding-bottom: 3px;">대관 규정</a>
+      <a href="./ISSEUM Events.dc.html" style="font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;">지난 행사</a>
+    </nav>
+    <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="flex: none; background: #1C1C1A; color: #fff; font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; padding: 13px 24px; border-radius: 2px; transition: background .2s;" style-hover="background: #3D3D38; color: #fff;">대관 예약하기</a>
+  </div>
+  <div class="m-only" style="display: flex; border-top: 1px solid #E5E5E0; overflow-x: auto;">
+    <a href="./ISSEUM Main.dc.html#space" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap;">공간 소개</a>
+    <a href="./ISSEUM Equipment.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap; border-left: 1px solid #E5E5E0;">보유 장비</a>
+    <a href="./ISSEUM Rules.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: #F4F4F0; border-left: 1px solid #E5E5E0;">대관 규정</a>
+    <a href="./ISSEUM Events.dc.html" style="flex: 1; text-align: center; padding: 12px 6px; font-size: 12.5px; font-weight: 500; white-space: nowrap; border-left: 1px solid #E5E5E0;">지난 행사</a>
+  </div>
+</header>
+
+<main>
+  <section style="max-width: 1440px; margin: 0 auto; padding: clamp(46px, 6vw, 90px) clamp(20px, 4vw, 64px) 0;">
+    <p style="margin: 0 0 clamp(20px, 3vw, 34px); font-size: 11.5px; letter-spacing: 0.24em; color: #8A8A7E; font-weight: 500;">RENTAL POLICY &amp; GUIDE</p>
+    <h1 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(30px, 4.8vw, 66px); line-height: 1.24; letter-spacing: -0.03em;">이씀 대관 규정 및 이용 안내</h1>
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 28px; margin-top: clamp(24px, 3vw, 44px); padding-bottom: clamp(24px, 3vw, 40px); border-bottom: 1px solid #1C1C1A;">
+      <div style="max-width: 34em;">
+        <p style="margin: 0; font-size: clamp(15px, 1.4vw, 17.5px); line-height: 1.75; color: #55554C; letter-spacing: -0.015em;">예약 전 반드시 아래의 대관 규정을 확인해 주시기 바랍니다.</p>
+        <p style="margin: 8px 0 0; font-size: clamp(15px, 1.4vw, 17.5px); line-height: 1.75; color: #1C1C1A; font-weight: 600; letter-spacing: -0.015em;">예약 결제가 완료됨과 동시에 본 이용 규정에 모두 동의하신 것으로 간주됩니다.</p>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #8A8A7E; letter-spacing: 0.02em; white-space: nowrap;">최종 개정 2026. 08. 01. · 총 12개 항목</p>
+    </div>
+  </section>
+
+  <section class="doc-grid" style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px) clamp(60px, 8vw, 110px); display: grid; grid-template-columns: 1fr; gap: clamp(32px, 4vw, 64px);">
+    <aside class="toc">
+      <div style="position: sticky; top: 112px;">
+        <p style="margin: clamp(32px, 4vw, 56px) 0 14px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">목차</p>
+        <nav style="display: flex; flex-direction: column; border-top: 1px solid #E5E5E0;">
+          <sc-for list="{{ toc }}" as="t" hint-placeholder-count="4">
+            <a href="{{ t.href }}" style="display: flex; gap: 10px; padding: 13px 2px; border-bottom: 1px solid #E5E5E0; font-size: 13.5px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.4;"><span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #A5A599;">{{ t.num }}</span>{{ t.label }}</a>
+          </sc-for>
+        </nav>
+        <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="display: block; text-align: center; margin-top: 20px; background: #1C1C1A; color: #fff; font-size: 13.5px; font-weight: 600; padding: 15px 18px; border-radius: 2px; transition: background .2s;" style-hover="background: #3D3D38; color: #fff;">대관 예약하기</a>
+      </div>
+    </aside>
+
+    <div>
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+        <div id="{{ g.id }}" style="padding-top: clamp(38px, 5vw, 68px); scroll-margin-top: 100px;">
+          <div style="display: flex; align-items: baseline; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid #E5E5E0;">
+            <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #A5A599; letter-spacing: 0.1em;">{{ g.num }}</span>
+            <h2 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(22px, 2.8vw, 34px); letter-spacing: -0.03em; line-height: 1.25;">{{ g.title }}</h2>
+          </div>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+            <article style="display: grid; grid-template-columns: 1fr; gap: 10px; padding: clamp(26px, 3vw, 40px) 0; border-bottom: 1px solid #E5E5E0;">
+              <div style="display: flex; align-items: baseline; gap: 12px;">
+                <span style="flex: none; width: 26px; height: 26px; border: 1px solid #1C1C1A; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">{{ it.n }}</span>
+                <h3 style="margin: 0; font-size: clamp(17px, 1.8vw, 21px); font-weight: 600; letter-spacing: -0.03em;">{{ it.title }}</h3>
+              </div>
+              <div style="padding-left: 38px; display: flex; flex-direction: column; gap: 13px;">
+                <sc-for list="{{ it.lines }}" as="ln" hint-placeholder-count="3">
+                  <div style="display: flex; gap: 11px; align-items: flex-start;">
+                    <span style="flex: none; width: 4px; height: 4px; background: #A5A599; border-radius: 50%; margin-top: 11px;"></span>
+                    <p style="margin: 0; font-size: 15px; line-height: 1.78; color: #55554C; letter-spacing: -0.015em;"><strong style="color: #1C1C1A; font-weight: 600;">{{ ln.label }}</strong>{{ ln.text }}</p>
+                  </div>
+                </sc-for>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-for>
+
+      <div id="refund" style="padding-top: clamp(38px, 5vw, 68px); scroll-margin-top: 100px;">
+        <div style="display: flex; align-items: baseline; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid #E5E5E0;">
+          <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #A5A599; letter-spacing: 0.1em;">05</span>
+          <h2 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: clamp(22px, 2.8vw, 34px); letter-spacing: -0.03em;">취소 및 환불 정책</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: #E5E5E0; border: 1px solid #E5E5E0; margin-top: clamp(24px, 3vw, 36px);">
+          <sc-for list="{{ refund }}" as="r" hint-placeholder-count="3">
+            <div style="background: #FBFBF9; padding: clamp(22px, 2.4vw, 32px) 24px clamp(26px, 2.8vw, 36px); display: flex; flex-direction: column; gap: 14px;">
+              <p style="margin: 0; font-size: 13.5px; font-weight: 600; color: #55554C; letter-spacing: -0.02em;">{{ r.when }}</p>
+              <p style="margin: 0; font-family: 'Noto Serif KR', serif; font-size: clamp(24px, 2.6vw, 34px); font-weight: 500; letter-spacing: -0.03em; color: {{ r.color }};">{{ r.rate }}</p>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top: clamp(22px, 2.6vw, 34px); background: #F4F4F0; border: 1px solid #E5E5E0; padding: clamp(24px, 3vw, 40px);">
+          <p style="margin: 0 0 18px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">예외 규정 및 주의사항</p>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <sc-for list="{{ exceptions }}" as="ex" hint-placeholder-count="3">
+              <div style="display: flex; gap: 11px; align-items: flex-start;">
+                <span style="flex: none; width: 4px; height: 4px; background: #A5A599; border-radius: 50%; margin-top: 11px;"></span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.78; color: #55554C; letter-spacing: -0.015em;"><strong style="color: #1C1C1A; font-weight: 600;">{{ ex.label }}</strong>{{ ex.text }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top: clamp(22px, 2.6vw, 34px); padding: clamp(24px, 3vw, 36px) 0; border-top: 1px solid #E5E5E0; border-bottom: 1px solid #E5E5E0;">
+          <div style="display: flex; align-items: baseline; gap: 12px;">
+            <span style="flex: none; width: 26px; height: 26px; border: 1px solid #1C1C1A; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">12</span>
+            <div>
+              <h3 style="margin: 0; font-size: clamp(17px, 1.8vw, 21px); font-weight: 600; letter-spacing: -0.03em;">안전 관리 및 책임 안내</h3>
+              <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.78; color: #55554C; letter-spacing: -0.015em;">행사 중 발생하는 참여자의 개인 소지품 분실, 도난 및 부주의로 인한 안전사고에 대한 모든 책임은 주최 측(예약자)에게 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: clamp(36px, 4.5vw, 64px); background: #1C1C1A; padding: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 44px);">
+        <label style="display: flex; align-items: flex-start; gap: 14px; cursor: pointer;">
+          <input type="checkbox" checked="{{ agreed }}" onChange="{{ toggleAgree }}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #FBFBF9; flex: none; cursor: pointer;">
+          <span style="font-size: clamp(15px, 1.5vw, 17.5px); line-height: 1.7; color: #FBFBF9; font-weight: 600; letter-spacing: -0.02em;">위 대관 규정 및 환불 정책을 모두 확인하였으며, 이에 동의합니다.</span>
+        </label>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: clamp(22px, 2.6vw, 32px); padding-top: clamp(22px, 2.6vw, 32px); border-top: 1px solid #3D3D38;">
+          <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="background: {{ ctaBg }}; color: {{ ctaFg }}; font-size: 14.5px; font-weight: 600; padding: 17px 32px; border-radius: 2px; letter-spacing: -0.01em; pointer-events: {{ ctaEvents }}; transition: background .2s;">대관 예약하기</a>
+          <a href="./ISSEUM Events.dc.html" style="border: 1px solid #6E6E64; color: #FBFBF9; font-size: 14.5px; font-weight: 600; padding: 16px 31px; border-radius: 2px; letter-spacing: -0.01em; transition: border-color .2s;" style-hover="border-color: #FBFBF9; color: #FBFBF9;">지난 행사 보기</a>
+          <p style="margin: 0; font-size: 12.5px; color: #A5A599; letter-spacing: -0.01em;">{{ ctaHint }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer style="margin-top: clamp(52px, 6.5vw, 92px); border-top: 1px solid #E5E5E0; background: #F4F4F0;">
+  <div style="max-width: 1440px; margin: 0 auto; padding: clamp(48px, 6vw, 90px) clamp(20px, 4vw, 64px) clamp(28px, 3vw, 44px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(32px, 4vw, 64px);">
+    <div>
+      <div style="display: flex; align-items: baseline; gap: 9px;">
+        <img src="./assets/isseum-logo.png" alt="이씀 ISSEUM" style="height: 40px; width: auto; display: block;">
+      </div>
+      <dl style="margin: 26px 0 0; display: grid; grid-template-columns: 92px 1fr; gap: 11px 0; font-size: 13.5px; letter-spacing: -0.01em;">
+        <dt style="color: #8A8A7E;">상호명</dt><dd style="margin: 0; color: #2D2D2A;">영준피엠씨(YOUNGJUN PMC)</dd>
+        <dt style="color: #8A8A7E;">대표자명</dt><dd style="margin: 0; color: #2D2D2A;">정용철</dd>
+        <dt style="color: #8A8A7E;">주소</dt><dd style="margin: 0; color: #2D2D2A;">서울특별시 마포구 월드컵북로 22, 지하 1층</dd>
+        <dt style="color: #8A8A7E;">연락처</dt><dd style="margin: 0; color: #2D2D2A;"><a href="tel:010-3099-0334">010-3099-0334</a></dd>
+        <dt style="color: #8A8A7E;">이메일</dt><dd style="margin: 0; color: #2D2D2A;"><a href="mailto:isseumspace@gmail.com">isseumspace@gmail.com</a></dd>
+        <dt style="color: #8A8A7E;">사업자등록번호</dt><dd style="margin: 0; color: #2D2D2A;">105-04-11192</dd>
+      </dl>
+    </div>
+
+    <div>
+      <p style="margin: 0 0 16px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">LOCATION</p>
+      <div class="ph" style="aspect-ratio: 16 / 10; border: 1px solid #E5E5E0; display: flex; align-items: center; justify-content: center;">
+        <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #8A8A7E; background: #FBFBF9; padding: 8px 14px; border: 1px solid #E5E5E0;">MAP EMBED — 네이버 / 카카오맵</span>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <a href="#" style="flex: 1; text-align: center; border: 1px solid #1C1C1A; padding: 12px 6px; font-size: 12.5px; font-weight: 600; border-radius: 2px; transition: background .2s, color .2s;" style-hover="background: #1C1C1A; color: #fff;">네이버 지도</a>
+        <a href="#" style="flex: 1; text-align: center; border: 1px solid #1C1C1A; padding: 12px 6px; font-size: 12.5px; font-weight: 600; border-radius: 2px; transition: background .2s, color .2s;" style-hover="background: #1C1C1A; color: #fff;">카카오맵</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 32px;">
+      <div>
+        <p style="margin: 0 0 16px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">주요 안내</p>
+        <div style="display: flex; flex-direction: column; border-top: 1px solid #E5E5E0;">
+          <a href="./ISSEUM Equipment.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">보유 장비 안내<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="./ISSEUM Rules.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">대관 규정 및 이용 안내<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="./ISSEUM Events.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">지난 행사 아카이브<span style="color: #A5A599; font-size: 12px;">→</span></a>
+          <a href="{{ bookingUrl }}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #E5E5E0; font-size: 14.5px; font-weight: 500; letter-spacing: -0.015em;">대관 예약하기<span style="color: #A5A599; font-size: 12px;">↗</span></a>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11.5px; letter-spacing: 0.2em; color: #8A8A7E; font-weight: 500;">공식 채널</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="#" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid #E5E5E0; background: #FBFBF9; padding: 11px 16px; border-radius: 2px; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; transition: border-color .2s;" style-hover="border-color: #1C1C1A;"><span style="width: 15px; height: 15px; border: 1.5px solid #1C1C1A; border-radius: 4px;"></span>인스타그램</a>
+          <a href="#" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid #E5E5E0; background: #FBFBF9; padding: 11px 16px; border-radius: 2px; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; transition: border-color .2s;" style-hover="border-color: #1C1C1A;"><span style="width: 15px; height: 15px; border: 1.5px solid #1C1C1A; border-radius: 50%;"></span>스페이스클라우드</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #E5E5E0;">
+    <div style="max-width: 1440px; margin: 0 auto; padding: 20px clamp(20px, 4vw, 64px); display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; font-size: 12px; color: #8A8A7E; letter-spacing: 0.01em;">
+      <span>© 2026 ISSEUM. All rights reserved.</span>
+      <span style="letter-spacing: 0.18em;">SEOUL · KOREA</span>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;bookingUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://forms.gle/&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;외부 링크&quot;}}">
+class Component extends DCLogic {
+  state = { agreed: false };
+  renderVals() {
+    const p = this.props;
+    const agreed = this.state.agreed;
+    return {
+      bookingUrl: p.bookingUrl ?? "https://forms.gle/",
+      agreed,
+      toggleAgree: () => this.setState(s => ({ agreed: !s.agreed })),
+      ctaBg: agreed ? "#FBFBF9" : "#3D3D38",
+      ctaFg: agreed ? "#1C1C1A" : "#8A8A7E",
+      ctaEvents: agreed ? "auto" : "none",
+      ctaHint: agreed ? "동의 완료 — 예약 신청서로 이동할 수 있습니다." : "동의 후 예약 신청이 가능합니다.",
+      toc: [
+        { num: "01", label: "예약 전 필수 확인 사항", href: "#before" },
+        { num: "02", label: "공간 도착 및 이용 안내", href: "#arrival" },
+        { num: "03", label: "주의사항 및 퇴실 · 정리", href: "#exit" },
+        { num: "04", label: "규정 및 책임", href: "#refund" },
+      ],
+      refund: [
+        { when: "이용 8일 전 취소", rate: "100% 환불", color: "#1C1C1A" },
+        { when: "이용 4일 ~ 7일 전 취소", rate: "50% 환불", color: "#2D2D2A" },
+        { when: "이용 3일 전 ~ 당일 취소", rate: "환불 불가", color: "#8A8A7E" },
+      ],
+      exceptions: [
+        { label: "결제 직후 취소 예외 — ", text: "결제 후 2시간 이내 취소 시 100% 환불 (단, 당일 이용 시간이 경과한 경우 환불 불가)" },
+        { label: "변경 불가 — ", text: "일정·시간 변경 및 인원 축소로 인한 부분 취소는 별도로 문의해 주시기 바랍니다." },
+        { label: "불가항력 — ", text: "천재지변이나 공간 자체의 심각한 결함으로 이용이 불가한 경우 100% 환불 처리됩니다." },
+      ],
+      groups: [
+        {
+          id: "before", num: "01", title: "예약 전 필수 확인 사항",
+          items: [
+            { n: "1", title: "이용 시간 및 인원 안내", lines: [
+              { label: "이용 시간 — ", text: "대관 시간은 행사 준비 및 철수(정리) 시간을 모두 포함한 시간입니다." },
+              { label: "시간 초과 — ", text: "이용 시간을 초과할 경우, 30분 단위로 추가 요금이 부과됩니다." },
+              { label: "수용 인원 — ", text: "예약 인원을 초과하여 입실할 경우 사전 고지가 필요하며, 추가 비용이 발생합니다." },
+            ]},
+            { n: "2", title: "미성년자 및 반려동물 출입", lines: [
+              { label: "미성년자 이용 — ", text: "만 19세 미만은 법정대리인(보호자) 동반 없이 단독으로 공간을 대관 및 이용할 수 없습니다. 규정 위반 시 환불 없이 퇴실 조치됩니다." },
+              { label: "반려동물 출입 — ", text: "시각장애인 안내견을 제외한 모든 반려동물의 출입은 사전 협의 후 가능합니다." },
+            ]},
+            { n: "3", title: "이동 약자 접근성 안내", lines: [
+              { label: "주출입구 — ", text: "단차가 없어 휠체어 진입이 원활하며, 엘리베이터를 통해 지하 1층 공간까지 편리하게 이동할 수 있습니다." },
+              { label: "주차 · 화장실 — ", text: "1층 기계식 주차장 옆에 장애인 전용 주차 구역 1면이 마련되어 있으며, 장애인 전용 화장실(남녀 공용)은 건물 1층에 위치합니다." },
+            ]},
+            { n: "4", title: "주차 및 화물 반입 안내", lines: [
+              { label: "주차 안내 — ", text: "대관 시 기계식 주차장 기준 기본 3대 주차가 가능합니다. 기계식 주차장 제한 규격이 있어 SUV 등 일부 대형·RV 차량은 입고가 불가할 수 있으며, 방문객 차량은 인근 유료 주차장 이용을 사전에 안내 부탁드립니다." },
+              { label: "화물 반입 — ", text: "대형 디스플레이, 이동식 대형 행거 등 부피가 큰 짐을 반입할 경우 사전 승인을 받아야 합니다." },
+            ]},
+          ],
+        },
+        {
+          id: "arrival", num: "02", title: "공간 도착 및 이용 안내",
+          items: [
+            { n: "5", title: "입퇴실 및 출입 안내", lines: [
+              { label: "출입 정보 — ", text: "현관 비밀번호 및 상세 이용 안내는 이용 시작 1시간 전에 예약자 연락처로 문자·카카오톡 발송됩니다." },
+              { label: "정각 입퇴실 — ", text: "다음 예약자를 위해 반드시 예약된 시간 정각에 입실 및 퇴실해 주시기 바랍니다. (사전 짐 보관 불가)" },
+            ]},
+            { n: "6", title: "F&B(음식물) 반입 및 취식", lines: [
+              { label: "반입 제한 — ", text: "공간 내 현장 조리 및 국물류 음식의 반입은 엄격히 금지됩니다." },
+              { label: "허용 품목 — ", text: "완제품 형태의 음료 및 다과류만 반입 가능합니다." },
+              { label: "뒷정리 — ", text: "취식 후 남은 음식물 쓰레기와 잔여물은 직접 수거해 깔끔하게 정리해 주셔야 합니다. 사전 결제하신 청소 보증금은 퇴실 후 정리 상태를 확인한 뒤 전액 환불해 드립니다." },
+            ]},
+            { n: "7", title: "통신 및 음향 · 영상 기기 사용", lines: [
+              { label: "Wi-Fi — ", text: "공간 내 무료 와이파이가 제공되며, 비밀번호는 공간 내부 및 안내 문자를 통해 확인할 수 있습니다." },
+              { label: "기기 조작 주의 — ", text: "빔프로젝터, 마이크, 스피커 등 음향·영상 기기는 제공된 매뉴얼에 따라 주의하여 다뤄 주시고, 케이블을 임의로 뽑거나 설정을 변경하지 마세요." },
+            ]},
+          ],
+        },
+        {
+          id: "exit", num: "03", title: "주의사항 및 퇴실 · 정리",
+          items: [
+            { n: "8", title: "화재 예방 및 안전 관리", lines: [
+              { label: "절대 금연 — ", text: "건물 전체 및 지하 내부에서는 전자담배를 포함하여 절대 금연입니다." },
+              { label: "화기 금지 — ", text: "촛불, 캔들, 가스버너, 폭죽 등 화기 및 연막 장비는 어떠한 경우에도 사용이 불가합니다." },
+              { label: "통행 방해 금지 — ", text: "복도·계단 등 공용 공간에서의 대기 및 짐 보관은 제한됩니다. 방문객 대기와 짐 보관은 대관하신 공간 내부를 이용해 주시기 바랍니다." },
+            ]},
+            { n: "9", title: "보안 및 CCTV 작동 안내", lines: [
+              { label: "CCTV 녹화 — ", text: "안전, 화재 예방, 방범 및 시설물 훼손 방지를 위해 24시간 CCTV가 녹화되고 있습니다. 예약 시 CCTV 촬영 및 저장에 동의한 것으로 간주합니다." },
+              { label: "임의 조작 금지 — ", text: "CCTV 방향을 임의로 돌리거나 가리는 행위는 엄격히 금지합니다." },
+            ]},
+            { n: "10", title: "원상복구 및 쓰레기 분리배출", lines: [
+              { label: "원상복구 — ", text: "퇴실 시 책상, 의자, 무대 등은 입실 전 기본 배치로 원상 복구해 주셔야 합니다." },
+              { label: "벽면 훼손 금지 — ", text: "벽면에 테이프, 접착제, 못, 핀 사용은 절대 불가하며, 부착물은 갤러리 와이어 및 전용 점착제(블루택)만 허용됩니다." },
+              { label: "손해 배상 — ", text: "기자재 파손 및 소품 분실 시 수리비 또는 동일 제품 교체 비용이 청구될 수 있습니다." },
+              { label: "쓰레기 분리배출 — ", text: "행사 중 발생한 일반 쓰레기 및 플라스틱·종이컵은 지정된 방식에 따라 분리 배출해 주시고, 대량으로 발생한 쓰레기는 별도 봉투에 담아 쓰레기통 옆에 배출해 주시기 바랍니다." },
+            ]},
+          ],
+        },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>
