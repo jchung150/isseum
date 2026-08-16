@@ -1,9 +1,19 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import FilterChips from '../components/FilterChips.astro';
 import DarkCta from '../components/DarkCta.astro';
 import { EVENT_CATEGORIES, tiles } from '../data/events';
+
+// The lightbox reuses one <img>, so each tile carries the URL of its
+// full-size variant. Generated at build time alongside the thumbnails.
+const gallery = await Promise.all(
+  tiles.map(async (tile) => ({
+    tile,
+    full: tile.src ? (await getImage({ src: tile.src, width: 1800, format: 'webp' })).src : '',
+  }))
+);
 ---
 
 <BaseLayout
@@ -14,18 +24,17 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
     eyebrow="PAST EVENTS · ARCHIVE"
     title="이씀에서 열린 지난 행사"
     lead="공연, 브랜드 행사, 촬영, 강연 — 실제 진행된 현장의 사진과 영상입니다. 이미지를 클릭하면 크게 넘겨 볼 수 있습니다."
-    wide
   />
 
-  <section class="container container--wide filters">
+  <section class="container filters">
     <FilterChips categories={EVENT_CATEGORIES} controls="event-gallery" label="행사 분류" />
     <p class="filters__count" role="status" aria-live="polite" data-count></p>
   </section>
 
-  <section class="container container--wide gallery-section">
+  <section class="container gallery-section">
     <div id="event-gallery" class="gallery" data-list>
       {
-        tiles.map((tile, i) => (
+        gallery.map(({ tile, full }, i) => (
           <button
             type="button"
             class:list={['tile', { 'tile--feature': tile.colSpan === 2 }]}
@@ -33,13 +42,29 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
             data-category={tile.category}
             data-index={i}
             data-big-slot={tile.bigSlot}
+            data-full={full}
             data-date={tile.date}
             data-title={tile.title}
             data-video={tile.isVideo ? 'true' : 'false'}
             aria-label={`${tile.title} — ${tile.shot} 크게 보기`}
           >
-            <span class="ph tile__fill" aria-hidden="true" />
-            <span class="tile__slot" aria-hidden="true">{tile.slot}</span>
+            {tile.src ? (
+              <Image
+                class="tile__fill tile__photo"
+                src={tile.src}
+                alt={tile.shot}
+                widths={[300, 600, 900]}
+                sizes="(min-width: 900px) 25vw, 50vw"
+                loading="lazy"
+              />
+            ) : (
+              <>
+                <span class="ph tile__fill" aria-hidden="true" />
+                <span class="tile__slot" aria-hidden="true">
+                  {tile.slot}
+                </span>
+              </>
+            )}
             {tile.isVideo && (
               <span class="tile__play" aria-hidden="true">
                 <span class="tile__triangle" />
@@ -62,7 +87,7 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
     <p class="gallery__note">현장 사진은 주최 측 동의를 받아 게시하며, 요청 시 즉시 삭제해 드립니다.</p>
   </section>
 
-  <section class="container container--wide closing">
+  <section class="container closing">
     <DarkCta
       headline="비슷한 행사를 기획하고 계신가요?"
       sub="이전 사례의 세팅 그대로 준비해 드릴 수 있습니다. 신청서에 참고 행사명을 적어 주세요."
@@ -86,7 +111,8 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
           <button type="button" class="lightbox__btn" data-lb-close aria-label="닫기">✕</button>
         </div>
       </div>
-      <div class="ph lightbox__stage">
+      <div class="lightbox__stage" data-lb-stage>
+        <img class="lightbox__img" data-lb-img alt="" hidden />
         <span class="lightbox__slot" data-lb-slot></span>
       </div>
     </div>
@@ -103,6 +129,8 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
   if (list && dialog) {
     const tiles = Array.from(list.querySelectorAll<HTMLButtonElement>('.tile'));
     const slot = dialog.querySelector<HTMLElement>('[data-lb-slot]');
+    const stage = dialog.querySelector<HTMLElement>('[data-lb-stage]');
+    const img = dialog.querySelector<HTMLImageElement>('[data-lb-img]');
     const dateEl = dialog.querySelector<HTMLElement>('[data-lb-date]');
     const titleEl = dialog.querySelector<HTMLElement>('[data-lb-title]');
     const countEl = dialog.querySelector<HTMLElement>('[data-lb-count]');
@@ -113,7 +141,26 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
     const render = () => {
       const tile = visible[index];
       if (!tile) return;
-      if (slot) slot.textContent = tile.dataset.bigSlot ?? '';
+
+      const full = tile.dataset.full ?? '';
+      // Real photo when one exists; otherwise fall back to the hatch caption
+      // so the lightbox still works for events awaiting photography.
+      if (img && slot && stage) {
+        if (full) {
+          img.src = full;
+          img.alt = tile.getAttribute('aria-label')?.replace(' 크게 보기', '') ?? '';
+          img.hidden = false;
+          slot.hidden = true;
+          stage.classList.remove('ph');
+        } else {
+          img.removeAttribute('src');
+          img.hidden = true;
+          slot.hidden = false;
+          slot.textContent = tile.dataset.bigSlot ?? '';
+          stage.classList.add('ph');
+        }
+      }
+
       if (dateEl) dateEl.textContent = tile.dataset.date ?? '';
       if (titleEl) titleEl.textContent = tile.dataset.title ?? '';
       if (countEl) countEl.textContent = `${index + 1} / ${visible.length}`;
@@ -237,6 +284,12 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
     position: absolute;
     inset: 0;
     display: block;
+  }
+
+  .tile :global(.tile__photo) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tile__slot {
@@ -372,7 +425,7 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
   .lightbox__inner {
     width: min(1200px, 100%);
     margin: 0 auto;
-    padding: var(--gutter-wide);
+    padding: var(--gutter);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
@@ -447,6 +500,13 @@ import { EVENT_CATEGORIES, tiles } from '../data/events';
     align-items: center;
     justify-content: center;
     max-height: 70vh;
+    overflow: hidden;
+  }
+
+  .lightbox__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .lightbox__slot {

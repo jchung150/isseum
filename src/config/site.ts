@@ -3,28 +3,28 @@
 export const site = {
   name: '이씀',
   nameLatin: 'ISSEUM',
-  tagline: 'PREMIUM MULTI CULTURE SPACE',
+  tagline: 'PRIVATE MULTI CULTURE SPACE',
   description:
     '홍대입구역 인근 동교동에 위치한 약 68평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
   locale: 'ko_KR',
   lang: 'ko',
 } as const;
 
-/** External booking form. Was the `bookingUrl` prop; replace with the live form URL. */
-export const bookingUrl = 'https://forms.gle/';
+/** 대관 예약 신청서 (Google Form). Single source for every booking CTA on the site. */
+export const bookingUrl = 'https://forms.gle/HCXGP9p7tJiJYrMX8';
 
 export const business = {
   companyName: '영준피엠씨(YOUNGJUN PMC)',
   representative: '정용철',
   address: '서울특별시 마포구 월드컵북로 22, 지하 1층',
-  phone: '010-3099-0334',
+  phone: '010-6899-4417',
   email: 'isseumspace@gmail.com',
   registrationNumber: '105-04-11192',
 } as const;
 
 export const socialLinks = [
   { label: '인스타그램', href: '#', glyph: 'square' },
-  { label: '스페이스클라우드', href: '#', glyph: 'circle' },
+  { label: '네이버 블로그', href: '#', glyph: 'circle' },
 ] as const;
 
 export const mapLinks = [
@@ -40,7 +40,7 @@ export type NavItem = {
 };
 
 export const nav: NavItem[] = [
-  { label: '공간 소개', href: '/#space', match: '/' },
+  { label: '공간 소개', href: '/', match: '/' },
   { label: '보유 장비', href: '/equipment', match: '/equipment' },
   { label: '대관 규정', href: '/rules', match: '/rules' },
   { label: '지난 행사', href: '/events', match: '/events' },

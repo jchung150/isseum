@@ -1,11 +1,26 @@
 # ISSEUM — Design Tokens
 
+> ## ⚠️ Historical record — not live documentation
+>
+> **`src/styles/tokens.css` is the source of truth for token values.** This file documents what the
+> original Claude Design export *contained*, at the moment it was extracted. It is preserved because it
+> explains the *reasoning* behind the visual language — why there are no shadows, why there is no accent
+> colour, why letter-spacing is load-bearing — which the CSS alone doesn't convey.
+>
+> Do **not** sync values into this file. Two copies of a token list will drift, and they already did:
+> the old §8 code block outlived `--container-wide` and a 68px `--display-page`.
+>
+> Values that have since changed in `tokens.css`: `--display-page` (68px → 46px), `--container-wide`
+> and `--gutter-wide` (removed — all pages share one container), breakpoints (6 → 3), plus new
+> `--logo-height`, `--logo-height-footer`, `--text-nav`. See CLAUDE.md → *Divergences from the design
+> reference*.
+
 Extracted from the Claude Design export in `design/*.dc.html` (4 pages: Main, Equipment, Rules, Events).
 Every value below was read from the actual CSS — inline `style` attributes plus each page's `<style>` block.
 Where a value is inferred rather than read, it is marked **[inferred]**.
 
 The export has no CSS variables: values are literal and repeated inline. The names below are new — this
-file is where the naming is established.
+file is where the naming was first established.
 
 ---
 
@@ -312,70 +327,11 @@ Photo gallery uses row-span masonry instead of a ratio: `grid-auto-rows: 12px` w
 
 ---
 
-## 8. Copy-paste starting point
+## 8. Implementation
 
-```css
-:root {
-  /* color */
-  --ink: #1C1C1A;           --ink-hover: #3D3D38;
-  --text-strong: #2D2D2A;   --text-body: #55554C;
-  --text-secondary: #8A8A7E; --text-tertiary: #A5A599;
-  --link-hover: #6E6E64;
-  --border: #E5E5E0;        --surface: #F4F4F0;
-  --bg: #FBFBF9;            --placeholder-stripe: #EAEAE3;
-  --bg-sticky: rgba(251,251,249,0.88);
-  --on-ink-muted: rgba(251,251,249,0.72);
-  --border-on-ink: rgba(251,251,249,0.3);
-
-  /* type */
-  --font-serif: 'Noto Serif KR', serif;
-  --font-sans: Pretendard, -apple-system, system-ui, sans-serif;
-  --font-mono: ui-monospace, Menlo, monospace;
-
-  --display-page: clamp(30px, 5vw, 68px);
-  --display-section: clamp(28px, 4vw, 52px);
-  --display-group: clamp(22px, 2.8vw, 34px);
-  --display-card: clamp(19px, 2vw, 24px);
-  --text-lead: clamp(15px, 1.4vw, 17.5px);
-  --text-base: 15px;
-  --text-sm: 14.5px;
-  --text-ui: 13.5px;
-  --text-meta: 12.5px;
-
-  --tracking-display: -0.03em;
-  --tracking-body: -0.015em;
-  --tracking-ui: -0.01em;
-  --tracking-eyebrow: 0.24em;
-  --tracking-label: 0.2em;
-
-  /* space */
-  --gutter: clamp(20px, 4vw, 64px);
-  --space-section: clamp(70px, 10vw, 140px);
-  --space-header-gap: clamp(28px, 3.6vw, 52px);
-  --space-panel: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 44px);
-  --gap-lg: clamp(32px, 4vw, 64px);
-  --gap-md: clamp(20px, 2.4vw, 30px);
-
-  /* layout */
-  --container: 1440px;
-  --container-wide: 1600px;
-  --header-height: 100px;
-
-  /* line */
-  --border-hairline: 1px solid var(--border);
-  --border-emphasis: 1px solid var(--ink);
-  --border-active: 1.5px solid var(--ink);
-  --radius: 2px;
-  --radius-full: 50%;
-
-  /* motion */
-  --transition-fast: .2s;
-  --transition: .25s;
-  --backdrop-blur: blur(12px);
-}
-```
-
----
+The live token layer is **`src/styles/tokens.css`** — read it there rather than copying from this file.
+It applies the normalizations recommended in §9 (single "white", consolidated display scale, three
+breakpoints) and has since diverged further; see the notice at the top of this document.
 
 ## 9. Notes for implementation
 

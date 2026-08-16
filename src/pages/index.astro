@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeader from '../components/SectionHeader.astro';
-import Placeholder from '../components/Placeholder.astro';
+import { Image } from 'astro:assets';
 import DarkCta from '../components/DarkCta.astro';
-import { hero, stats, features, steps } from '../data/home';
+import HeroSlideshow from '../components/HeroSlideshow.astro';
+import { hero, heroSlides, stats, features, steps } from '../data/home';
 import { spaces } from '../data/spaces';
 import { equipment } from '../data/equipment';
 ---
@@ -11,13 +12,7 @@ import { equipment } from '../data/equipment';
 <BaseLayout title="홈" isHome>
   {/* ---------- Hero ---------- */}
   <section class="container hero">
-    <Placeholder
-      label={hero.slot}
-      ratio="var(--ratio-hero)"
-      size="lg"
-      border="sides"
-      align="center"
-    />
+    <HeroSlideshow slides={heroSlides} />
     <div class="hero__body">
       <p class="eyebrow hero__eyebrow">{hero.eyebrow}</p>
       <h1 class="display hero__title">
@@ -65,13 +60,21 @@ import { equipment } from '../data/equipment';
 
   {/* ---------- Space ---------- */}
   <section id="space" class="container section space-section">
-    <SectionHeader eyebrow="SPACE &amp; EQUIPMENT" title="공간 안내" />
+    <SectionHeader eyebrow="SPACE & EQUIPMENT" title="공간 안내" />
 
     <div class="spaces">
       {
         spaces.map((space) => (
           <article class="space">
-            <Placeholder label={space.slot} ratio="var(--ratio-card)" align="end" />
+            <Image
+              class="space__photo"
+              src={space.src}
+              alt={space.alt}
+              widths={[400, 700, 1000]}
+              sizes="(min-width: 1100px) 25vw, (min-width: 640px) 50vw, 100vw"
+              style={`object-position: ${space.focus ?? 'center'};`}
+              loading="lazy"
+            />
             <div class="space__head">
               <span class="mono-num">{space.num}</span>
               <h3 class="display space__name">{space.name}</h3>
@@ -184,7 +187,11 @@ import { equipment } from '../data/equipment';
 
   .stats__cell {
     background: var(--bg);
-    padding: clamp(20px, 2.4vw, 30px) var(--space-5) clamp(22px, 2.6vw, 32px) 0;
+    padding: clamp(20px, 2.4vw, 30px) var(--space-4) clamp(22px, 2.6vw, 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .stats__value {
@@ -192,7 +199,7 @@ import { equipment } from '../data/equipment';
     font-size: var(--display-sub);
     font-weight: 500;
     letter-spacing: var(--tracking-title);
-    line-height: var(--leading-none);
+    line-height: 1.15;
   }
 
   .stats__label {
@@ -200,6 +207,7 @@ import { equipment } from '../data/equipment';
     font-size: var(--text-meta);
     color: var(--text-secondary);
     letter-spacing: var(--tracking-meta);
+    text-wrap: balance;
   }
 
   /* ---------- Why ---------- */
@@ -243,6 +251,14 @@ import { equipment } from '../data/equipment';
   .space {
     display: flex;
     flex-direction: column;
+  }
+
+  .space :global(.space__photo) {
+    width: 100%;
+    aspect-ratio: var(--ratio-card);
+    object-fit: cover;
+    border: var(--border-hairline);
+    background: var(--surface);
   }
 
   .space__head {

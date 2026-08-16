@@ -3,19 +3,30 @@
 interface Props {
   eyebrow: string;
   title: string;
+  /** Single-paragraph lead. For more than one paragraph use the `lead` slot. */
   lead?: string;
   meta?: string;
-  wide?: boolean;
 }
 
-const { eyebrow, title, lead, meta, wide = false } = Astro.props;
+const { eyebrow, title, lead, meta }: Props = Astro.props;
+
+// The slot wins over the prop; either may be used, so check both.
+const hasLead = Boolean(lead) || Astro.slots.has('lead');
 ---
 
-<section class:list={['container', { 'container--wide': wide }, 'hero']}>
+<section class="container hero">
   <p class="eyebrow hero__eyebrow">{eyebrow}</p>
   <h1 class="display hero__title">{title}</h1>
   <div class="hero__foot">
-    {lead && <p class="lead hero__lead"><slot name="lead">{lead}</slot></p>}
+    {
+      hasLead && (
+        <div class="hero__lead">
+          <slot name="lead">
+            <p class="lead">{lead}</p>
+          </slot>
+        </div>
+      )
+    }
     {meta && <p class="hero__meta">{meta}</p>}
   </div>
 </section>
@@ -47,6 +58,9 @@ const { eyebrow, title, lead, meta, wide = false } = Astro.props;
 
   .hero__lead {
     max-width: var(--measure-body);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
   }
 
   .hero__meta {

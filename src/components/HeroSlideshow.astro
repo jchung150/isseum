@@ -1,0 +1,255 @@
+---
+import { Image } from 'astro:assets';
+import type { HeroSlide } from '../data/home';
+
+/**
+ * Crossfading hero. Slides are stacked absolutely and cross-dissolved on
+ * opacity, so the outgoing and incoming frames overlap — no gap, no flash.
+ * Requires a fixed aspect-ratio container or the page reflows between slides.
+ */
+interface Props {
+  slides: HeroSlide[];
+  /**
+   * How long a slide sits fully visible, in ms, before the next dissolve
+   * begins. Suppressed entirely under prefers-reduced-motion.
+   */
+  dwell?: number;
+  /** Crossfade duration in ms. Kept well under `dwell` or the hero never settles. */
+  fade?: number;
+}
+
+const { slides, dwell = 3000, fade = 1200 }: Props = Astro.props;
+---
+
+<section
+  class="hero-slideshow"
+  data-slideshow
+  data-dwell={dwell}
+  data-fade={fade}
+  style={`--fade: ${fade}ms;`}
+  aria-roledescription="캐러셀"
+  aria-label="이씀 공간 사진"
+>
+  <div class="frame">
+    {
+      slides.map((slide, i) => (
+        <div
+          class:list={['slide', { 'is-active': i === 0 }]}
+          data-slide
+          role="group"
+          aria-roledescription="슬라이드"
+          aria-label={`${i + 1} / ${slides.length}`}
+          aria-hidden={i === 0 ? undefined : 'true'}
+          inert={i === 0 ? undefined : true}
+        >
+          <Image
+            src={slide.src}
+            alt={slide.alt}
+            widths={[768, 1200, 1800, 2400]}
+            sizes="100vw"
+            style={`object-position: ${slide.focus ?? 'center'};`}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : 'auto'}
+          />
+        </div>
+      ))
+    }
+
+    <button type="button" class="edge edge--prev" data-prev aria-label="이전 슬라이드">
+      <span class="chev chev--left" aria-hidden="true"></span>
+    </button>
+    <button type="button" class="edge edge--next" data-next aria-label="다음 슬라이드">
+      <span class="chev chev--right" aria-hidden="true"></span>
+    </button>
+
+  </div>
+
+  <p class="visually-hidden" role="status" aria-live="polite" data-live></p>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-slideshow]');
+
+  if (root) {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    const live = root.querySelector<HTMLElement>('[data-live]');
+    const dwell = Number(root.dataset.dwell ?? 3000);
+    const fade = Number(root.dataset.fade ?? 1200);
+    // Timer covers the dissolve plus the settled time, so `dwell` really is
+    // how long the photo sits still — which is what you actually perceive.
+    const cycle = dwell + fade;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let index = 0;
+    let timer: number | undefined;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle('is-active', active);
+        // inert keeps offscreen slides out of the tab order and a11y tree
+        // without display:none, which would kill the crossfade.
+        slide.toggleAttribute('inert', !active);
+        if (active) slide.removeAttribute('aria-hidden');
+        else slide.setAttribute('aria-hidden', 'true');
+      });
+
+      // Visually hidden, but keeps screen readers informed as slides change.
+      if (live) live.textContent = `${index + 1} / ${slides.length}`;
+    };
+
+    const stop = () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      timer = undefined;
+    };
+
+    const start = () => {
+      stop();
+      // Users who asked for reduced motion get a static first slide plus
+      // working manual controls — never an auto-advancing carousel.
+      if (reduced.matches || slides.length < 2) return;
+      timer = window.setInterval(() => show(index + 1), cycle);
+    };
+
+    root.querySelector('[data-prev]')?.addEventListener('click', () => {
+      show(index - 1);
+      start();
+    });
+    root.querySelector('[data-next]')?.addEventListener('click', () => {
+      show(index + 1);
+      start();
+    });
+    root.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        show(index - 1);
+        start();
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        show(index + 1);
+        start();
+      }
+    });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', (event) => {
+      if (!root.contains(event.relatedTarget as Node)) start();
+    });
+
+    // Don't burn cycles animating a hero that's scrolled off screen.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => (entry?.isIntersecting ? start() : stop()),
+        { threshold: 0 }
+      ).observe(root);
+    }
+
+    document.addEventListener('visibilitychange', () =>
+      document.hidden ? stop() : start()
+    );
+
+    reduced.addEventListener('change', start);
+    show(0);
+    start();
+  }
+</script>
+
+<style>
+  .frame {
+    position: relative;
+    aspect-ratio: var(--ratio-hero);
+    overflow: hidden;
+    /* No top border — the hero butts against the sticky header. */
+    border-left: var(--border-hairline);
+    border-right: var(--border-hairline);
+    border-bottom: var(--border-hairline);
+    background: var(--surface);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--fade, 1200ms) ease;
+  }
+
+  .slide.is-active {
+    opacity: 1;
+  }
+
+  .slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Bare chevrons sitting directly on the photo — no box, no fill.
+     The button stays large for the hit area; only the mark is visible. */
+  .edge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(56px, 5vw, 76px);
+    height: clamp(56px, 5vw, 76px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .edge--prev {
+    left: clamp(4px, 0.8vw, 14px);
+  }
+
+  .edge--next {
+    right: clamp(4px, 0.8vw, 14px);
+  }
+
+  /* Drawn in CSS rather than typed as < and > — a real chevron stays
+     optically centred and scales crisply at any size. */
+  .chev {
+    width: clamp(16px, 1.7vw, 24px);
+    height: clamp(16px, 1.7vw, 24px);
+    border-top: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+    transition:
+      border-color var(--transition-fast),
+      translate var(--transition-fast);
+  }
+
+  .chev--right {
+    transform: rotate(45deg);
+    translate: -25% 0;
+  }
+
+  .chev--left {
+    transform: rotate(-135deg);
+    translate: 25% 0;
+  }
+
+  .edge:hover .chev {
+    border-color: var(--link-hover);
+  }
+
+  .edge--next:hover .chev {
+    translate: -10% 0;
+  }
+
+  .edge--prev:hover .chev {
+    translate: 10% 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slide {
+      transition: none;
+    }
+  }
+</style>

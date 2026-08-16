@@ -1,76 +1,316 @@
 # ISSEUM (이씀) — 복합문화공간 website
 
-A venue-rental site for ISSEUM, a 68-pyeong multi-purpose cultural space in Donggyo-dong, Seoul.
-Content is **Korean** — set `lang="ko"` on `<html>`.
+Marketing site for ISSEUM, a ~60평 (198㎡) convertible multi-purpose cultural space in
+동교동, Mapo-gu, Seoul, five minutes from 홍대입구역 exit 1. It rents the space for
+workshops, book talks, pop-ups, fan meetings, showcases, and photo shoots.
 
-Pages: Main (공간 소개) · Equipment (보유 장비) · Rules (대관 규정) · Events (지난 행사).
+**All content is Korean.** `<html lang="ko">` is set in `BaseLayout.astro`. Copy is written
+for Korean event organisers; keep that register. Latin text appears only as wide-tracked
+eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not translation.
 
-## Styling: single source of truth
+**Status: pre-launch.** Built and working locally, not yet deployed. Domain purchased at
+후이즈 (Whois). See [Before launch](#before-launch) for the blocking items.
 
-**All styling comes from `design/TOKENS.md`.** Component structure comes from `design/COMPONENTS.md`.
-Read both before writing any markup or CSS. If a value you need isn't in TOKENS.md, add it there first
-with a name, then use the name — don't inline it.
+---
 
-- **No hardcoded hex colors or magic pixel values** in component code. Every color, size, space, radius,
-  and duration resolves through a CSS custom property defined once from TOKENS.md §8.
-- If the design reference and TOKENS.md disagree, TOKENS.md wins — it records deliberate normalizations
-  (see its §9).
+## Stack
 
-## Non-negotiable design rules
+| | |
+|---|---|
+| Framework | Astro 7 (`output: 'static'`) |
+| Language | TypeScript 6 (strict), plain CSS |
+| Styling | CSS custom properties. **No Tailwind, no UI library** |
+| Interactivity | Vanilla `<script>` in `.astro` files. **No React/Vue/Svelte** |
+| Images | `astro:assets` (sharp) → WebP, responsive `srcset` |
+| Fonts | Pretendard + Noto Serif KR, currently via CDN |
+| Hosting | Not yet set up. Cloudflare Pages recommended (static, free, Seoul PoP) |
 
-These are properties of the visual language, not preferences. Breaking any one of them makes the site
-stop looking like ISSEUM.
+```bash
+npm run dev      # localhost:4321 — runs as a daemon; `astro dev stop` to kill
+npm run build    # astro check && astro build → dist/
+npm run preview  # serve dist/
+```
 
-1. **No shadows.** There is not one `box-shadow` in the entire design. Every boundary is a 1px line.
-   Elevation is expressed by border weight: `--border` hairline for internal separation, `--ink` for
-   section-level rules.
-2. **No accent color.** The palette is twelve warm neutrals with no brand hue. Hierarchy and even
-   severity (e.g. refund tiers) are encoded by lightness, never by red/green/blue.
-3. **Sharp corners.** `--radius` is `2px`. Circles (`50%`) are only for badges, bullets, and marks.
-4. **Letter-spacing is load-bearing.** Korean text is tight (`-0.015em` body, `-0.03em` display); Latin
-   eyebrow labels are wide (`0.18em`–`0.24em`). Never leave it at default.
-5. **Fluid type, not breakpoint type.** Display sizes are `clamp()` pairs. Don't add per-breakpoint
-   font-size overrides.
-6. **Serif for display, sans for everything else.** Noto Serif KR at weight 500 for headings; Pretendard
-   for body and UI; mono only for index numerals and placeholder captions — never body text.
+`npm run build` runs `astro check` first, so **type errors block the build**. Keep it at
+0 errors / 0 warnings / 0 hints.
 
-## `design/` is a read-only reference
+### Why this stack
 
-`design/*.dc.html` is an export from Claude Design. **Never edit it and never ship it.** It exists only
-as the visual reference the two `.md` files were extracted from.
+Chosen deliberately, not by default:
 
-It will not run as-is. It depends on a Claude Design runtime that won't exist in this build:
+- **Zero JS by default.** The home page ships **no JavaScript at all**; Equipment, Rules and
+  Events each carry one small inlined module (~1.5 KB max). The site already pays for two
+  Korean webfonts, which are heavy — spending a framework runtime on a four-page brochure
+  site on top of that would be the wrong trade.
+- **Naver.** The audience searches in Korean, and Naver's crawler handles static HTML far
+  better than client-rendered content. Pre-rendered pages matter more here than for a
+  Google-only audience.
+- **No Tailwind** because the design has 11 fluid `clamp()` display sizes, each pairing a
+  size with a specific `line-height` *and* `letter-spacing`. Expressing that as utilities
+  means extending the config until it *is* `tokens.css`. See [Design rules](#design-rules).
 
-- `style-hover="…"` is a **custom attribute, not CSS** — every hover state in the design comes from it
-  and must be rewritten as a real `:hover` rule or it silently disappears.
-- `<sc-for list as>`, `<sc-if value>`, `{{ expr }}`, `onClick="{{ fn }}"` are its template directives.
-- Page content lives in a `<script type="text/x-dc">` `renderVals()` class per page. That data needs
-  re-homing — Rules alone is ~30 bullet lines of policy copy.
-- `data-path-to-node` attributes are editor artifacts. Strip them.
-- All images are placeholders. The logo is referenced as `assets/isseum-logo.png` but the file on disk is
-  `assets/isseum_logo_no_BG.png`.
+---
+
+## Repo map
+
+```
+CLAUDE.md                 ← this file
+astro.config.mjs          site URL, static output, image defaults
+design/                   READ-ONLY design reference — see §Design reference
+src/
+  config/site.ts          business info, nav, bookingUrl, social/map links
+  data/                   all page content, plain typed TS modules
+    home.ts               hero slideshow + copy, stats, features, process steps
+    spaces.ts             the 4 areas (메인 홀 · 프로젝트 룸 · 파우더 룸 · 바)
+    equipment.ts          7 equipment items + usage notes
+    rules.ts              rental policy: 4 groups, 11 items, refund tiers
+    events.ts             past events + disk-discovered gallery photos
+  assets/                 images processed by Astro (see §Adding content)
+    events/README.md      the event-photo folder convention
+  styles/
+    tokens.css            ★ every design value. Single source of truth
+    base.css              globals, focus ring, reduced-motion, primitives
+  components/             10 components, all scoped-CSS .astro
+  layouts/BaseLayout.astro  head, SEO, JSON-LD, header/footer, skip link
+  pages/                  index · equipment · rules · events
+```
+
+### Content lives in `src/data/*.ts`, not in markup
+
+Plain typed TS modules rather than Astro content collections: this content is structured
+records, not prose documents, so collections' markdown/glob machinery buys nothing while TS
+gives full type-checking through `astro check`. Never hardcode copy into a `.astro` file.
+
+---
+
+## Design rules
+
+**All styling resolves through `src/styles/tokens.css`.** If a value you need isn't there,
+add it with a name, then use the name. No literal hex colours or magic pixel values in
+component code.
+
+These five are properties of the visual language, not preferences. Break any one and the
+site stops looking like ISSEUM:
+
+1. **No shadows.** There is not one `box-shadow` in the design. Every boundary is a 1px
+   line. Elevation is border weight: `--border` hairline for internal separation,
+   `--border-emphasis` (`--ink`) for section-level rules. That single contrast step carries
+   the entire hierarchy.
+2. **No accent colour.** Twelve warm neutrals, no brand hue anywhere. Hierarchy *and
+   severity* are encoded by lightness — the refund tiers go 100% 환불 → 환불 불가 by fading
+   `--ink` → `--text-secondary`, never by turning red.
+3. **Sharp corners.** `--radius` is `2px`. `--radius-full` (50%) is only for badges,
+   bullet dots and circular marks.
+4. **Letter-spacing is load-bearing.** Korean is tight (`--tracking-body` -0.015em, display
+   -0.03em); Latin eyebrows are wide (0.18em–0.24em). Never leave it at browser default.
+5. **Fluid type, not breakpoint type.** Display sizes are `clamp()`. Don't add
+   per-breakpoint `font-size` overrides.
+
+Serif (Noto Serif KR, weight 500) for display; Pretendard for body and UI; mono for index
+numerals and placeholder captions only — never body text.
+
+### The hairline-grid idiom
+
+Used for every card grid. The grid *is* the border colour and 1px gaps let it show through,
+giving perfect interior rules with no double-border seams:
+
+```css
+display: grid; gap: 1px; background: var(--border); border: var(--border-hairline);
+/* cells then set background: var(--bg) */
+```
+
+`.hairline-grid` in `base.css`. Preserve it.
+
+### Breakpoints — only three
+
+`640px` · `900px` · `1100px`. The design export had six ad-hoc values; they were collapsed.
+Only 900px is load-bearing (desktop nav ⇄ mobile tab bar). Prefer intrinsic grids
+(`repeat(auto-fit, minmax(…, 1fr))`) over adding a fourth.
+
+---
 
 ## Accessibility floor
 
-The reference does not meet this bar; the build must. Links are undecorated globally, which makes the
-first two items critical:
+Non-negotiable, and the design reference does **not** meet it — the build must.
 
-- Visible `:focus-visible` on every interactive element. Only the photo tiles have any in the reference.
-- Never gate an action with `pointer-events: none` on an `<a>` (the reference does this on the Rules
-  page CTA) — it is unreachable by keyboard. Use a real `<button>` with `disabled`, or `aria-disabled`
-  plus a handled activation.
-- Include `@media (prefers-reduced-motion: reduce)`; neutralize the arrow translate, photo-tile caption
-  transform, and `scroll-behavior: smooth`.
-- Filters can return zero results — every filtered list needs an empty state.
+- **Visible `:focus-visible` on every interactive element.** Links are undecorated globally
+  (`a { text-decoration: none }`), so the focus ring is the only affordance a keyboard user
+  gets. Global rule is in `base.css`; `.on-ink` flips it to `--bg` on dark panels.
+- **Never gate an action with `pointer-events: none` on an `<a>`.** The design export did
+  this on the Rules page CTA, which makes it unreachable by keyboard. The build uses
+  `aria-disabled` plus a click handler, and renders **enabled** so it still works with JS
+  off.
+- **`prefers-reduced-motion` is respected.** `base.css` neutralises transitions globally,
+  and the hero slideshow **does not auto-advance** at all under it — manual controls still
+  work. If the hero looks frozen on macOS, check System Settings → Accessibility → Display →
+  Reduce motion before assuming a bug.
+- **Every filtered list has an empty state** plus a `role="status"` live-region count.
+  Equipment and Events filters can both return zero.
+- **The Events lightbox is a native `<dialog>`** with `showModal()`, which brings focus
+  trapping, Escape-to-close and an inert background for free. Don't replace it with a div.
+- Skip link (`본문으로 건너뛰기`) is the first focusable element.
 
-## Open decisions
+---
 
-Don't invent answers to these; ask.
+## Adding content
 
-- **Stack is not chosen yet.**
-- **Pricing appears nowhere** in the design. Deliberate (steer to inquiry) or missing?
-- **The Main CTA promises date-availability checking** ("원하시는 날짜가 비어 있는지 먼저 확인해 보세요") but
-  links to a Google Form. Needs a real calendar or softer copy.
-- Four spots are unauthored in the reference: stat-row cells, feature-card icon slots, Rules TOC
-  (4 entries vs 5 sections, with conflicting numbering), Equipment `notes`. See `COMPONENTS.md` §Gaps.
-- Booking is an external Google Form (`bookingUrl` prop). Staying external, or moving in-house?
+### Event photos — just drop files in
+
+The only auto-discovering collection. One folder per event, named exactly the event's
+`slug` in `events.ts`:
+
+```
+src/assets/events/2026-06-14_이씀의밤/01.jpg, 02.jpg, 09.jpg, 10.jpg
+```
+
+Sorted numerically by filename; **first file becomes the feature tile** (double width,
+taller). An event whose folder is missing or empty falls back to the placeholder hatch via
+its `shots` array, so the page never breaks mid-upload. Full convention in
+`src/assets/events/README.md`. Adding an event = 5 lines in `events.ts` + a folder; array
+order doesn't matter, the gallery sorts by date newest-first.
+
+### Everything else — explicit imports
+
+Hero slides, space cards and equipment are fixed 1:1 slots, so they take explicit imports
+in their data file. **Dropping a file in `src/assets/` does nothing on its own** — it must
+be imported and referenced. (This has broken the build twice: renamed files with stale
+imports.)
+
+- **Hero slideshow** — `heroSlides` in `home.ts`. Reorder/swap freely; the component reads
+  the array length. Optional `focus` per slide (CSS `object-position`) because the 3:2
+  sources lose ~29% of height at the 16:7.6 hero crop.
+- **Space cards** — `src`/`alt`/`focus` in `spaces.ts`. 4:5 portrait crop discards ~47% of
+  the 3:2 frame width; `focus` nudges it.
+- **Equipment** — optional `src`/`alt`/`fit` in `equipment.ts`. `fit: 'contain'` is set on
+  the current product cut-outs so nothing is cropped; switch to `'cover'` when real in-situ
+  photography replaces them. Items without `src` fall back to the placeholder.
+
+### Where files go
+
+- **`src/assets/`** — images only. Processed: WebP conversion, resizing, content hashing.
+  Upload full-resolution originals (~2000px long edge); Astro downsizes.
+- **`public/`** — served verbatim at the same path. For favicon, `robots.txt`, PDFs, and
+  **video**.
+- **Never commit video to this repo.** Astro doesn't process it and git handles large
+  binaries badly — it would bloat every clone permanently. Host on Cloudflare Stream, Mux,
+  or unlisted Vimeo and store the URL. `src/assets/` is already ~13 MB of photography.
+
+### The booking form is the only conversion path
+
+`bookingUrl` in `config/site.ts` feeds **13 CTAs** across the four pages (header, dark CTA
+banners, footer link, Rules TOC button and agreement gate). Change it in one place.
+
+---
+
+## Divergences from the design reference
+
+`design/` is the original Claude Design export and is **read-only** — never edit it, never
+ship it. It will not run: `style-hover="…"` is a custom attribute rather than CSS, and
+`<sc-for>` / `<sc-if>` / `{{ }}` are its template directives. Every hover state in the
+build was rewritten as a real `:hover` rule.
+
+Deliberate departures from it, so nobody "fixes" them back:
+
+| | Export | Now | Why |
+|---|---|---|---|
+| Hero | single static image | 5-slide crossfade | requested |
+| Subpage `h1` | 68px | 46px | 68px dwarfed everything under it |
+| Events container | 1600px / narrower gutter | same 1440px as all pages | margins now match sitewide |
+| Breakpoints | 6 ad-hoc | 640 / 900 / 1100 | maintainability |
+| Rules numbering | hardcoded, self-contradictory | derived from data | see below |
+| "white" | `#FFF` and `#FBFBF9` mixed | `--bg` only | `#FFF` is colder than the palette |
+| Rules page head | hand-rolled `.intro` | shared `PageHero` | had drifted from the others |
+
+**Rules numbering is derived, not stored.** The export contradicted itself four ways:
+groups ran 01→02→03 then jumped to 05, the TOC listed 4 entries for 5 sections and labelled
+the last 04, item 11 didn't exist (1–10 then 12), and the header claimed 12 items against
+11 real ones. It now computes from the data and reads **총 11개 항목**. If 12 is the legally
+correct count, an item is missing and needs writing.
+
+Two spots were **unauthored** in the export and are my invention in the design's idiom —
+replace freely: the stat-row cells (serif value over secondary label) and the feature-card
+icon slots (mono index numerals).
+
+### Design reference
+
+`design/TOKENS.md` and `design/COMPONENTS.md` are the **extraction record of the original
+export**, not live documentation. They explain *why* the design is shadow-free, accent-free
+and tracking-sensitive, and they inventory all 30 original components — still worth reading
+once. But **`src/styles/tokens.css` is the source of truth for values**, and the code is
+the source of truth for components. Don't sync token lists into Markdown; that's what
+caused the container-width drift.
+
+---
+
+## Before launch
+
+Blocking:
+
+1. **The Google Form requires a Google account.** Verified by loading
+   `https://forms.gle/HCXGP9p7tJiJYrMX8` in a signed-out browser — it shows Google's sign-in
+   screen, not the form. Fix in Forms settings: 이메일 주소 수집 → `수집 안 함` or
+   `응답자 입력` (not 확인된), turn off 응답 횟수 1개로 제한, and if it's a Workspace form
+   allow external respondents. **This is the site's only conversion path.**
+2. **Confirm the real domain** and set `site:` in `astro.config.mjs` (currently
+   `https://isseum.space`). It feeds canonical URLs, Open Graph and JSON-LD. Whois domains
+   need nameservers pointed at the host.
+3. **Social and map links are `href="#"`** — 인스타그램, 네이버 블로그, 네이버 지도, 카카오맵
+   in `config/site.ts`.
+4. **No favicon, no OG image.** Both referenced by `BaseLayout.astro`'s meta; add to
+   `public/`.
+
+Should do:
+
+5. **Self-host and subset the fonts.** Currently CDN (`fonts.googleapis.com` +
+   jsDelivr) — a third-party dependency on every page load, and Korean webfonts are large.
+   Noto Serif KR is already trimmed to weights 400/500 (from five).
+6. **Real event photography.** All 23 gallery tiles are placeholder hatches.
+7. **Map embed** — placeholder only; needs a Naver or Kakao Maps key.
+8. `isseum_control-room_mixer.jpg` is unused — no matching equipment item exists, though
+   the notes copy mentions 믹서. Either add an 음향 item or delete the file.
+9. 이동식 강연대 and 초고속 Wi-Fi have no photo (they fall back to placeholders).
+
+Open product questions — **don't invent answers, ask**:
+
+10. **No pricing anywhere.** A venue's most-asked question. Deliberate (steer to inquiry) or
+    missing?
+11. **The home CTA promises date-availability checking** ("원하시는 날짜가 비어 있는지 먼저
+    확인해 보세요") but links to a static form. Needs a real calendar or softer copy.
+12. **Korean only** — no `hreflang`, no language switcher. Retrofitting is painful because
+    the letter-spacing scale is tuned for Korean.
+
+---
+
+## Gotchas
+
+Things that have actually bitten, in this order of likelihood:
+
+- **`astro check` treats an unused `Props` interface as a hint.** Annotate the destructure
+  (`const { … }: Props = Astro.props`) rather than leaving it inferred.
+- **Malformed class names don't fail the build.** A bulk find-and-replace once produced
+  `class="containerfilters"`, silently dropping the container entirely, and the build stayed
+  green. Verify layout changes by rendering, not by compiling.
+- **`@astrojs/check` peers TypeScript `^5 || ^6`.** TS 7 exists; installing it breaks
+  `npm install`. Pin TS to `^6`.
+- **Renaming a file in `src/assets/` breaks its import.** The import path is a hard
+  reference; there is no auto-discovery outside `src/assets/events/`.
+- **The dev server daemonises.** `npm run dev` returns immediately; use `astro dev stop`.
+- **Chrome `--dump-dom` output contains NUL bytes**, so `grep` treats it as binary and
+  prints nothing. Pipe through node, or use `grep -a`.
+- The logo asset was originally 88% transparent padding (a 496×984 mark on a 2000×2000
+  canvas). It's trimmed now; the original is preserved at
+  `design/assets/isseum_logo_no_BG.png`. Sizes are `--logo-height` / `--logo-height-footer`.
+
+---
+
+## Conventions
+
+- Commit messages in English, imperative. Branch off `main` for anything non-trivial.
+- Component CSS is scoped `<style>` in the `.astro` file. Only genuinely global primitives
+  go in `base.css`.
+- Use `:global()` sparingly, and only to style an `<Image>` rendered by a child component.
+- BEM-ish class names scoped per component (`.tile__cap`, `.hero__lead`). One leftover
+  misnomer: `.intro__emphasis` on the Rules page now lives in a `PageHero` slot;
+  `.rules__emphasis` would read better.
+- Korean copy uses `·` as a separator and `—` (em dash) before explanatory clauses, matching
+  the reference. Bullet-line labels end with `— ` inside `<strong>`.

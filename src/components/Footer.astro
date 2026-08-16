@@ -19,7 +19,7 @@ const info = [
   <div class="grid container">
     <div>
       <a href="/" class="logo" aria-label={`${site.name} ${site.nameLatin} 홈`}>
-        <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={40} width={40} densities={[1, 2]} />
+        <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={112} densities={[1, 2]} />
       </a>
       <dl class="info">
         {
@@ -100,7 +100,7 @@ const info = [
   }
 
   .logo :global(img) {
-    height: 40px;
+    height: var(--logo-height-footer);
     width: auto;
   }
 

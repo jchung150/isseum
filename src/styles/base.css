@@ -136,11 +136,6 @@ button {
   padding-inline: var(--gutter);
 }
 
-.container--wide {
-  max-width: var(--container-wide);
-  padding-inline: var(--gutter-wide);
-}
-
 .section {
   padding-top: var(--space-section);
 }

@@ -11,7 +11,7 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
 <header>
   <div class="bar container">
     <a href="/" class="logo" aria-label={`${site.name} ${site.nameLatin} 홈`}>
-      <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={64} width={64} densities={[1, 2]} loading="eager" />
+      <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={144} densities={[1, 2]} loading="eager" />
     </a>
 
     <nav class="gnb" aria-label="주요 메뉴">
@@ -70,7 +70,7 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
   }
 
   .logo :global(img) {
-    height: 64px;
+    height: var(--logo-height);
     width: auto;
   }
 
@@ -82,7 +82,7 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
   }
 
   .gnb__link {
-    font-size: var(--text-sm);
+    font-size: var(--text-nav);
     font-weight: 500;
     letter-spacing: var(--tracking-ui);
   }

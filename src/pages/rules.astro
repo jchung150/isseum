@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import BulletList from '../components/BulletList.astro';
 import Button from '../components/Button.astro';
 import { bookingUrl } from '../config/site';
@@ -38,17 +39,16 @@ const toc = [
   title="대관 규정"
   description="이씀 대관 규정 및 이용 안내. 예약 전 이용 시간, 반입 규정, 원상복구, 취소 및 환불 정책을 확인해 주세요."
 >
-  <section class="container intro">
-    <p class="eyebrow intro__eyebrow">{intro.eyebrow}</p>
-    <h1 class="display intro__title">{intro.headline}</h1>
-    <div class="intro__foot">
-      <div class="intro__copy">
-        <p class="lead">{intro.body}</p>
-        <p class="lead intro__emphasis">{intro.emphasis}</p>
-      </div>
-      <p class="intro__meta">최종 개정 {lastRevised} · 총 {totalItems}개 항목</p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow={intro.eyebrow}
+    title={intro.headline}
+    meta={`최종 개정 ${lastRevised} · 총 ${totalItems}개 항목`}
+  >
+    <Fragment slot="lead">
+      <p class="lead">{intro.body}</p>
+      <p class="lead intro__emphasis">{intro.emphasis}</p>
+    </Fragment>
+  </PageHero>
 
   <div class="container doc">
     <aside class="toc">
@@ -183,46 +183,11 @@ const toc = [
 </script>
 
 <style>
-  /* ---------- Intro ---------- */
-  .intro {
-    padding-top: var(--space-section-sm);
-  }
-
-  .intro__eyebrow {
-    margin-bottom: clamp(20px, 3vw, 34px);
-  }
-
-  .intro__title {
-    font-size: clamp(30px, 4.8vw, 66px);
-    line-height: 1.24;
-  }
-
-  .intro__foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 28px;
-    margin-top: clamp(24px, 3vw, 44px);
-    padding-bottom: clamp(24px, 3vw, 40px);
-    border-bottom: var(--border-emphasis);
-  }
-
-  .intro__copy {
-    max-width: 34em;
-  }
-
+  /* Second lead paragraph in the PageHero slot — the agreement clause carries
+     legal weight, so it stays visually distinct from the sentence above it. */
   .intro__emphasis {
-    margin-top: var(--space-2);
     color: var(--ink);
     font-weight: 600;
-  }
-
-  .intro__meta {
-    font-size: var(--text-meta);
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
-    white-space: nowrap;
   }
 
   /* ---------- Doc layout ---------- */

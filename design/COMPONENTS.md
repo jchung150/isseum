@@ -1,5 +1,18 @@
 # ISSEUM — Component Inventory
 
+> ## ⚠️ Historical record — not live documentation
+>
+> **`src/components/` and `src/pages/` are the source of truth.** This inventories what the original
+> Claude Design export contained; the build has since diverged (hero slideshow added, position
+> indicators removed, Rules head unified onto `PageHero`, real photography replacing placeholders,
+> and more). See CLAUDE.md → *Divergences from the design reference*.
+>
+> It stays because the per-component notes explain intent that the code can't state — why the policy
+> item indents 38px, why the equipment rows flip with `order` rather than DOM order, why the refund
+> tiers fade instead of turning red. Read it once for the reasoning; trust the code for the details.
+>
+> The §Gaps list below is annotated with current status and is still the useful part.
+
 Extracted from `design/*.dc.html`. Token names refer to [TOKENS.md](./TOKENS.md).
 
 30 distinct components across 4 pages. The header and footer are **byte-identical** across all four
@@ -375,50 +388,49 @@ this document comes from that custom attribute and must become a real `:hover` r
 
 ---
 
-## Gaps — what the reference does not cover
+## Gaps — status as of the pre-launch build
 
-Ranked by how likely each is to block the build.
+Two corrections to the original extraction, for the record: the Equipment `notes` array **does** exist
+in the export (line 230 — I'd grepped too shallow), and the gallery is **23 tiles**, not 18
+(`hint-placeholder-count="18"` was a design-tool hint; the real data flattens 6 events into 23).
 
-**Unauthored in the export**
-1. **Stat row cells (§17) are empty.** The `stats` data exists; the markup does not. Needs designing.
-2. **Feature card icon slots (§18) are empty** — three cards each with an empty leading `<div>`.
-3. **Rules TOC lists 4 entries but the page has 5 sections.** `#refund` is hardcoded outside the
-   `groups` loop, and item 12 (안전 관리) sits outside any group. Numbering is inconsistent: the TOC
-   labels `04` as `규정 및 책임` while the heading reads `05 취소 및 환불 정책`.
-4. **Equipment page: `notes` array is referenced but its contents aren't in the export.**
+### Resolved in the build
 
-**Absent entirely — every real site needs these**
-5. **No form.** Booking goes to an external Google Form. There is no text input, select, textarea,
-   radio, validation message, or submit state anywhere. The only input in the design is one checkbox.
-6. **No error, empty, or loading states.** The filters (§9) can produce zero results with nothing to
-   show. No 404 page. No image loading state (though §4 doubles as one).
-7. **No focus-visible styling.** Only `.tile` has any focus treatment. With links globally undecorated
-   and a keyboard-inaccessible CTA gate (§29), this is the most serious accessibility gap.
-8. **No `prefers-reduced-motion`.**
-9. **No dark mode.** The palette is a single light theme. Given the warm off-white is the brand, this is
-   probably correct — but decide explicitly.
-10. **No `<title>`, meta description, Open Graph, or favicon** on any page. No structured data, which
-    matters for a venue (`LocalBusiness` / `Place` schema).
-11. **No `lang` attribute** — `<html>` has none, and the content is Korean. Set `lang="ko"`.
+1. ~~Stat row cells unauthored~~ — built: serif value over secondary label, hairline separators,
+   centred. **My invention in the design's idiom**, not recovered from the reference.
+2. ~~Feature card icon slots empty~~ — filled with mono index numerals. Also invented; replace freely.
+3. ~~Rules TOC 4 entries vs 5 sections, conflicting numbering~~ — numbering is now derived from the
+   data. Reads 총 11개 항목. **If 12 is the legally correct count, an item is still missing.**
+4. ~~Equipment `notes` missing~~ — was never missing; ported.
+5. ~~No focus-visible styling~~ — global `:focus-visible` in `base.css`, inverted on `.on-ink`.
+6. ~~`pointer-events: none` gating the Rules CTA~~ — replaced with `aria-disabled` + click handler,
+   rendered enabled so it survives JS-off.
+7. ~~No `prefers-reduced-motion`~~ — global block, plus the hero refuses to auto-advance under it.
+8. ~~No empty states~~ — both filters have one, with a `role="status"` live count.
+9. ~~No `<title>` / meta / OG / structured data~~ — all in `BaseLayout.astro`, including
+   `EventVenue` JSON-LD. **Favicon and OG image still missing.**
+10. ~~No `lang` attribute~~ — `lang="ko"`.
+11. ~~Broken logo path~~ — fixed, and the asset trimmed of 88% transparent padding.
+12. ~~13-step display scale / 6 ad-hoc breakpoints~~ — consolidated to 11 and 3.
+13. ~~Two "whites"~~ — `--bg` only.
 
-**Content gaps**
-12. **No pricing anywhere.** A venue rental site's most-asked question. Deliberate (steering to
-    inquiry) or missing — confirm which.
-13. **No availability calendar**, though the Main CTA says `원하시는 날짜가 비어 있는지 먼저 확인해 보세요`
-    ("check whether your date is free") — which promises exactly that and then links to a form.
-14. **No real photography** — all 23+ image slots are placeholders (TOKENS §9).
-15. **No map embed** — placeholder only; needs a Naver or Kakao Maps key.
-16. **Social links are `href="#"`** — real URLs needed.
-17. **Directions / transit detail.** 홍대입구역 도보 9분 is mentioned in prose but there's no
-    step-by-step arrival guide, which a basement venue really wants.
-18. **Korean only.** No `hreflang`, no language switcher. If English is ever needed, retrofitting the
-    fluid Korean-tuned letter-spacing is painful — decide now.
+### Still open
 
-**Decisions to make before building**
-19. Consolidate the 13-step display scale and 6 ad-hoc breakpoints (TOKENS §2, §4).
-20. Pick one "white" (TOKENS §1).
-21. Fix the logo filename (TOKENS §9).
-22. Choose where content lives — the `renderVals()` arrays are substantial enough (Rules alone is ~30
-    bullet lines of legal copy) that hardcoding them into markup will hurt the first time they change.
+See CLAUDE.md → *Before launch* for the authoritative list. In summary:
+
+- **No form of any kind.** Booking is an external Google Form, which currently requires a Google
+  account — the single biggest launch blocker. There is still no text input, select, textarea, or
+  validation anywhere in the design.
+- **No real photography in the gallery** — all 23 tiles are placeholder hatches. Hero, space cards and
+  5 of 7 equipment items now have real photos.
+- **No pricing.** A venue's most-asked question. Deliberate or missing — unconfirmed.
+- **No availability calendar**, though the home CTA copy promises date-checking.
+- **No map embed** — needs a Naver or Kakao key.
+- **Social links are `href="#"`.**
+- **No dark mode.** Probably correct (the warm off-white *is* the brand) but never explicitly decided.
+- **Korean only** — no `hreflang`, no switcher. Retrofitting is painful given Korean-tuned tracking.
+- **No arrival/directions detail** beyond prose, which a basement venue really wants.
+- Content lives in `src/data/*.ts`; a CMS was considered and deliberately deferred (single editor for
+  now). Keystatic reads the existing folder layout if that changes.
 
 Related: [[isseum-tokens]]
