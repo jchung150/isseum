@@ -19,6 +19,8 @@ const fullTitle = isHome
   : `${title} | ${site.name} ISSEUM`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// Absolute URL required — Kakao, Slack and Facebook won't resolve a relative one.
+const ogImage = new URL('/og-image.jpg', Astro.site).href;
 
 // LocalBusiness structured data — matters for a venue, and for Naver/Google local results.
 const jsonLd = {
@@ -56,7 +58,18 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={site.locale} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="이씀 ISSEUM — 홍대 복합문화공간 대관" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#FBFBF9" />
 
     <!-- TODO: self-host + subset these. Korean webfonts are heavy and the CDN is a
          third-party dependency on every page load. See design/TOKENS.md §9. -->

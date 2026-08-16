@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Naver's crawler — the primary search engine for this audience.
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://www.isseum.com/sitemap-index.xml

@@ -8,8 +8,9 @@ workshops, book talks, pop-ups, fan meetings, showcases, and photo shoots.
 for Korean event organisers; keep that register. Latin text appears only as wide-tracked
 eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not translation.
 
-**Status: pre-launch.** Built and working locally, not yet deployed. Domain purchased at
-후이즈 (Whois). See [Before launch](#before-launch) for the blocking items.
+**Status: pre-launch.** Built and deploy-ready. Canonical host is
+**`https://www.isseum.com`** (domain registered at 후이즈 / Whois; DNS not yet pointed).
+See [Before launch](#before-launch) for what's left.
 
 ---
 
@@ -23,6 +24,7 @@ eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not transl
 | Interactivity | Vanilla `<script>` in `.astro` files. **No React/Vue/Svelte** |
 | Images | `astro:assets` (sharp) → WebP, responsive `srcset` |
 | Fonts | Pretendard + Noto Serif KR, currently via CDN |
+| SEO | `@astrojs/sitemap`, `public/robots.txt` (incl. Naver's `Yeti` crawler) |
 | Hosting | Not yet set up. Cloudflare Pages recommended (static, free, Seoul PoP) |
 
 ```bash
@@ -251,13 +253,29 @@ Blocking:
    screen, not the form. Fix in Forms settings: 이메일 주소 수집 → `수집 안 함` or
    `응답자 입력` (not 확인된), turn off 응답 횟수 1개로 제한, and if it's a Workspace form
    allow external respondents. **This is the site's only conversion path.**
-2. **Confirm the real domain** and set `site:` in `astro.config.mjs` (currently
-   `https://isseum.space`). It feeds canonical URLs, Open Graph and JSON-LD. Whois domains
-   need nameservers pointed at the host.
+2. **Point DNS.** `site:` is set to `https://www.isseum.com`. Still to do at the registrar
+   and host: change 후이즈 nameservers to the host's, add the custom domain, and **301
+   `isseum.com` → `www.isseum.com`**. Serving both hosts un-redirected splits search
+   indexing. Apex domains can't take a CNAME in classic DNS, which is why Cloudflare (CNAME
+   flattening) is the recommended host.
 3. **Social and map links are `href="#"`** — 인스타그램, 네이버 블로그, 네이버 지도, 카카오맵
    in `config/site.ts`.
-4. **No favicon, no OG image.** Both referenced by `BaseLayout.astro`'s meta; add to
-   `public/`.
+4. **Register with 네이버 서치어드바이저 and Google Search Console.** Naver matters more for
+   this audience. Sitemap is at `/sitemap-index.xml`. Verification file goes in `public/`.
+
+### Done
+
+Favicons (`favicon-16/32`, `apple-touch-icon`, `icon-192/512`, `site.webmanifest`) and the
+1200×630 `og-image.jpg` are generated and wired into `BaseLayout.astro`. Both were produced
+from the repo's own assets, so they can be regenerated:
+
+- **Icons** — sharp, from `design/assets/isseum_logo_no_BG.png`. The mark is knocked out of
+  an `--ink` tile because a 1:1.98 portrait wordmark on a light background is illegible at
+  small sizes. 16px and 32px use **only the `이` glyph** (the mark's first row, found by
+  detecting fully-transparent row gaps); 180px and up use the full stacked mark.
+- **OG image** — rendered by screenshotting an HTML layout in headless Chrome rather than
+  drawing it with sharp, because sharp/librsvg can't reliably render Korean text without the
+  webfont installed. This way it uses the real Noto Serif KR and real tokens.
 
 Should do:
 
