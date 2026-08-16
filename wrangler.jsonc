@@ -1,0 +1,15 @@
+{
+  // Cloudflare Workers Static Assets. There is no Worker script — no `main` key —
+  // so this deploys dist/ as a pure static site. Cloudflare no longer offers the
+  // Pages flow for new projects, which is why this file exists.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "isseum",
+  "compatibility_date": "2026-08-16",
+  "assets": {
+    "directory": "./dist",
+    // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
+    // to /rules rather than serving both. Keeps canonical URLs unambiguous.
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
