@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Placeholder from '../components/Placeholder.astro';
+import FilterChips from '../components/FilterChips.astro';
+import BulletList from '../components/BulletList.astro';
+import DarkCta from '../components/DarkCta.astro';
+import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
+---
+
+<BaseLayout
+  title="보유 장비"
+  description="이씀에 상시 준비된 음향·영상 장비와 가구. 전 품목 대관료에 포함되며, 사전 요청 시 세팅해 드립니다."
+>
+  <PageHero eyebrow="EQUIPMENT &amp; PROPS" title="보유 장비">
+    <p class="lead" slot="lead">
+      이씀에는 상시 이용 가능한 음향·영상 장비와 가구가 준비되어 있습니다. 대관료에 모두 포함되어
+      있으며, 세팅이 필요한 품목은 <strong>이용일 3일 전까지 사전 요청</strong>해 주시면 미리 준비해
+      드립니다.
+    </p>
+  </PageHero>
+
+  <section class="container filters">
+    <FilterChips categories={CATEGORIES} controls="equipment-list" label="장비 분류" />
+    <p class="filters__count" role="status" aria-live="polite" data-count></p>
+  </section>
+
+  <section class="container list-section">
+    <div id="equipment-list" data-list>
+      {
+        equipment.map((item, i) => (
+          <article class="row" data-category={item.category} data-index={i}>
+            <div class="row__media">
+              <Placeholder label={item.slot} ratio="var(--ratio-media)" align="end" />
+            </div>
+            <div class="row__body">
+              <div class="row__inner">
+                <div class="badges">
+                  <span class="mono-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="badge badge--category">{item.category}</span>
+                  <span
+                    class:list={['badge', item.req === '사전 요청' ? 'badge--required' : 'badge--standard']}
+                  >
+                    {item.req}
+                  </span>
+                </div>
+                <h2 class="display row__name">{item.name}</h2>
+                <p class="row__desc">{item.desc}</p>
+                <dl class="spec">
+                  <dt>규격</dt><dd>{item.spec}</dd>
+                  <dt>보유 수량</dt><dd>{item.qty}</dd>
+                  <dt>설치 장소</dt><dd>{item.place}</dd>
+                </dl>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="empty" data-empty hidden>
+      해당 분류에 표시할 장비가 없습니다. 다른 분류를 선택해 주세요.
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="notice">
+      <h2 class="display notice__title">장비 이용 시 안내</h2>
+      <div class="notice__body">
+        <BulletList lines={equipmentNotes} />
+      </div>
+    </div>
+  </section>
+
+  <section class="container closing">
+    <DarkCta
+      headline="필요한 장비를 미리 알려주세요."
+      sub="예약 신청서의 요청 사항란에 적어 주시면 이용 시작 전에 세팅해 두겠습니다."
+    />
+  </section>
+</BaseLayout>
+
+<script>
+  const list = document.querySelector<HTMLElement>('[data-list]');
+  const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter-value]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const count = document.querySelector<HTMLElement>('[data-count]');
+
+  if (list && chips.length) {
+    const rows = Array.from(list.querySelectorAll<HTMLElement>('.row'));
+
+    const apply = (value: string) => {
+      const visible = rows.filter((row) => {
+        const match = value === '전체' || row.dataset.category === value;
+        row.hidden = !match;
+        return match;
+      });
+
+      // Alternation is recomputed against the *visible* set, so the zig-zag
+      // stays correct after filtering.
+      visible.forEach((row, i) => row.classList.toggle('is-alt', i % 2 === 1));
+
+      if (empty) empty.hidden = visible.length > 0;
+      if (count) {
+        count.textContent = `${value === '전체' ? '전체 장비' : value} ${visible.length}종`;
+      }
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.classList.toggle('is-active', isActive);
+          other.setAttribute('aria-pressed', String(isActive));
+        });
+        apply(chip.dataset.filterValue ?? '전체');
+      });
+    });
+
+    apply('전체');
+  }
+</script>
+
+<style>
+  .filters {
+    padding-top: clamp(18px, 2.4vw, 28px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .filters__count {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .list-section {
+    padding-top: var(--space-header-gap);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(18px, 3vw, 46px);
+    padding-bottom: clamp(30px, 4vw, 58px);
+    margin-bottom: clamp(30px, 4vw, 58px);
+    border-bottom: var(--border-hairline);
+    align-items: start;
+  }
+
+  .row[hidden] {
+    display: none;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Square, no radius — badges are not chips. */
+  .badge {
+    font-size: var(--eyebrow-size);
+    font-weight: 600;
+    padding: 5px 10px;
+    letter-spacing: var(--tracking-ui);
+    border: var(--border-hairline);
+  }
+
+  .badge--category {
+    background: var(--surface);
+  }
+
+  /* Filled = action needed. */
+  .badge--required {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .badge--standard {
+    background: transparent;
+    color: var(--text-body);
+  }
+
+  .row__name {
+    margin-top: var(--space-4);
+    font-size: var(--display-item);
+    line-height: var(--leading-title);
+    letter-spacing: var(--tracking-display-tight);
+  }
+
+  .row__desc {
+    margin-top: 14px;
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .spec {
+    margin-top: clamp(20px, 2.4vw, 28px);
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    border-top: var(--border-hairline);
+    font-size: var(--text-ui);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .spec dt,
+  .spec dd {
+    padding: 11px 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .spec dt {
+    color: var(--text-secondary);
+  }
+
+  .spec dd {
+    color: var(--text-strong);
+  }
+
+  .empty {
+    padding: var(--space-section-sm) 0;
+    text-align: center;
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-body);
+    border-bottom: var(--border-hairline);
+  }
+
+  .notice {
+    background: var(--surface);
+    border: var(--border-hairline);
+    padding: var(--space-notice);
+  }
+
+  .notice__title {
+    font-size: var(--display-notice);
+  }
+
+  .notice__body {
+    margin-top: clamp(18px, 2.2vw, 26px);
+  }
+
+  .closing {
+    margin-top: var(--space-section-sm);
+  }
+
+  /* Alternating rows. Order flips visually via `order`, so DOM reading order
+     stays correct. design/COMPONENTS.md §30. */
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: 1.28fr 1fr;
+    }
+
+    .row.is-alt {
+      grid-template-columns: 1fr 1.28fr;
+    }
+
+    .row.is-alt .row__media {
+      order: 2;
+    }
+
+    .row.is-alt .row__body {
+      order: 1;
+    }
+
+    .row__inner {
+      padding-top: var(--space-2);
+    }
+  }
+</style>

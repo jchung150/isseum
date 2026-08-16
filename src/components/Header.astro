@@ -1,0 +1,130 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/isseum-logo.png';
+import { nav, bookingUrl, site } from '../config/site';
+import Button from './Button.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (match: string) => (match === '/' ? path === '/' : path.startsWith(match));
+---
+
+<header>
+  <div class="bar container">
+    <a href="/" class="logo" aria-label={`${site.name} ${site.nameLatin} 홈`}>
+      <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={64} width={64} densities={[1, 2]} loading="eager" />
+    </a>
+
+    <nav class="gnb" aria-label="주요 메뉴">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={['gnb__link', { 'is-active': isActive(item.match) }]}
+            aria-current={isActive(item.match) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <Button href={bookingUrl} external variant="primary" size="md">대관 예약하기</Button>
+  </div>
+
+  <nav class="tabs" aria-label="주요 메뉴 (모바일)">
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={['tabs__link', { 'is-active': isActive(item.match) }]}
+          aria-current={isActive(item.match) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg-sticky);
+    backdrop-filter: var(--backdrop-blur);
+    border-bottom: var(--border-hairline);
+  }
+
+  .bar {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo :global(img) {
+    height: 64px;
+    width: auto;
+  }
+
+  /* Desktop nav — hidden below the 900px breakpoint, where .tabs takes over. */
+  .gnb {
+    display: none;
+    align-items: center;
+    gap: var(--gap-md);
+  }
+
+  .gnb__link {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .gnb__link.is-active {
+    font-weight: 600;
+    border-bottom: var(--border-active);
+    padding-bottom: 3px;
+  }
+
+  /* Mobile: a horizontally-scrolling tab strip, not a hamburger.
+     Better for a 4-item nav — see design/COMPONENTS.md §14. */
+  .tabs {
+    display: flex;
+    border-top: var(--border-hairline);
+    overflow-x: auto;
+  }
+
+  .tabs__link {
+    flex: 1;
+    text-align: center;
+    padding: var(--space-3) 6px;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .tabs__link + .tabs__link {
+    border-left: var(--border-hairline);
+  }
+
+  .tabs__link.is-active {
+    font-weight: 700;
+    background: var(--surface);
+  }
+
+  @media (min-width: 900px) {
+    .gnb {
+      display: flex;
+    }
+    .tabs {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+/**
+ * Eyebrow + serif heading closed by the dark emphasis rule.
+ * The --ink rule against the --border hairlines used everywhere else is what
+ * carries section-level hierarchy. design/COMPONENTS.md §2.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  id?: string;
+  as?: 'h2' | 'h3';
+}
+
+const { eyebrow, title, id, as: Tag = 'h2' }: Props = Astro.props;
+---
+
+<div class="head">
+  <div>
+    {eyebrow && <p class="eyebrow head__eyebrow">{eyebrow}</p>}
+    <Tag class="display head__title" id={id}>{title}</Tag>
+  </div>
+  <slot />
+</div>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding-bottom: 26px;
+    border-bottom: var(--border-emphasis);
+  }
+
+  .head__eyebrow {
+    margin-bottom: 14px;
+  }
+
+  .head__title {
+    font-size: var(--display-section);
+  }
+</style>

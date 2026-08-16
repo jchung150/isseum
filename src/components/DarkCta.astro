@@ -1,0 +1,48 @@
+---
+import { bookingUrl } from '../config/site';
+import Button from './Button.astro';
+
+/** Closing call-to-action panel. design/COMPONENTS.md §22. */
+interface Props {
+  headline: string;
+  sub: string;
+  cta?: string;
+}
+
+const { headline, sub, cta = '대관 예약하기' } = Astro.props;
+---
+
+<div class="cta on-ink">
+  <div>
+    <p class="cta__headline">{headline}</p>
+    <p class="cta__sub">{sub}</p>
+  </div>
+  <Button href={bookingUrl} external variant="inverted" size="lg">{cta}</Button>
+</div>
+
+<style>
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    background: var(--ink);
+    padding: var(--space-panel);
+  }
+
+  .cta__headline {
+    font-family: var(--font-serif);
+    font-size: var(--display-cta);
+    font-weight: 500;
+    color: var(--bg);
+    letter-spacing: var(--tracking-title);
+  }
+
+  .cta__sub {
+    margin-top: 10px;
+    font-size: var(--text-ui);
+    color: var(--text-tertiary);
+    letter-spacing: var(--tracking-ui);
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+/**
+ * The atom of all policy and note copy: 4px dot + bold label + text.
+ * design/COMPONENTS.md §25.
+ */
+interface Props {
+  lines: { label: string; text: string }[];
+  gap?: string;
+}
+
+const { lines, gap = '13px' } = Astro.props;
+---
+
+<ul class="bullets" style={`--bullet-gap: ${gap};`}>
+  {
+    lines.map((line) => (
+      <li class="bullets__row">
+        <span class="bullets__dot" aria-hidden="true" />
+        <p class="prose">
+          <strong>{line.label}</strong>
+          {line.text}
+        </p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .bullets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bullet-gap);
+  }
+
+  .bullets__row {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+  }
+
+  /* margin-top optically centres the dot on the first line at 15px/1.78 */
+  .bullets__dot {
+    flex: none;
+    width: var(--space-1);
+    height: var(--space-1);
+    background: var(--text-tertiary);
+    border-radius: var(--radius-full);
+    margin-top: 11px;
+  }
+</style>

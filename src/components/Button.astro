@@ -1,0 +1,121 @@
+---
+/**
+ * Button — renders <a> when href is given, <button> otherwise.
+ * Variants map to design/COMPONENTS.md §5–§8.
+ */
+type Variant = 'primary' | 'inverted' | 'outline' | 'outline-on-ink';
+type Size = 'sm' | 'md' | 'lg' | 'block';
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  size?: Size;
+  external?: boolean;
+  class?: string;
+  type?: 'button' | 'submit';
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  external = false,
+  class: className,
+  type = 'button',
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, className].filter(Boolean).join(' ');
+
+const linkAttrs = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener' } : {}) }
+  : { type };
+---
+
+<Tag class={classes} {...linkAttrs} {...rest}><slot /></Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  /* --- sizes --- */
+  .btn--sm {
+    font-size: var(--text-meta);
+    padding: var(--space-3) 6px;
+  }
+  .btn--md {
+    font-size: var(--text-ui);
+    padding: 13px var(--space-6);
+  }
+  .btn--lg {
+    font-size: var(--text-sm);
+    padding: 17px var(--space-8);
+  }
+  .btn--block {
+    display: flex;
+    width: 100%;
+    font-size: var(--text-ui);
+    padding: 15px 18px;
+  }
+
+  /* --- variants --- */
+  .btn--primary {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .btn--primary:hover {
+    background: var(--ink-hover);
+    color: var(--bg);
+  }
+
+  .btn--inverted {
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .btn--inverted:hover {
+    background: var(--border);
+    color: var(--ink);
+  }
+
+  .btn--outline {
+    border-color: var(--ink);
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn--outline:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  /* 1px less padding than a filled sibling so optical heights match. */
+  .btn--outline-on-ink {
+    border-color: var(--link-hover);
+    background: transparent;
+    color: var(--bg);
+  }
+  .btn--outline-on-ink:hover {
+    border-color: var(--bg);
+    color: var(--bg);
+  }
+  .btn--outline-on-ink.btn--lg {
+    padding: 16px 31px;
+  }
+</style>

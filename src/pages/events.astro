@@ -1,0 +1,462 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import FilterChips from '../components/FilterChips.astro';
+import DarkCta from '../components/DarkCta.astro';
+import { EVENT_CATEGORIES, tiles } from '../data/events';
+---
+
+<BaseLayout
+  title="지난 행사"
+  description="이씀에서 실제 진행된 공연, 브랜드 행사, 촬영, 강연의 현장 사진과 영상 아카이브."
+>
+  <PageHero
+    eyebrow="PAST EVENTS · ARCHIVE"
+    title="이씀에서 열린 지난 행사"
+    lead="공연, 브랜드 행사, 촬영, 강연 — 실제 진행된 현장의 사진과 영상입니다. 이미지를 클릭하면 크게 넘겨 볼 수 있습니다."
+    wide
+  />
+
+  <section class="container container--wide filters">
+    <FilterChips categories={EVENT_CATEGORIES} controls="event-gallery" label="행사 분류" />
+    <p class="filters__count" role="status" aria-live="polite" data-count></p>
+  </section>
+
+  <section class="container container--wide gallery-section">
+    <div id="event-gallery" class="gallery" data-list>
+      {
+        tiles.map((tile, i) => (
+          <button
+            type="button"
+            class:list={['tile', { 'tile--feature': tile.colSpan === 2 }]}
+            style={`grid-row: span ${tile.span};`}
+            data-category={tile.category}
+            data-index={i}
+            data-big-slot={tile.bigSlot}
+            data-date={tile.date}
+            data-title={tile.title}
+            data-video={tile.isVideo ? 'true' : 'false'}
+            aria-label={`${tile.title} — ${tile.shot} 크게 보기`}
+          >
+            <span class="ph tile__fill" aria-hidden="true" />
+            <span class="tile__slot" aria-hidden="true">{tile.slot}</span>
+            {tile.isVideo && (
+              <span class="tile__play" aria-hidden="true">
+                <span class="tile__triangle" />
+              </span>
+            )}
+            <span class="tile__mark" aria-hidden="true">＋</span>
+            <span class="tile__cap" aria-hidden="true">
+              <span class="tile__date">{tile.date}</span>
+              <span class="tile__title">{tile.title}</span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <p class="empty" data-empty hidden>
+      해당 분류의 기록이 아직 없습니다. 다른 분류를 선택해 주세요.
+    </p>
+
+    <p class="gallery__note">현장 사진은 주최 측 동의를 받아 게시하며, 요청 시 즉시 삭제해 드립니다.</p>
+  </section>
+
+  <section class="container container--wide closing">
+    <DarkCta
+      headline="비슷한 행사를 기획하고 계신가요?"
+      sub="이전 사례의 세팅 그대로 준비해 드릴 수 있습니다. 신청서에 참고 행사명을 적어 주세요."
+    />
+  </section>
+
+  {/* Native <dialog> gives focus trapping, Escape-to-close and an inert
+      background for free — most of the accessibility floor, unpaid for. */}
+  <dialog class="lightbox" data-lightbox aria-label="행사 사진 크게 보기">
+    <div class="lightbox__inner">
+      <div class="lightbox__bar">
+        <p class="lightbox__meta">
+          <span data-lb-date></span>
+          <span class="lightbox__sep" aria-hidden="true">·</span>
+          <span data-lb-title></span>
+        </p>
+        <div class="lightbox__controls">
+          <span class="lightbox__count" data-lb-count></span>
+          <button type="button" class="lightbox__btn" data-lb-prev aria-label="이전 사진">←</button>
+          <button type="button" class="lightbox__btn" data-lb-next aria-label="다음 사진">→</button>
+          <button type="button" class="lightbox__btn" data-lb-close aria-label="닫기">✕</button>
+        </div>
+      </div>
+      <div class="ph lightbox__stage">
+        <span class="lightbox__slot" data-lb-slot></span>
+      </div>
+    </div>
+  </dialog>
+</BaseLayout>
+
+<script>
+  const list = document.querySelector<HTMLElement>('[data-list]');
+  const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter-value]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const count = document.querySelector<HTMLElement>('[data-count]');
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+
+  if (list && dialog) {
+    const tiles = Array.from(list.querySelectorAll<HTMLButtonElement>('.tile'));
+    const slot = dialog.querySelector<HTMLElement>('[data-lb-slot]');
+    const dateEl = dialog.querySelector<HTMLElement>('[data-lb-date]');
+    const titleEl = dialog.querySelector<HTMLElement>('[data-lb-title]');
+    const countEl = dialog.querySelector<HTMLElement>('[data-lb-count]');
+
+    let visible: HTMLButtonElement[] = tiles;
+    let index = 0;
+
+    const render = () => {
+      const tile = visible[index];
+      if (!tile) return;
+      if (slot) slot.textContent = tile.dataset.bigSlot ?? '';
+      if (dateEl) dateEl.textContent = tile.dataset.date ?? '';
+      if (titleEl) titleEl.textContent = tile.dataset.title ?? '';
+      if (countEl) countEl.textContent = `${index + 1} / ${visible.length}`;
+    };
+
+    const step = (delta: number) => {
+      if (!visible.length) return;
+      index = (index + delta + visible.length) % visible.length;
+      render();
+    };
+
+    const applyFilter = (value: string) => {
+      visible = tiles.filter((tile) => {
+        const match = value === '전체' || tile.dataset.category === value;
+        tile.hidden = !match;
+        return match;
+      });
+      if (empty) empty.hidden = visible.length > 0;
+      if (count) {
+        count.textContent = `${value === '전체' ? '사진 · 영상' : value} ${visible.length}컷`;
+      }
+    };
+
+    tiles.forEach((tile) => {
+      tile.addEventListener('click', () => {
+        index = visible.indexOf(tile);
+        if (index < 0) return;
+        render();
+        dialog.showModal();
+      });
+    });
+
+    dialog.querySelector('[data-lb-prev]')?.addEventListener('click', () => step(-1));
+    dialog.querySelector('[data-lb-next]')?.addEventListener('click', () => step(1));
+    dialog.querySelector('[data-lb-close]')?.addEventListener('click', () => dialog.close());
+
+    // Escape is handled natively by <dialog>; only arrows need wiring.
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        step(1);
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        step(-1);
+      }
+    });
+
+    // Click the backdrop (outside .lightbox__inner) to dismiss.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.classList.toggle('is-active', isActive);
+          other.setAttribute('aria-pressed', String(isActive));
+        });
+        applyFilter(chip.dataset.filterValue ?? '전체');
+      });
+    });
+
+    applyFilter('전체');
+  }
+</script>
+
+<style>
+  .filters {
+    padding-top: clamp(20px, 2.6vw, 32px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .filters__count {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .gallery-section {
+    padding-top: clamp(18px, 2.4vw, 28px);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+    grid-auto-rows: 12px;
+    gap: 10px;
+  }
+
+  .tile {
+    position: relative;
+    border: var(--border-hairline);
+    overflow: hidden;
+    cursor: zoom-in;
+    padding: 0;
+    background: none;
+    font-family: inherit;
+    text-align: left;
+    display: block;
+  }
+
+  .tile[hidden] {
+    display: none;
+  }
+
+  /* Feature tiles only double-span once there are at least two columns,
+     otherwise they'd force an implicit second column on narrow screens. */
+  @media (min-width: 640px) {
+    .tile--feature {
+      grid-column: span 2;
+    }
+  }
+
+  .tile__fill {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .tile__slot {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-slot-xs);
+    letter-spacing: var(--tracking-mono);
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: 5px var(--space-2);
+    border: var(--border-hairline);
+  }
+
+  .tile__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    border: var(--border-emphasis);
+    border-radius: var(--radius-full);
+    background: var(--bg-glass);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* CSS triangle — no SVG anywhere in this design. */
+  .tile__triangle {
+    width: 0;
+    height: 0;
+    border-left: 11px solid var(--ink);
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    margin-left: 3px;
+  }
+
+  .tile__mark {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 26px;
+    height: 26px;
+    border: var(--border-emphasis);
+    border-radius: var(--radius-full);
+    background: var(--bg-glass-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-ui-sm);
+    line-height: 1;
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .tile:hover .tile__mark {
+    opacity: 1;
+  }
+
+  .tile__cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 14px 14px 13px;
+    background: var(--scrim);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity var(--transition),
+      transform var(--transition);
+  }
+
+  .tile:hover .tile__cap,
+  .tile:focus-visible .tile__cap {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tile__date {
+    display: block;
+    font-size: var(--mono-slot);
+    letter-spacing: 0.16em;
+    color: var(--on-ink-muted);
+    font-weight: 500;
+  }
+
+  .tile__title {
+    display: block;
+    margin-top: 5px;
+    font-size: var(--text-ui);
+    font-weight: 600;
+    color: var(--bg);
+    letter-spacing: var(--tracking-title);
+  }
+
+  .empty {
+    padding: var(--space-section-sm) 0;
+    text-align: center;
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-body);
+    border-bottom: var(--border-hairline);
+  }
+
+  .gallery__note {
+    margin-top: 18px;
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .closing {
+    margin-top: clamp(52px, 6.5vw, 92px);
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lightbox::backdrop {
+    background: var(--backdrop-lightbox);
+  }
+
+  .lightbox__inner {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: var(--gutter-wide);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    height: 100%;
+    justify-content: center;
+  }
+
+  .lightbox__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .lightbox__meta {
+    font-size: var(--text-ui);
+    color: var(--bg);
+    letter-spacing: var(--tracking-ui);
+    font-weight: 600;
+  }
+
+  .lightbox__sep {
+    color: var(--text-secondary);
+    margin: 0 var(--space-2);
+  }
+
+  .lightbox__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .lightbox__count {
+    font-family: var(--font-mono);
+    font-size: var(--mono-num);
+    letter-spacing: var(--tracking-mono);
+    color: var(--text-tertiary);
+    margin-right: var(--space-2);
+  }
+
+  .lightbox__btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-on-ink);
+    background: transparent;
+    color: var(--bg);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--text-ui);
+    transition:
+      border-color var(--transition-fast),
+      background var(--transition-fast);
+  }
+
+  .lightbox__btn:hover {
+    border-color: var(--bg);
+  }
+
+  .lightbox__btn:focus-visible {
+    outline: 2px solid var(--bg);
+    outline-offset: 2px;
+  }
+
+  .lightbox__stage {
+    aspect-ratio: var(--ratio-media);
+    border: 1px solid var(--border-on-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 70vh;
+  }
+
+  .lightbox__slot {
+    font-family: var(--font-mono);
+    font-size: var(--mono-slot);
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: var(--space-2) 14px;
+    border: var(--border-hairline);
+    text-align: center;
+  }
+</style>

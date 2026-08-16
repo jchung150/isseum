@@ -1,0 +1,58 @@
+---
+/** Subpage masthead: eyebrow + h1 + lead, closed by the emphasis rule. design/COMPONENTS.md §3. */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  meta?: string;
+  wide?: boolean;
+}
+
+const { eyebrow, title, lead, meta, wide = false } = Astro.props;
+---
+
+<section class:list={['container', { 'container--wide': wide }, 'hero']}>
+  <p class="eyebrow hero__eyebrow">{eyebrow}</p>
+  <h1 class="display hero__title">{title}</h1>
+  <div class="hero__foot">
+    {lead && <p class="lead hero__lead"><slot name="lead">{lead}</slot></p>}
+    {meta && <p class="hero__meta">{meta}</p>}
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: var(--space-section-sm);
+  }
+
+  .hero__eyebrow {
+    margin-bottom: clamp(18px, 2.6vw, 32px);
+  }
+
+  .hero__title {
+    font-size: var(--display-page);
+    line-height: 1.22;
+  }
+
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-top: clamp(20px, 2.6vw, 34px);
+    padding-bottom: clamp(20px, 2.6vw, 32px);
+    border-bottom: var(--border-emphasis);
+  }
+
+  .hero__lead {
+    max-width: var(--measure-body);
+  }
+
+  .hero__meta {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+</style>

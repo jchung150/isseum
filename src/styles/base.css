@@ -1,0 +1,231 @@
+/**
+ * Global base + shared primitives.
+ * Every value resolves through tokens.css. No literals below except 0, 1px hairlines
+ * already tokenized, and structural values with no design meaning.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Accessibility floor (CLAUDE.md) ----------
+   Links are undecorated globally, so a visible focus ring is the only
+   affordance a keyboard user gets. This is not optional. */
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+/* Dark surfaces need the inverse ring to stay visible. */
+.on-ink :focus-visible {
+  outline-color: var(--bg);
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: var(--space-2);
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: var(--text-ui);
+  font-weight: 600;
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  color: var(--bg);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Layout primitives ---------- */
+
+.container {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container--wide {
+  max-width: var(--container-wide);
+  padding-inline: var(--gutter-wide);
+}
+
+.section {
+  padding-top: var(--space-section);
+}
+
+.section--sm {
+  padding-top: var(--space-section-sm);
+}
+
+/* Hairline grid: the grid background shows through 1px gaps, giving perfect
+   interior rules with no double-border seams. See design/TOKENS.md §5. */
+.hairline-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+  border: var(--border-hairline);
+}
+
+.hairline-grid > * {
+  background: var(--bg);
+}
+
+/* ---------- Type primitives ---------- */
+
+.eyebrow {
+  font-size: var(--eyebrow-size);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--text-secondary);
+}
+
+.eyebrow--label {
+  letter-spacing: var(--tracking-label);
+}
+
+.display {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
+}
+
+.mono-num {
+  font-family: var(--font-mono);
+  font-size: var(--mono-num);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-tertiary);
+}
+
+.lead {
+  font-size: var(--text-lead);
+  line-height: var(--leading-compact);
+  color: var(--text-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.prose {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- Placeholder ----------
+   Stands in for unshot photography, and remains the missing-image fallback
+   once real assets land. See design/TOKENS.md §9. */
+
+.ph {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--placeholder-stripe) 0 10px,
+    var(--surface) 10px 20px
+  );
+}
+
+.ph__label {
+  font-family: var(--font-mono);
+  font-size: var(--mono-slot);
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border: var(--border-hairline);
+  padding: 7px 12px;
+}
