@@ -5,6 +5,13 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "isseum",
   "compatibility_date": "2026-08-16",
+  // Custom domains declared here instead of clicked in the dashboard: every
+  // `wrangler deploy` reconciles them, and the DNS records are created for us.
+  // Requires the isseum.com zone to be Active in the same account.
+  "routes": [
+    { "pattern": "www.isseum.com", "custom_domain": true },
+    { "pattern": "isseum.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
