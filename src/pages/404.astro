@@ -37,6 +37,12 @@ import { footerLinks } from '../config/site';
   .notfound {
     padding-top: var(--space-section-sm);
     padding-bottom: var(--space-section);
+  }
+
+  /* Measure goes on the children, not the container — putting it on .container
+     overrides its max-width and margin-inline:auto then centres the block,
+     which breaks the left-aligned rhythm every other page follows. */
+  .notfound > * {
     max-width: var(--measure-body);
   }
 
