@@ -8,9 +8,10 @@ workshops, book talks, pop-ups, fan meetings, showcases, and photo shoots.
 for Korean event organisers; keep that register. Latin text appears only as wide-tracked
 eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not translation.
 
-**Status: pre-launch.** Built and deploy-ready. Canonical host is
-**`https://www.isseum.com`** (domain registered at 후이즈 / Whois; DNS not yet pointed).
-See [Before launch](#before-launch) for what's left.
+**Status: live.** Serving at **`https://www.isseum.com`** (and `isseum.com`, which does
+not yet redirect — see [Before launch](#before-launch)). Domain registered at 후이즈 /
+Whois, DNS delegated to Cloudflare. The booking form still requires a Google sign-in, so
+the site is not yet ready to promote.
 
 ---
 
@@ -25,7 +26,7 @@ See [Before launch](#before-launch) for what's left.
 | Images | `astro:assets` (sharp) → WebP, responsive `srcset` |
 | Fonts | Pretendard + Noto Serif KR, currently via CDN |
 | SEO | `@astrojs/sitemap`, `public/robots.txt` (incl. Naver's `Yeti` crawler) |
-| Hosting | Not yet set up. Cloudflare Pages recommended (static, free, Seoul PoP) |
+| Hosting | Cloudflare **Workers Static Assets** — see [Deployment](#deployment) |
 
 ```bash
 npm run dev      # localhost:4321 — runs as a daemon; `astro dev stop` to kill
@@ -42,7 +43,7 @@ Chosen deliberately, not by default:
 
 - **Zero JS by default.** The home page ships **no JavaScript at all**; Equipment, Rules and
   Events each carry one small inlined module (~1.5 KB max). The site already pays for two
-  Korean webfonts, which are heavy — spending a framework runtime on a four-page brochure
+  Korean webfonts, which are heavy — spending a framework runtime on a small brochure
   site on top of that would be the wrong trade.
 - **Naver.** The audience searches in Korean, and Naver's crawler handles static HTML far
   better than client-rendered content. Pre-rendered pages matter more here than for a
@@ -57,7 +58,8 @@ Chosen deliberately, not by default:
 
 ```
 CLAUDE.md                 ← this file
-astro.config.mjs          site URL, static output, image defaults
+astro.config.mjs          site URL, static output, sitemap, image defaults
+wrangler.jsonc            Cloudflare deploy config: static assets + custom domains
 design/                   READ-ONLY design reference — see §Design reference
 src/
   config/site.ts          business info, nav, bookingUrl, social/map links
@@ -74,7 +76,7 @@ src/
     base.css              globals, focus ring, reduced-motion, primitives
   components/             10 components, all scoped-CSS .astro
   layouts/BaseLayout.astro  head, SEO, JSON-LD, header/footer, skip link
-  pages/                  index · equipment · rules · events
+  pages/                  index · equipment · rules · events (hidden) · 404
 ```
 
 ### Content lives in `src/data/*.ts`, not in markup
@@ -199,10 +201,73 @@ imports.)
 
 ### The booking form is the only conversion path
 
-`bookingUrl` in `config/site.ts` feeds **13 CTAs** across the four pages (header, dark CTA
+`bookingUrl` in `config/site.ts` feeds **10 CTAs** across the live pages (header, dark CTA
 banners, footer link, Rules TOC button and agreement gate). Change it in one place.
 
 ---
+
+## Deployment
+
+`git push` to `main` is the deploy. Cloudflare Workers Builds runs `npm run build` then
+`npx wrangler deploy`, and the site is live in about a minute. There is no server — the
+build produces static files and Cloudflare serves them from its edge.
+
+- **Project**: Cloudflare Workers → `isseum`. Direct URL `isseum.cloudfan150.workers.dev`
+  stays live and is useful for checking a deploy before DNS-level changes.
+- **`wrangler.jsonc`** declares the whole deploy: `assets.directory` = `./dist`, plus the
+  custom domains as `routes` with `custom_domain: true`. **Attach domains here, not in the
+  dashboard** — dashboard attempts failed silently, writing no DNS record while appearing to
+  succeed. In the config, every deploy reconciles them and failures show up in the build log.
+- **`html_handling: "drop-trailing-slash"`** pairs with Astro's `trailingSlash: 'never'`, so
+  `/rules/` 301s to `/rules` instead of both being served.
+- **`public/_headers`** works on Workers Static Assets (verified against live response
+  headers, not assumed): security headers sitewide, `/_astro/*` immutable for a year, HTML
+  revalidated every request.
+- **`robots.txt`**: Cloudflare **prepends a managed block** to the file we ship. It declares
+  `Content-Signal: search=yes, ai-train=no, use=reference` and blocks AI training crawlers
+  (GPTBot, ClaudeBot, CCBot, Google-Extended, …). `search=yes` means Google and Naver index
+  normally — the dashboard labelling this "disabled" is confusing; it means blocking is
+  disabled. Our own rules, including Naver's `Yeti` and the sitemap line, survive underneath.
+- **Node version** is supplied by the build image (24.x). The `NODE_VERSION` variable is not
+  needed; an unused `nodeversion` variable may still be set in the dashboard and is harmless.
+
+### Deploy gotcha
+
+**Run `npm ci` locally after adding any dependency, before pushing.** CI installs with
+`npm ci`, which hard-fails if `package-lock.json` and `package.json` disagree. A normal
+`npm install` papers over that, so the build can break while everything works locally —
+this happened once, with sharp's `@emnapi/*` transitive deps missing from the lock.
+
+---
+
+## Feature flags
+
+### `showEventsPage` — `src/config/site.ts`
+
+Currently **`false`**. The 지난 행사 archive is finished code but has no real
+photography yet — all 23 gallery tiles are placeholder hatches — so it is hidden until
+the venue has run enough events to fill it.
+
+One flag drives all five consequences, so they can't fall out of step:
+
+| | when `false` |
+|---|---|
+| Header nav (desktop + mobile tabs) | 공간 소개 · 보유 장비 · 대관 규정 only |
+| Footer link list | 지난 행사 아카이브 removed |
+| Rules page agreement CTA | `지난 행사 보기` button removed |
+| `/events` page | `<meta name="robots" content="noindex, nofollow">` |
+| Sitemap | `/events` excluded |
+
+`astro.config.mjs` **imports the same flag** for the sitemap filter rather than repeating
+the decision — Astro's config loader resolves the `.ts` import fine. Don't split this
+across two files; that is exactly how the Events container width drifted earlier.
+
+**The page still builds**, so you can review it at `/events` while adding photos. It just
+has no inbound link and no crawler will cache it. Hiding only the nav link would have been
+worse than leaving it visible: `/events` was in the sitemap, so Google and Naver would have
+kept indexing a page of grey hatches.
+
+To reopen: set the flag to `true`, add photos under `src/assets/events/<slug>/`, push.
 
 ## Divergences from the design reference
 
@@ -253,15 +318,19 @@ Blocking:
    screen, not the form. Fix in Forms settings: 이메일 주소 수집 → `수집 안 함` or
    `응답자 입력` (not 확인된), turn off 응답 횟수 1개로 제한, and if it's a Workspace form
    allow external respondents. **This is the site's only conversion path.**
-2. **Point DNS.** `site:` is set to `https://www.isseum.com`. Still to do at the registrar
-   and host: change 후이즈 nameservers to the host's, add the custom domain, and **301
-   `isseum.com` → `www.isseum.com`**. Serving both hosts un-redirected splits search
-   indexing. Apex domains can't take a CNAME in classic DNS, which is why Cloudflare (CNAME
-   flattening) is the recommended host.
+2. **`isseum.com` does not redirect to `www`.** Both hostnames currently serve the site
+   directly, which reads as duplicate content. Every canonical tag points at `www`, so the
+   damage is limited, but it should be a real 301. Fix with a Cloudflare **Redirect Rule**:
+   match `Hostname equals isseum.com`, action Dynamic,
+   `concat("https://www.isseum.com", http.request.uri.path)`, status 301, preserve query
+   string. Dynamic rather than static so `/rules` doesn't collapse to the homepage.
+   Redirect Rules run before Workers, so the rule wins over the apex custom domain.
 3. **Social and map links are `href="#"`** — 인스타그램, 네이버 블로그, 네이버 지도, 카카오맵
    in `config/site.ts`.
 4. **Register with 네이버 서치어드바이저 and Google Search Console.** Naver matters more for
    this audience. Sitemap is at `/sitemap-index.xml`. Verification file goes in `public/`.
+5. **Event photography**, which is what `showEventsPage` is waiting on — see
+   [Feature flags](#feature-flags).
 
 ### Done
 
@@ -279,10 +348,9 @@ from the repo's own assets, so they can be regenerated:
 
 Should do:
 
-5. **Self-host and subset the fonts.** Currently CDN (`fonts.googleapis.com` +
+6. **Self-host and subset the fonts.** Currently CDN (`fonts.googleapis.com` +
    jsDelivr) — a third-party dependency on every page load, and Korean webfonts are large.
    Noto Serif KR is already trimmed to weights 400/500 (from five).
-6. **Real event photography.** All 23 gallery tiles are placeholder hatches.
 7. **Map embed** — placeholder only; needs a Naver or Kakao Maps key.
 8. `isseum_control-room_mixer.jpg` is unused — no matching equipment item exists, though
    the notes copy mentions 믹서. Either add an 음향 item or delete the file.
