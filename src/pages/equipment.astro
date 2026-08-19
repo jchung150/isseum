@@ -37,8 +37,8 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
                     class:list={['row__photo', `row__photo--${item.fit ?? 'cover'}`]}
                     src={item.src}
                     alt={item.alt ?? item.name}
-                    widths={[400, 640, 900, 1280]}
-                    sizes="(min-width: 1440px) 630px, (min-width: 900px) 44vw, 92vw"
+                    widths={[280, 360, 560, 720]}
+                    sizes="(min-width: 1440px) 360px, (min-width: 900px) 26vw, 92vw"
                     style={`object-position: ${item.focus ?? 'center'};`}
                     loading="lazy"
                   />
@@ -152,9 +152,9 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
   .row {
     display: grid;
     grid-template-columns: 1fr;
-    gap: clamp(18px, 3vw, 46px);
-    padding-bottom: clamp(30px, 4vw, 58px);
-    margin-bottom: clamp(30px, 4vw, 58px);
+    gap: clamp(18px, 2.4vw, 36px);
+    padding-bottom: clamp(24px, 2.6vw, 36px);
+    margin-bottom: clamp(24px, 2.6vw, 36px);
     border-bottom: var(--border-hairline);
     align-items: start;
   }
@@ -220,6 +220,9 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
   }
 
   .row__desc {
+    /* The body column is now ~900px; uncapped, that is ~60 Korean characters
+       a line. Keep it to a comfortable measure. */
+    max-width: var(--measure-hero-lead);
     margin-top: 14px;
     font-size: var(--text-base);
     line-height: 1.8;
@@ -281,11 +284,11 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
      stays correct. design/COMPONENTS.md §30. */
   @media (min-width: 900px) {
     .row {
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: minmax(0, var(--equipment-media)) 1fr;
     }
 
     .row.is-alt {
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1fr minmax(0, var(--equipment-media));
     }
 
     .row.is-alt .row__media {

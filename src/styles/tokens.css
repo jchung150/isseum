@@ -161,5 +161,9 @@
      subjects are centred product shots that survive that. A 4:3 frame instead
      clips 44% of height off the portraits, cutting chair legs and podium base. */
   --ratio-equipment: 1 / 1;
+  /* Caps the equipment photo so a row stays around 430px tall — roughly two
+     items per screen, scrolling into the third and fourth. Letting the photo
+     take a full grid fraction made each row fill the viewport on its own. */
+  --equipment-media: clamp(200px, 26vw, 360px);
   --ratio-map: 16 / 10;
 }
