@@ -1,6 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+// Single source for the flag — keeps the sitemap in step with the nav, footer
+// and noindex meta instead of duplicating the decision here.
+import { showEventsPage } from './src/config/site.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,7 +19,11 @@ export default defineConfig({
     format: 'directory',
     inlineStylesheets: 'auto',
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => showEventsPage || !page.includes('/events'),
+    }),
+  ],
   image: {
     // Venue photography is the bulk of this site's payload.
     responsiveStyles: true,

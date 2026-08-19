@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import BulletList from '../components/BulletList.astro';
 import Button from '../components/Button.astro';
-import { bookingUrl } from '../config/site';
+import { bookingUrl, showEventsPage } from '../config/site';
 import {
   agreement,
   intro,
@@ -144,7 +144,13 @@ const toc = [
           >
             대관 예약하기
           </a>
-          <Button href="/events" variant="outline-on-ink" size="lg">지난 행사 보기</Button>
+          {
+            showEventsPage && (
+              <Button href="/events" variant="outline-on-ink" size="lg">
+                지난 행사 보기
+              </Button>
+            )
+          }
           <p class="gate__hint" role="status" aria-live="polite" data-hint></p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import PageHero from '../components/PageHero.astro';
 import FilterChips from '../components/FilterChips.astro';
 import DarkCta from '../components/DarkCta.astro';
 import { EVENT_CATEGORIES, tiles } from '../data/events';
+import { showEventsPage } from '../config/site';
 
 // The lightbox reuses one <img>, so each tile carries the URL of its
 // full-size variant. Generated at build time alongside the thumbnails.
@@ -19,6 +20,7 @@ const gallery = await Promise.all(
 <BaseLayout
   title="지난 행사"
   description="이씀에서 실제 진행된 공연, 브랜드 행사, 촬영, 강연의 현장 사진과 영상 아카이브."
+  noindex={!showEventsPage}
 >
   <PageHero
     eyebrow="PAST EVENTS · ARCHIVE"

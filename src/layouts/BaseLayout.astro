@@ -10,9 +10,11 @@ interface Props {
   description?: string;
   /** Set true on the home page so the title isn't doubled up. */
   isHome?: boolean;
+  /** Keep the page out of search results while it's unfinished. */
+  noindex?: boolean;
 }
 
-const { title, description = site.description, isHome = false } = Astro.props;
+const { title, description = site.description, isHome = false, noindex = false } = Astro.props;
 
 const fullTitle = isHome
   ? `${site.name} ISSEUM — 홍대 복합문화공간 대관`
@@ -50,6 +52,7 @@ const jsonLd = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
 
     <meta property="og:type" content="website" />

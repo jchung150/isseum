@@ -39,16 +39,37 @@ export type NavItem = {
   match: string;
 };
 
-export const nav: NavItem[] = [
+/**
+ * 지난 행사 page — off until there is real event photography (all 23 gallery
+ * tiles are still placeholder hatches).
+ *
+ * While false the page is still BUILT, so you can review it at /events, but it
+ * is unlinked from the nav and footer, dropped from the Rules page CTA, marked
+ * noindex and excluded from the sitemap. Nobody can stumble onto a
+ * half-finished archive, and search engines won't cache one.
+ *
+ * Flip to true to reopen — every one of those follows automatically.
+ */
+export const showEventsPage = false;
+
+const allNav: NavItem[] = [
   { label: '공간 소개', href: '/', match: '/' },
   { label: '보유 장비', href: '/equipment', match: '/equipment' },
   { label: '대관 규정', href: '/rules', match: '/rules' },
   { label: '지난 행사', href: '/events', match: '/events' },
 ];
 
-export const footerLinks = [
+export const nav: NavItem[] = allNav.filter(
+  (item) => showEventsPage || item.href !== '/events'
+);
+
+const allFooterLinks = [
   { label: '보유 장비 안내', href: '/equipment', external: false },
   { label: '대관 규정 및 이용 안내', href: '/rules', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
   { label: '대관 예약하기', href: bookingUrl, external: true },
-] as const;
+];
+
+export const footerLinks = allFooterLinks.filter(
+  (link) => showEventsPage || link.href !== '/events'
+);
