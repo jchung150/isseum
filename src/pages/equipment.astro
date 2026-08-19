@@ -20,7 +20,9 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
 
   <section class="container filters">
     <FilterChips categories={CATEGORIES} controls="equipment-list" label="장비 분류" />
-    <p class="filters__count" role="status" aria-live="polite" data-count></p>
+    {/* Count is hidden visually but kept as a live region — it's the only cue a
+        screen-reader user gets that filtering changed the list. */}
+    <p class="visually-hidden" role="status" aria-live="polite" data-count></p>
   </section>
 
   <section class="container list-section">
@@ -141,12 +143,6 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-  }
-
-  .filters__count {
-    font-size: var(--text-meta);
-    color: var(--text-secondary);
-    letter-spacing: var(--tracking-meta);
   }
 
   .list-section {
