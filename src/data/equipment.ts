@@ -6,11 +6,14 @@
 
 import type { ImageMetadata } from 'astro';
 
-import jblSpeakers from '../assets/isseum_JBL_speakers.jpeg';
-import smartTv from '../assets/isseum_100_tv.jpeg';
-import chair from '../assets/isseum_chair.jpg';
-import table from '../assets/isseum_table.jpg';
-import sofa from '../assets/isseum_sofa.jpeg';
+import jblSpeakers from '../assets/jbl_speakers.jpg';
+import smartTv from '../assets/samsung_smart_tv.jpg';
+import chair from '../assets/basic_chair.jpg';
+import table from '../assets/portable_table.jpg';
+import sofa from '../assets/sofa_and_lounge_chair.jpg';
+import podium from '../assets/podium.jpg';
+import mic from '../assets/shure_mic.jpg';
+import wifi from '../assets/wifi.jpg';
 
 export const CATEGORIES = ['전체', '음향', '영상', '가구', '기타'] as const;
 export type Category = (typeof CATEGORIES)[number];
@@ -42,17 +45,31 @@ export type EquipmentItem = {
 export const equipment: EquipmentItem[] = [
   {
     category: '음향',
-    name: 'JBL 6채널 입체 음향 시스템 & 슈어 무선 마이크',
+    name: 'JBL 6채널 입체 음향 시스템',
     req: '상시 세팅',
-    desc: 'JBL 6채널 스피커가 공간 전체에 고르게 소리를 채웁니다. SHURE 무선 마이크를 함께 운용해 강연·북토크처럼 진행자와 게스트가 함께 말하는 구성에 적합합니다.',
-    spec: 'JBL 6채널 · 슈어 무선 마이크',
-    qty: '무선 마이크 4채널',
+    desc: 'JBL 6채널 스피커가 공간 전체에 고르게 소리를 채웁니다. 메인 홀 전 영역에 분산 배치되어 어느 좌석에서도 음압이 균일합니다.',
+    spec: 'JBL 6채널 · 전 영역 분산 배치',
+    qty: '6채널',
     place: '메인 홀 (스피커 전 영역 분산)',
-    slot: 'JBL 음향 시스템 & SHURE 마이크 (1800×1200)',
+    slot: 'JBL 음향 시스템 (1800×1200)',
     src: jblSpeakers,
     alt: '벽걸이형 JBL 스피커 한 쌍',
     fit: 'contain',
-    summary: { name: 'JBL 6채널 입체 음향 시스템', spec: 'SHURE 무선 마이크 포함' },
+    summary: { name: 'JBL 6채널 입체 음향 시스템', spec: '공간 전 영역 분산 배치' },
+  },
+  {
+    category: '음향',
+    name: '슈어(SHURE) 무선 마이크',
+    req: '상시 세팅',
+    desc: '강연·북토크처럼 진행자와 게스트가 함께 말하는 구성에 적합합니다. 4채널을 동시에 운용할 수 있어 패널 토크나 Q&A 진행에도 여유가 있습니다.',
+    spec: 'SHURE 무선 · 4채널 동시 운용',
+    qty: '4채널',
+    place: '메인 홀',
+    slot: 'SHURE 무선 마이크 (1800×1200)',
+    src: mic,
+    alt: '슈어 무선 핸드 마이크',
+    fit: 'contain',
+    summary: { name: '슈어 무선 마이크', spec: '4채널 동시 운용' },
   },
   {
     category: '영상',
@@ -119,6 +136,9 @@ export const equipment: EquipmentItem[] = [
     qty: '2개',
     place: '메인 홀',
     slot: '강연대 (1800×1200)',
+    src: podium,
+    alt: '이동식 강연대',
+    fit: 'contain',
     summary: { name: '강연대', spec: '이동식 · 노트북 거치 가능' },
   },
   {
@@ -129,7 +149,10 @@ export const equipment: EquipmentItem[] = [
     spec: '기가 인터넷',
     qty: '-',
     place: '전 영역',
-    slot: '초고속 기가 Wi-Fi (1800×1200)',
+    slot: '초고속 와이파이 (1800×1200)',
+    src: wifi,
+    alt: '초고속 와이파이',
+    fit: 'contain',
     summary: { name: '초고속 기가 Wi-Fi', spec: '행사 전용 분리 회선' },
   },
 ];
