@@ -133,6 +133,10 @@
   --measure-display: 24em;
   --measure-body: 36em;
   --measure-lead: 62em;
+  /* Subpage hero lead. em-based measures only scale with the type if the
+     measured element carries the fluid font-size — see PageHero. ~42 Korean
+     characters per line, within the comfortable range. */
+  --measure-hero-lead: 42em;
 
   /* ---------- Line & radius ---------- */
   --border-hairline: 1px solid var(--border);

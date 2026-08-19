@@ -57,7 +57,12 @@ const hasLead = Boolean(lead) || Astro.slots.has('lead');
   }
 
   .hero__lead {
-    max-width: var(--measure-body);
+    /* The fluid lead size is declared here as well as on .lead, so the em-based
+       max-width resolves against the growing type rather than the 16px root.
+       Without this the measure is pinned at 576px and the paragraph appears to
+       shrink as the viewport widens. */
+    font-size: var(--text-lead);
+    max-width: var(--measure-hero-lead);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
