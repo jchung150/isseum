@@ -151,5 +151,11 @@
   --ratio-hero: 16 / 7.6;
   --ratio-card: 4 / 5;
   --ratio-media: 3 / 2;
+  /* Equipment photos are a MIXED set: four portrait 3:4 (speaker, mic, chair,
+     podium) and four landscape 4:3 (TV, table, sofa, wifi). A square frame is
+     the symmetric compromise — it crops 25% off either orientation, and the
+     subjects are centred product shots that survive that. A 4:3 frame instead
+     clips 44% of height off the portraits, cutting chair legs and podium base. */
+  --ratio-equipment: 1 / 1;
   --ratio-map: 16 / 10;
 }

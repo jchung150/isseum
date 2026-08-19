@@ -15,8 +15,7 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
 >
   <PageHero eyebrow="EQUIPMENT & PROPS" 
     title="보유 장비"
-    lead="이씀에는 상시 이용 가능한 음향·영상 장비와 가구가 준비되어 있습니다. 
-    대관료에 모두 포함되어 있으며, 세팅이 필요한 품목은 이용일 3일 전까지 사전 요청해 주시면 미리 준비해 드립니다."
+    lead="이씀에는 상시 이용 가능한 음향·영상 장비와 가구가 준비되어 있습니다. 대관료에 모두 포함되어 있으며, 세팅이 필요한 품목은 이용일 3일 전까지 사전 요청해 주시면 미리 준비해 드립니다."
   />
 
   <section class="container filters">
@@ -36,12 +35,13 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
                     class:list={['row__photo', `row__photo--${item.fit ?? 'cover'}`]}
                     src={item.src}
                     alt={item.alt ?? item.name}
-                    widths={[400, 800]}
-                    sizes="(min-width: 900px) 45vw, 100vw"
+                    widths={[400, 640, 900, 1280]}
+                    sizes="(min-width: 1440px) 630px, (min-width: 900px) 44vw, 92vw"
+                    style={`object-position: ${item.focus ?? 'center'};`}
                     loading="lazy"
                   />
                 ) : (
-                  <Placeholder label={item.slot} ratio="var(--ratio-media)" align="end" />
+                  <Placeholder label={item.slot} ratio="var(--ratio-equipment)" align="end" />
                 )
               }
             </div>
@@ -169,7 +169,7 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
 
   .row :global(.row__photo) {
     width: 100%;
-    aspect-ratio: var(--ratio-media);
+    aspect-ratio: var(--ratio-equipment);
     border: var(--border-hairline);
     background: var(--surface);
   }
@@ -285,11 +285,11 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
      stays correct. design/COMPONENTS.md §30. */
   @media (min-width: 900px) {
     .row {
-      grid-template-columns: 1.28fr 1fr;
+      grid-template-columns: 1fr 1.1fr;
     }
 
     .row.is-alt {
-      grid-template-columns: 1fr 1.28fr;
+      grid-template-columns: 1.1fr 1fr;
     }
 
     .row.is-alt .row__media {
@@ -300,8 +300,10 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
       order: 1;
     }
 
-    .row__inner {
-      padding-top: var(--space-2);
+    /* The square photo is much taller than the text block, so centre the body
+       against it. Top-aligning left a large void under the spec table. */
+    .row {
+      align-items: center;
     }
   }
 </style>

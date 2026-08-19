@@ -39,7 +39,7 @@ export const heroSlides: HeroSlide[] = [
 export const hero = {
   eyebrow: 'PRIVATE MULTI CULTURE SPACE',
   /** `brand` renders as the <em> treatment: italics suppressed, colour shifted one step. */
-  headline: '모든 존재에는 저마다의 아름다움이 있다.',
+  headline: '오래 머무르고 싶은 공간.',
   brand: '“이씀”',
   body: [
     '이씀은 홍대입구역 1번 출구에서 5분 거리에 위치한, 차분하고 프라이빗한 약 60평 규모의 가변형 복합문화공간입니다. 기업의 비전을 쌓아 올리는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드의 팬덤을 형성하는 팝업스토어와 팬미팅까지. 주최자가 원하는 모든 형태의 이야기를 완벽한 무대로 구현해 드립니다.',

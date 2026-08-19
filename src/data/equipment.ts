@@ -34,11 +34,18 @@ export type EquipmentItem = {
   src?: ImageMetadata;
   alt?: string;
   /**
-   * 'contain' suits product cut-outs shot on a plain background: the whole
-   * item stays visible instead of being cropped by the 3:2 frame. Switch to
-   * 'cover' (the default) once real in-situ photography replaces these.
+   * Defaults to 'cover', which is right for the current in-situ photography —
+   * all shot 4000×3000, matching --ratio-equipment exactly, so nothing is
+   * cropped. Only set 'contain' for a product cut-out on a plain background,
+   * where letterboxing beats cropping.
    */
   fit?: 'cover' | 'contain';
+  /**
+   * CSS object-position. The frame is square and the set is mixed portrait /
+   * landscape, so every photo loses 25% on one axis — nudge this if a crop
+   * clips the subject ('center top', '40% center', …).
+   */
+  focus?: string;
   summary: { name: string; spec: string };
 };
 
@@ -54,7 +61,6 @@ export const equipment: EquipmentItem[] = [
     slot: 'JBL 음향 시스템 (1800×1200)',
     src: jblSpeakers,
     alt: '벽걸이형 JBL 스피커 한 쌍',
-    fit: 'contain',
     summary: { name: 'JBL 6채널 입체 음향 시스템', spec: '공간 전 영역 분산 배치' },
   },
   {
@@ -68,7 +74,6 @@ export const equipment: EquipmentItem[] = [
     slot: 'SHURE 무선 마이크 (1800×1200)',
     src: mic,
     alt: '슈어 무선 핸드 마이크',
-    fit: 'contain',
     summary: { name: '슈어 무선 마이크', spec: '4채널 동시 운용' },
   },
   {
@@ -82,7 +87,6 @@ export const equipment: EquipmentItem[] = [
     slot: '100인치 삼성 스마트 TV (1800×1200)',
     src: smartTv,
     alt: '메인 홀 벽면에 설치된 100인치 스마트 TV',
-    fit: 'contain',
     summary: { name: '100인치 삼성 4K 스마트 TV', spec: '미러링 & HDMI 지원' },
   },
   {
@@ -96,7 +100,6 @@ export const equipment: EquipmentItem[] = [
     slot: '기본 의자 (1800×1200)',
     src: chair,
     alt: '등판과 좌판에 패딩이 있는 기본 의자',
-    fit: 'contain',
     summary: { name: '기본 의자', spec: '등·좌판 패딩 · 자유로운 레이아웃 구성' },
   },
   {
@@ -110,7 +113,6 @@ export const equipment: EquipmentItem[] = [
     slot: '이동식 다목적 테이블 (1800×1200)',
     src: table,
     alt: '바퀴가 달린 흰색 접이식 다목적 테이블',
-    fit: 'contain',
     summary: { name: '이동식 다목적 테이블', spec: '퍼시스 2인·3인용 접이식 · 바퀴 이동' },
   },
   {
@@ -124,7 +126,6 @@ export const equipment: EquipmentItem[] = [
     slot: '3인용 소파 & 1인용 라운지 체어 (1800×1200)',
     src: sofa,
     alt: '원목 프레임의 3인용 패브릭 소파',
-    fit: 'contain',
     summary: { name: '3인용 소파 & 1인용 라운지 체어', spec: '톤앤매너 맞춤 커버 교체 가능' },
   },
   {
@@ -138,7 +139,6 @@ export const equipment: EquipmentItem[] = [
     slot: '강연대 (1800×1200)',
     src: podium,
     alt: '이동식 강연대',
-    fit: 'contain',
     summary: { name: '강연대', spec: '이동식 · 노트북 거치 가능' },
   },
   {
@@ -152,7 +152,6 @@ export const equipment: EquipmentItem[] = [
     slot: '초고속 와이파이 (1800×1200)',
     src: wifi,
     alt: '초고속 와이파이',
-    fit: 'contain',
     summary: { name: '초고속 기가 Wi-Fi', spec: '행사 전용 분리 회선' },
   },
 ];
