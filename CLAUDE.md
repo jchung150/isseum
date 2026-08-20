@@ -233,10 +233,25 @@ build produces static files and Cloudflare serves them from its edge.
 
 ### Deploy gotcha
 
-**Run `npm ci` locally after adding any dependency, before pushing.** CI installs with
-`npm ci`, which hard-fails if `package-lock.json` and `package.json` disagree. A normal
-`npm install` papers over that, so the build can break while everything works locally —
-this happened once, with sharp's `@emnapi/*` transitive deps missing from the lock.
+**After adding any dependency, verify the lock against Linux before pushing:**
+
+```bash
+npm ci --dry-run --os=linux --cpu=x64
+```
+
+CI installs with `npm ci`, which hard-fails if `package-lock.json` and `package.json`
+disagree. A plain `npm ci` on macOS is **not** a sufficient check — it only resolves
+darwin-arm64 optional deps, so a lock missing Linux entries passes locally and breaks in
+CI. This has now bitten twice, both times sharp's `@emnapi/*` transitive deps.
+
+Incremental `npm install <pkg>` is what drops them. If the Linux check fails:
+
+```bash
+rm -rf node_modules package-lock.json && npm install
+```
+
+A full regenerate restores the cross-platform optional tree. Confirm with
+`grep -c emnapi package-lock.json` — it should be 20, not 15.
 
 ---
 
