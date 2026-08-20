@@ -1,0 +1,1143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import BulletList from '../components/BulletList.astro';
+import {
+  MAX_GUESTS,
+  MIN_HOURS,
+  OPEN_HOUR,
+  CLOSE_HOUR,
+  addOns,
+  optionsIntro,
+  privacy,
+  referralSources,
+  signature,
+  steps,
+} from '../data/booking';
+import { business } from '../config/site';
+import { policyGroups, refundSection, lastRevised } from '../data/rules';
+
+// The regulations shown in step 2 come from the same source as /rules, so the
+// two can never state different policies.
+let itemCounter = 0;
+const numberedGroups = policyGroups.map((group) => ({
+  ...group,
+  items: group.items.map((item) => ({ ...item, n: ++itemCounter })),
+}));
+const closingItemNumber = itemCounter + 1;
+
+const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
+  const h = OPEN_HOUR + i;
+  return { value: `${String(h).padStart(2, '0')}:00`, label: `${h}:00` };
+});
+---
+
+<BaseLayout
+  title="대관 예약 신청"
+  description="이씀 대관 예약 신청서. 기본 정보와 이용 규정 동의, 추가 옵션을 작성해 주시면 영업일 기준 1일 내에 회신드립니다."
+  noindex
+>
+  <PageHero
+    eyebrow="BOOKING REQUEST"
+    title="대관 예약 신청"
+    lead="아래 내용을 작성해 주시면 영업일 기준 1일 내에 담당자가 연락드립니다. 최종 금액과 예약 확정은 확인 후 안내됩니다."
+  />
+
+  <section class="container form-section">
+    {/* Progress. Hidden until JS turns the form into a wizard — without JS all
+        four sections are simply visible in order, which still works. */}
+    <ol class="progress" data-progress hidden>
+      {
+        steps.map((step, i) => (
+          <li class="progress__item" data-progress-item={i}>
+            <span class="mono-num progress__num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="progress__label">{step.label}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <form class="form" method="POST" action="/api/booking" data-form novalidate>
+      {/* ---------------- 1. 기본 정보 ---------------- */}
+      <fieldset class="step" data-step="0">
+        <legend class="step__legend">
+          <span class="eyebrow">STEP 01</span>
+          <span class="step__title">행사장 대관 예약자 기본 정보</span>
+        </legend>
+        <p class="step__hint">예약하시는 분의 기본 정보를 입력해 주세요.</p>
+
+        <div class="grid">
+          <p class="field">
+            <label class="field__label" for="name">성함 <span class="req">*</span></label>
+            <input class="input" type="text" id="name" name="name" required autocomplete="name" placeholder="홍길동" />
+          </p>
+          <p class="field">
+            <label class="field__label" for="org">소속</label>
+            <input class="input" type="text" id="org" name="org" autocomplete="organization" placeholder="소속 단체 (선택)" />
+          </p>
+          <p class="field">
+            <label class="field__label" for="phone">전화번호 <span class="req">*</span></label>
+            <input class="input" type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel" placeholder="010-0000-0000" />
+          </p>
+          <p class="field">
+            <label class="field__label" for="email">이메일 <span class="req">*</span></label>
+            <input class="input" type="email" id="email" name="email" required autocomplete="email" placeholder="example@email.com" />
+          </p>
+          <p class="field">
+            <label class="field__label" for="date">대관 날짜 <span class="req">*</span></label>
+            <input class="input" type="date" id="date" name="date" required />
+          </p>
+          <p class="field">
+            <label class="field__label" for="guests">
+              총 사용 인원 <span class="req">*</span>
+            </label>
+            <input class="input" type="number" id="guests" name="guests" required min="1" max={MAX_GUESTS} inputmode="numeric" placeholder="명" />
+            <span class="field__note">스태프와 게스트를 모두 포함합니다. 최대 {MAX_GUESTS}인.</span>
+          </p>
+        </div>
+
+        <fieldset class="subfield">
+          <legend class="field__label">
+            대관 시간 <span class="req">*</span>
+            <span class="field__note">최소 {MIN_HOURS}시간</span>
+          </legend>
+          <div class="timerange">
+            <label class="visually-hidden" for="start">시작 시간</label>
+            <select class="input" id="start" name="start" required>
+              <option value="">시작</option>
+              {times.map((t) => <option value={t.value}>{t.label}</option>)}
+            </select>
+            <span class="timerange__sep" aria-hidden="true">~</span>
+            <label class="visually-hidden" for="end">종료 시간</label>
+            <select class="input" id="end" name="end" required>
+              <option value="">종료</option>
+              {times.map((t) => <option value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
+          <span class="field__note" data-duration aria-live="polite"></span>
+        </fieldset>
+
+        <p class="field">
+          <label class="field__label" for="purpose">대관 설명 <span class="req">*</span></label>
+          <textarea class="input input--area" id="purpose" name="purpose" required rows="3"
+            placeholder="예) 연말 모임, 워크숍, 팝업스토어, NGO 행사, 크리스마스 파티 등"></textarea>
+        </p>
+
+        <fieldset class="subfield">
+          <legend class="field__label">
+            유입 경로 <span class="req">*</span>
+            <span class="field__note">복수 선택 가능</span>
+          </legend>
+          <div class="chips">
+            {
+              referralSources.map((source) => (
+                <label class="chip">
+                  <input type="checkbox" name="referral" value={source} />
+                  <span>{source}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+      </fieldset>
+
+      {/* ---------------- 2. 이용 규정 ---------------- */}
+      <fieldset class="step" data-step="1">
+        <legend class="step__legend">
+          <span class="eyebrow">STEP 02</span>
+          <span class="step__title">이용 규정 동의</span>
+        </legend>
+        <p class="step__hint">
+          아래 규정을 확인해 주세요. 최종 개정 {lastRevised}
+        </p>
+
+        <div class="policy" tabindex="0" role="region" aria-label="대관 규정 전문">
+          {
+            numberedGroups.map((group) => (
+              <section class="policy__group">
+                <h3 class="policy__group-title">{group.title}</h3>
+                {group.items.map((item) => (
+                  <article class="policy__item">
+                    <h4 class="policy__item-title">
+                      <span class="policy__n">{item.n}</span>
+                      {item.title}
+                    </h4>
+                    <BulletList lines={item.lines} gap="10px" />
+                  </article>
+                ))}
+              </section>
+            ))
+          }
+
+          <section class="policy__group">
+            <h3 class="policy__group-title">{refundSection.title}</h3>
+            <ul class="tiers">
+              {
+                refundSection.tiers.map((tier) => (
+                  <li class="tier">
+                    <span>{tier.when}</span>
+                    <span class="tier__rate">{tier.rate}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="policy__item">
+              <BulletList lines={refundSection.exceptions} gap="10px" />
+            </div>
+            <article class="policy__item">
+              <h4 class="policy__item-title">
+                <span class="policy__n">{closingItemNumber}</span>
+                {refundSection.closingItem.title}
+              </h4>
+              <p class="prose">{refundSection.closingItem.body}</p>
+            </article>
+          </section>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" name="agreeRules" required />
+          <span>위 대관 규정 및 환불 정책을 모두 확인하였으며, 이에 동의합니다. <span class="req">*</span></span>
+        </label>
+
+        <div class="sig">
+          <p class="field__label">{signature.title} <span class="req">*</span></p>
+          <p class="field__note">{signature.body}</p>
+
+          {/* Canvas is revealed by JS; the text input below always works. */}
+          <div class="sig__pad" data-sig hidden>
+            <canvas class="sig__canvas" data-sig-canvas width="640" height="200"
+              aria-label="서명란 — 마우스나 손가락으로 서명해 주세요"></canvas>
+            <div class="sig__actions">
+              <button type="button" class="sig__clear" data-sig-clear>{signature.clearLabel}</button>
+            </div>
+          </div>
+          <input type="hidden" name="signatureImage" data-sig-value />
+
+          {/* Only reachable without JS, where there is no canvas to draw on.
+              JS removes this the moment the pad initialises. */}
+          <p class="field" data-sig-fallback>
+            <label class="field__label field__label--sm" for="signatureName">{signature.typeLabel}</label>
+            <input class="input" type="text" id="signatureName" name="signatureName" placeholder="성함을 입력해 주세요" autocomplete="off" />
+            <span class="field__note">{signature.fallbackHint}</span>
+          </p>
+        </div>
+      </fieldset>
+
+      {/* ---------------- 3. 추가 옵션 ---------------- */}
+      <fieldset class="step" data-step="2">
+        <legend class="step__legend">
+          <span class="eyebrow">STEP 03</span>
+          <span class="step__title">{optionsIntro.title}</span>
+        </legend>
+        <p class="step__hint">{optionsIntro.body}</p>
+        <p class="notice-inline">{optionsIntro.note}</p>
+
+        <div class="options">
+          {
+            addOns.map((addon) => (
+              <label class="option">
+                <input type="checkbox" name="addons" value={addon.title} />
+                <span class="option__body">
+                  <span class="option__head">
+                    <span class="option__title">{addon.title}</span>
+                    <span class="option__price">{addon.price}</span>
+                  </span>
+                  <span class="option__notes">
+                    {addon.notes.map((note) => <span class="option__note">{note}</span>)}
+                  </span>
+                </span>
+              </label>
+            ))
+          }
+        </div>
+
+        <p class="field">
+          <label class="field__label" for="requests">그 외 요청 사항</label>
+          <textarea class="input input--area" id="requests" name="requests" rows="3"
+            placeholder="필요한 장비, 세팅 요청, 문의 사항 등을 자유롭게 적어 주세요. (선택)"></textarea>
+        </p>
+      </fieldset>
+
+      {/* ---------------- 4. 개인정보 동의 ---------------- */}
+      <fieldset class="step" data-step="3">
+        <legend class="step__legend">
+          <span class="eyebrow">STEP 04</span>
+          <span class="step__title">개인정보 수집·이용 동의</span>
+        </legend>
+
+        <div class="policy policy--privacy" tabindex="0" role="region" aria-label="개인정보 수집·이용 동의 전문">
+          <section class="pblock">
+            <p class="pblock__lead">{privacy.intro}</p>
+            <dl class="pdl">
+              {
+                privacy.collection.map((row) => (
+                  <div class="pdl__row">
+                    <dt>{row.term}</dt>
+                    <dd>{row.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <p class="pblock__note">{privacy.refusal}</p>
+          </section>
+
+          <section class="pblock">
+            <h3 class="pblock__title">{privacy.delegationTitle}</h3>
+            <p class="pblock__lead">{privacy.delegationIntro}</p>
+            <dl class="pdl pdl--wide">
+              {
+                privacy.delegation.map((row) => (
+                  <div class="pdl__row">
+                    <dt>{row.name}</dt>
+                    <dd>{row.task}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <p class="pblock__note">{privacy.delegationNote}</p>
+          </section>
+
+          <section class="pblock">
+            <h3 class="pblock__title">{privacy.rightsTitle}</h3>
+            <p class="pblock__lead">{privacy.rights}</p>
+            <p class="pblock__contact">
+              {privacy.officer}<br />{business.email} · {business.phone}
+            </p>
+          </section>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" name="agreePrivacy" required />
+          <span>{privacy.consentLabel}</span>
+        </label>
+      </fieldset>
+
+      {/* Honeypot — real people never fill this. */}
+      <p class="honeypot" aria-hidden="true">
+        <label for="company_website">웹사이트</label>
+        <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off" />
+      </p>
+
+      <p class="form__error" role="alert" data-error hidden></p>
+
+      <div class="nav">
+        <button type="button" class="btn btn--ghost" data-prev hidden>이전</button>
+        <button type="button" class="btn btn--next" data-next hidden>다음</button>
+        <button type="submit" class="btn btn--submit" data-submit>예약 신청 제출</button>
+      </div>
+    </form>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+
+  if (form) {
+    const stepEls = Array.from(form.querySelectorAll<HTMLFieldSetElement>('[data-step]'));
+    const progress = document.querySelector<HTMLElement>('[data-progress]');
+    const progressItems = Array.from(document.querySelectorAll<HTMLElement>('[data-progress-item]'));
+    const prevBtn = form.querySelector<HTMLButtonElement>('[data-prev]');
+    const nextBtn = form.querySelector<HTMLButtonElement>('[data-next]');
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const errorEl = form.querySelector<HTMLElement>('[data-error]');
+    const durationEl = form.querySelector<HTMLElement>('[data-duration]');
+    const startSel = form.querySelector<HTMLSelectElement>('#start');
+    const endSel = form.querySelector<HTMLSelectElement>('#end');
+
+    const MIN_HOURS = 3;
+
+    // ?step=2 opens straight to a step. Handy for reviewing the later steps
+    // without filling the earlier ones; harmless in production since the
+    // submit handler re-validates every step regardless.
+    const requested = Number(new URLSearchParams(location.search).get('step'));
+    let step =
+      Number.isInteger(requested) && requested >= 1 && requested <= stepEls.length
+        ? requested - 1
+        : 0;
+
+    /* ---------- wizard ---------- */
+
+    const render = () => {
+      stepEls.forEach((el, i) => {
+        el.hidden = i !== step;
+      });
+      progressItems.forEach((el, i) => {
+        el.classList.toggle('is-active', i === step);
+        el.classList.toggle('is-done', i < step);
+      });
+      if (prevBtn) prevBtn.hidden = step === 0;
+      if (nextBtn) nextBtn.hidden = step === stepEls.length - 1;
+      if (submitBtn) submitBtn.hidden = step !== stepEls.length - 1;
+      if (errorEl) errorEl.hidden = true;
+      form.querySelector<HTMLElement>(`[data-step="${step}"]`)?.scrollIntoView({ block: 'nearest' });
+    };
+
+    const showError = (message: string, field?: HTMLElement) => {
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.hidden = false;
+      }
+      field?.focus();
+    };
+
+    /** Validates only the fields inside the current step. */
+    const validateStep = () => {
+      const current = stepEls[step];
+      if (!current) return true;
+
+      for (const el of Array.from(
+        current.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+          'input, select, textarea'
+        )
+      )) {
+        // Referral is a checkbox group: at least one, but any number.
+        if (el.type === 'checkbox' && el.name === 'referral') {
+          const group = current.querySelectorAll<HTMLInputElement>('input[name="referral"]');
+          if (!Array.from(group).some((c) => c.checked)) {
+            showError('유입 경로를 하나 이상 선택해 주세요.', el);
+            return false;
+          }
+          continue;
+        }
+        if (!el.checkValidity()) {
+          showError(el.validationMessage || '입력값을 확인해 주세요.', el);
+          return false;
+        }
+      }
+
+      if (step === 0 && !checkDuration(true)) return false;
+      if (step === 1 && !checkSignature(true)) return false;
+      return true;
+    };
+
+    /* ---------- duration: minimum 3 hours ---------- */
+
+    const hourOf = (v: string) => Number(v.split(':')[0]);
+
+    function checkDuration(report = false) {
+      if (!startSel || !endSel) return true;
+      const s = startSel.value;
+      const e = endSel.value;
+      if (!s || !e) {
+        if (durationEl) durationEl.textContent = '';
+        return true;
+      }
+      const hours = hourOf(e) - hourOf(s);
+      if (hours <= 0) {
+        if (durationEl) durationEl.textContent = '종료 시간이 시작 시간보다 늦어야 합니다.';
+        if (report) showError('종료 시간이 시작 시간보다 늦어야 합니다.', endSel);
+        return false;
+      }
+      if (hours < MIN_HOURS) {
+        if (durationEl) durationEl.textContent = `${hours}시간 — 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`;
+        if (report) showError(`대관은 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`, endSel);
+        return false;
+      }
+      if (durationEl) durationEl.textContent = `총 ${hours}시간`;
+      return true;
+    }
+
+    startSel?.addEventListener('change', () => checkDuration());
+    endSel?.addEventListener('change', () => checkDuration());
+
+    /* ---------- signature ---------- */
+
+    const pad = form.querySelector<HTMLElement>('[data-sig]');
+    const canvas = form.querySelector<HTMLCanvasElement>('[data-sig-canvas]');
+    const sigValue = form.querySelector<HTMLInputElement>('[data-sig-value]');
+    let sigName = form.querySelector<HTMLInputElement>('#signatureName');
+    const sigFallback = form.querySelector<HTMLElement>('[data-sig-fallback]');
+    let hasStrokes = false;
+
+    if (pad && canvas) {
+      pad.hidden = false;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        // The typed-name field exists only for the no-JS path. With a working
+        // canvas there is nothing to fall back from, so drop it entirely.
+        sigFallback?.remove();
+        sigName = null;
+        // Match the backing store to the display size so strokes aren't blurry.
+        const scale = window.devicePixelRatio || 1;
+        const cssW = canvas.width;
+        const cssH = canvas.height;
+        canvas.width = cssW * scale;
+        canvas.height = cssH * scale;
+        canvas.style.aspectRatio = `${cssW} / ${cssH}`;
+        ctx.scale(scale, scale);
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#1c1c1a';
+
+        let drawing = false;
+        const pos = (event: PointerEvent) => {
+          const r = canvas.getBoundingClientRect();
+          return {
+            x: ((event.clientX - r.left) / r.width) * cssW,
+            y: ((event.clientY - r.top) / r.height) * cssH,
+          };
+        };
+
+        canvas.addEventListener('pointerdown', (event) => {
+          drawing = true;
+          hasStrokes = true;
+          canvas.setPointerCapture(event.pointerId);
+          const p = pos(event);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+        });
+        canvas.addEventListener('pointermove', (event) => {
+          if (!drawing) return;
+          event.preventDefault();
+          const p = pos(event);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        });
+        const stop = () => {
+          drawing = false;
+        };
+        canvas.addEventListener('pointerup', stop);
+        canvas.addEventListener('pointercancel', stop);
+        canvas.addEventListener('pointerleave', stop);
+
+        form.querySelector('[data-sig-clear]')?.addEventListener('click', () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          hasStrokes = false;
+          if (sigValue) sigValue.value = '';
+        });
+      }
+    }
+
+    function checkSignature(report = false) {
+      const typed = sigName?.value.trim() ?? '';
+      if (hasStrokes || typed) {
+        // Serialize the drawing only if there is one.
+        if (sigValue) sigValue.value = hasStrokes && canvas ? canvas.toDataURL('image/png') : '';
+        return true;
+      }
+      if (report) {
+        showError(
+          sigName ? '서명하거나 성함을 입력해 주세요.' : '이용 규정 동의 서명을 해주세요.',
+          sigName ?? canvas ?? undefined
+        );
+      }
+      return false;
+    }
+
+    /* ---------- nav ---------- */
+
+    nextBtn?.addEventListener('click', () => {
+      if (!validateStep()) return;
+      step = Math.min(step + 1, stepEls.length - 1);
+      render();
+    });
+    prevBtn?.addEventListener('click', () => {
+      step = Math.max(step - 1, 0);
+      render();
+    });
+
+    form.addEventListener('submit', (event) => {
+      // Validate every step, not just the visible one.
+      for (let i = 0; i < stepEls.length; i++) {
+        step = i;
+        render();
+        if (!validateStep()) {
+          event.preventDefault();
+          return;
+        }
+      }
+      checkSignature();
+      // TODO: endpoint not built yet — stop here so nothing 404s during review.
+      event.preventDefault();
+      showError('제출 기능은 아직 연결되지 않았습니다. (Turnstile · 메일 · 시트 연동 예정)');
+    });
+
+    if (progress) progress.hidden = false;
+    render();
+  }
+</script>
+
+<style>
+  .form-section {
+    padding-top: var(--space-header-gap);
+    padding-bottom: var(--space-section);
+  }
+
+  /* ---------- progress ---------- */
+  .progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--border);
+    border: var(--border-hairline);
+    margin-bottom: clamp(28px, 3.4vw, 44px);
+  }
+
+  .progress__item {
+    flex: 1 1 140px;
+    background: var(--bg);
+    padding: 14px var(--space-4);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+  }
+
+  .progress__item.is-active {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .progress__item.is-done {
+    color: var(--text-body);
+  }
+
+  .progress__label {
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+  }
+
+  /* ---------- form shell ---------- */
+  .form {
+    max-width: 58em;
+  }
+
+  .step {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .step__legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-bottom: var(--space-5);
+    border-bottom: var(--border-emphasis);
+    width: 100%;
+  }
+
+  .step__title {
+    font-family: var(--font-serif);
+    font-size: var(--display-group);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* One rhythm for every direct child of a step, instead of each block
+     carrying its own margin-top — that left 대관 설명 and 그 외 요청 사항
+     flush against whatever preceded them. */
+  .step > * + * {
+    margin-top: var(--space-6);
+  }
+
+  .step__hint {
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  /* ---------- fields ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field__label {
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .field__label--sm {
+    font-weight: 500;
+    color: var(--text-body);
+  }
+
+  .req {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .field__note {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .input {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    letter-spacing: var(--tracking-body);
+    background: var(--bg);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    width: 100%;
+    transition: border-color var(--transition-fast);
+  }
+
+  .input:hover {
+    border-color: var(--text-tertiary);
+  }
+
+  .input:focus {
+    border-color: var(--ink);
+    outline: none;
+  }
+
+  .input:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  .input--area {
+    resize: vertical;
+    line-height: var(--leading-compact);
+  }
+
+  .subfield {
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .timerange {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: 22em;
+  }
+
+  .timerange__sep {
+    color: var(--text-secondary);
+  }
+
+  /* ---------- referral chips ---------- */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+
+  .chip {
+    position: relative;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+
+  .chip span {
+    display: inline-block;
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    padding: 10px 18px;
+    font-size: var(--text-ui-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-body);
+    cursor: pointer;
+    transition:
+      border-color var(--transition-fast),
+      background var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .chip input:checked + span {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* ---------- policy scroll box ---------- */
+  .policy {
+    max-height: 420px;
+    overflow-y: auto;
+    border: var(--border-hairline);
+    background: var(--surface);
+    padding: var(--space-notice);
+  }
+
+  .policy--privacy {
+    max-height: 460px;
+  }
+
+  /* Blocks inside the consent box, so the three sections read as separate
+     things rather than one wall of text. */
+  .pblock + .pblock {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: var(--border-hairline);
+  }
+
+  .pblock__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    margin-bottom: var(--space-3);
+  }
+
+  .pblock__lead {
+    font-size: var(--text-ui);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .pblock__note {
+    margin-top: var(--space-3);
+    font-size: var(--text-meta);
+    line-height: var(--leading-compact);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .pblock__contact {
+    margin-top: var(--space-3);
+    font-size: var(--text-ui);
+    line-height: var(--leading-compact);
+    color: var(--text-strong);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .policy__group + .policy__group {
+    margin-top: var(--space-8);
+  }
+
+  .policy__group-title {
+    font-family: var(--font-serif);
+    font-size: var(--display-notice);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border-emphasis);
+  }
+
+  .policy__item {
+    padding: var(--space-5) 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .policy__item-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    margin-bottom: var(--space-3);
+  }
+
+  .policy__n {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border: var(--border-emphasis);
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+  }
+
+  .tiers {
+    margin-top: var(--space-4);
+    border-top: var(--border-hairline);
+  }
+
+  .tier {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 10px 0;
+    border-bottom: var(--border-hairline);
+    font-size: var(--text-ui);
+    color: var(--text-body);
+  }
+
+  .tier__rate {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .pdl {
+    margin-top: var(--space-4);
+    border-top: var(--border-hairline);
+    font-size: var(--text-ui);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .pdl__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .pdl dt {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .pdl dd {
+    color: var(--text-strong);
+    line-height: var(--leading-compact);
+  }
+
+  @media (min-width: 560px) {
+    .pdl__row {
+      grid-template-columns: 88px 1fr;
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+    .pdl--wide .pdl__row {
+      grid-template-columns: 132px 1fr;
+    }
+  }
+
+  /* ---------- consent ---------- */
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: var(--border-emphasis);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-body);
+    cursor: pointer;
+  }
+
+  .consent input {
+    width: 20px;
+    height: 20px;
+    margin: 1px 0 0;
+    flex: none;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* ---------- signature ---------- */
+  .sig {
+    padding-top: var(--space-6);
+    border-top: var(--border-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .sig__pad {
+    margin-top: var(--space-3);
+  }
+
+  .sig__canvas {
+    width: 100%;
+    max-width: 32em;
+    display: block;
+    background: var(--bg);
+    border: var(--border-hairline);
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .sig__actions {
+    display: flex;
+    margin-top: var(--space-2);
+  }
+
+  .sig__clear {
+    background: none;
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--text-body);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+  }
+
+  .sig__clear:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .sig .field {
+    margin-top: var(--space-5);
+    max-width: 24em;
+  }
+
+  /* ---------- options ---------- */
+  .notice-inline {
+    padding: var(--space-4);
+    background: var(--surface);
+    border: var(--border-hairline);
+    font-size: var(--text-meta);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: var(--border-hairline);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+  }
+
+  .option:hover {
+    border-color: var(--text-tertiary);
+  }
+
+  .option:has(input:checked) {
+    border-color: var(--ink);
+    background: var(--surface);
+  }
+
+  .option input {
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    flex: none;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+
+  .option__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .option__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .option__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+  }
+
+  .option__price {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .option__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .option__note {
+    font-size: var(--text-meta);
+    line-height: var(--leading-compact);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  /* ---------- honeypot / errors / nav ---------- */
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__error {
+    margin-top: var(--space-6);
+    padding: var(--space-4);
+    border: var(--border-emphasis);
+    background: var(--surface);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-body);
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: clamp(32px, 4vw, 48px);
+    padding-top: var(--space-6);
+    border-top: var(--border-hairline);
+  }
+
+  .btn {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+    padding: 15px var(--space-8);
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .btn--next,
+  .btn--submit {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .btn--next:hover,
+  .btn--submit:hover {
+    background: var(--ink-hover);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .btn--ghost:hover {
+    background: var(--surface);
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

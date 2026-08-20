@@ -29,6 +29,17 @@ const groupsWithItems = numbered.map((group) => ({
 }));
 const closingItemNumber = itemCounter + 1;
 
+// Seven refund tiers now, so the fade is interpolated across a four-step ramp
+// rather than authored per tier — the ramp stays even if a tier is added.
+const REFUND_RAMP = [
+  'var(--ink)',
+  'var(--text-strong)',
+  'var(--text-body)',
+  'var(--text-secondary)',
+];
+const refundTone = (i: number, n: number) =>
+  REFUND_RAMP[Math.round((i / Math.max(n - 1, 1)) * (REFUND_RAMP.length - 1))];
+
 const toc = [
   ...numbered.map((group) => ({ num: group.num, label: group.title, href: `#${group.id}` })),
   { num: refundNum, label: refundSection.title, href: `#${refundSection.id}` },
@@ -99,16 +110,21 @@ const toc = [
           <h2 class="display group__title">{refundSection.title}</h2>
         </div>
 
-        <div class="tiers">
+        <ul class="tiers">
           {
-            refundSection.tiers.map((tier) => (
-              <div class="tier">
-                <p class="tier__when">{tier.when}</p>
-                <p class:list={['tier__rate', `tier__rate--${tier.tone}`]}>{tier.rate}</p>
-              </div>
+            refundSection.tiers.map((tier, i) => (
+              <li class="tier">
+                <span class="tier__when">{tier.when}</span>
+                <span
+                  class="tier__rate"
+                  style={`color: ${refundTone(i, refundSection.tiers.length)};`}
+                >
+                  {tier.rate}
+                </span>
+              </li>
             ))
           }
-        </div>
+        </ul>
 
         <div class="exceptions">
           <p class="eyebrow eyebrow--label exceptions__label">예외 규정 및 주의사항</p>
@@ -298,46 +314,36 @@ const toc = [
   }
 
   /* ---------- Refund ---------- */
+  /* Seven tiers read better as rows than as seven wrapping cards. */
   .tiers {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: var(--border-hairline);
     margin-top: clamp(24px, 3vw, 36px);
+    border-top: var(--border-hairline);
   }
 
   .tier {
-    background: var(--bg);
-    padding: clamp(22px, 2.4vw, 32px) var(--space-6) clamp(26px, 2.8vw, 36px);
     display: flex;
-    flex-direction: column;
-    gap: 14px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: clamp(13px, 1.4vw, 17px) 0;
+    border-bottom: var(--border-hairline);
   }
 
   .tier__when {
-    font-size: var(--text-ui);
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--text-body);
     letter-spacing: var(--tracking-title);
   }
 
-  /* Severity fades rather than turning red — the palette has no accent hue. */
+  /* Severity fades rather than turning red — the palette has no accent hue.
+     Colour comes from refundTone() so the ramp is even across all tiers. */
   .tier__rate {
     font-family: var(--font-serif);
-    font-size: var(--display-figure);
+    font-size: var(--display-sub);
     font-weight: 500;
     letter-spacing: var(--tracking-display);
-  }
-
-  .tier__rate--strong {
-    color: var(--ink);
-  }
-  .tier__rate--medium {
-    color: var(--text-strong);
-  }
-  .tier__rate--muted {
-    color: var(--text-secondary);
   }
 
   .exceptions {

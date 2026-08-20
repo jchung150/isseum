@@ -31,7 +31,7 @@ export const policyGroups: PolicyGroup[] = [
         lines: [
           { label: '이용 시간 — ', text: '대관 시간은 행사 준비 및 철수(정리) 시간을 모두 포함한 시간입니다.' },
           { label: '시간 초과 — ', text: '이용 시간을 초과할 경우, 30분 단위로 추가 요금이 부과됩니다.' },
-          { label: '수용 인원 — ', text: '예약 인원을 초과하여 입실할 경우 사전 고지가 필요하며, 추가 비용이 발생합니다.' },
+          { label: '수용 인원 — ', text: '예약 인원을 초과하여 입실할 경우 사전 고지가 필요합니다.' },
         ],
       },
       {
@@ -65,7 +65,7 @@ export const policyGroups: PolicyGroup[] = [
         lines: [
           {
             label: '주차 안내 — ',
-            text: '대관 시 기계식 주차장 기준 기본 3대 주차가 가능합니다. 기계식 주차장 제한 규격이 있어 SUV 등 일부 대형·RV 차량은 입고가 불가할 수 있으며, 방문객 차량은 인근 유료 주차장 이용을 사전에 안내 부탁드립니다.',
+            text: '대관 시 기계식 주차장 기준 최대 5대 주차가 가능합니다. 기계식 주차장 제한 규격이 있어 SUV 등 일부 대형·RV 차량은 입고가 불가할 수 있으며, 방문객 차량은 인근 유료 주차장 이용을 사전에 안내 부탁드립니다.',
           },
           {
             label: '화물 반입 — ',
@@ -95,11 +95,11 @@ export const policyGroups: PolicyGroup[] = [
       {
         title: 'F&B(음식물) 반입 및 취식',
         lines: [
-          { label: '반입 제한 — ', text: '공간 내 현장 조리 및 국물류 음식의 반입은 엄격히 금지됩니다.' },
+          { label: '반입 제한 — ', text: '공간 내 현장 조리 및 국물류 음식의 반입은 삼가해 주시기 바랍니다.' },
           { label: '허용 품목 — ', text: '완제품 형태의 음료 및 다과류만 반입 가능합니다.' },
           {
             label: '뒷정리 — ',
-            text: '취식 후 남은 음식물 쓰레기와 잔여물은 직접 수거해 깔끔하게 정리해 주셔야 합니다. 사전 결제하신 청소 보증금은 퇴실 후 정리 상태를 확인한 뒤 전액 환불해 드립니다.',
+            text: '취식 후 남은 음식물 쓰레기와 잔여물은 직접 수거해 깔끔하게 정리해 주셔야 합니다.',
           },
         ],
       },
@@ -168,16 +168,24 @@ export const policyGroups: PolicyGroup[] = [
   },
 ];
 
-/** Severity is encoded by fading text, never by colour. design/COMPONENTS.md §26. */
-export type RefundTier = { when: string; rate: string; tone: 'strong' | 'medium' | 'muted' };
+/**
+ * Severity is encoded by fading text, never by colour. design/COMPONENTS.md §26.
+ * The fade is derived from position in the list rather than authored per tier,
+ * so adding or removing a tier can't leave the ramp inconsistent.
+ */
+export type RefundTier = { when: string; rate: string };
 
 export const refundSection = {
   id: 'refund',
   title: '취소 및 환불 정책',
   tiers: [
-    { when: '이용 8일 전 취소', rate: '100% 환불', tone: 'strong' },
-    { when: '이용 4일 ~ 7일 전 취소', rate: '50% 환불', tone: 'medium' },
-    { when: '이용 3일 전 ~ 당일 취소', rate: '환불 불가', tone: 'muted' },
+    { when: '이용 8일 전 취소', rate: '100% 환불' },
+    { when: '이용 7일 전 취소', rate: '70% 환불' },
+    { when: '이용 6일 전 취소', rate: '60% 환불' },
+    { when: '이용 5일 전 취소', rate: '50% 환불' },
+    { when: '이용 4일 전 취소', rate: '40% 환불' },
+    { when: '이용 3일 전 취소', rate: '30% 환불' },
+    { when: '이용 2일 전 ~ 당일 취소', rate: '환불 불가' },
   ] as RefundTier[],
   exceptions: [
     {
