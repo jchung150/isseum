@@ -15,7 +15,12 @@
     // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
     // to /rules rather than both being served.
     "html_handling": "drop-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // Assets are served first by default, and that router only answers GET/HEAD
+    // — a POST to /api/booking got 405 before ever reaching the Worker. Scoped
+    // to /api/* so static pages still come straight off the edge without
+    // invoking the Worker.
+    "run_worker_first": ["/api/*"]
   },
 
   // Custom domains declared here instead of clicked in the dashboard: every
