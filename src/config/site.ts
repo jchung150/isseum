@@ -13,6 +13,19 @@ export const site = {
 /** 대관 예약 신청서 (Google Form). Single source for every booking CTA on the site. */
 export const bookingUrl = 'https://forms.gle/HCXGP9p7tJiJYrMX8';
 
+/**
+ * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
+ * The matching secret is a Worker secret (TURNSTILE_SECRET) and must never be
+ * committed here.
+ *
+ * The real key is bound to isseum.com / www.isseum.com / *.workers.dev and so
+ * cannot work on localhost; dev falls back to Cloudflare's published test key,
+ * which passes on any host.
+ */
+export const turnstileSiteKey = import.meta.env.DEV
+  ? '1x00000000000000000000AA'
+  : '0x4AAAAAAEWoGEkb4C3IUaVj';
+
 export const business = {
   companyName: '영준피엠씨(YOUNGJUN PMC)',
   representative: '정용철',

@@ -1,22 +1,38 @@
 {
-  // Cloudflare Workers Static Assets. There is no Worker script — no `main` key —
-  // so this deploys dist/ as a pure static site. Cloudflare no longer offers the
-  // Pages flow for new projects, which is why this file exists.
+  // Cloudflare Workers. The site is still almost entirely static assets; the
+  // Astro Cloudflare adapter adds one on-demand route (/api/booking) and the
+  // Worker serves everything else straight from the ASSETS binding.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "isseum",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-16",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    // The adapter splits output: static assets in dist/client, Worker in dist/server.
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
+    // to /rules rather than both being served.
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
   // Custom domains declared here instead of clicked in the dashboard: every
   // `wrangler deploy` reconciles them, and the DNS records are created for us.
-  // Requires the isseum.com zone to be Active in the same account.
   "routes": [
     { "pattern": "www.isseum.com", "custom_domain": true },
     { "pattern": "isseum.com", "custom_domain": true }
   ],
-  "assets": {
-    "directory": "./dist",
-    // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
-    // to /rules rather than serving both. Keeps canonical URLs unambiguous.
-    "html_handling": "drop-trailing-slash",
-    "not_found_handling": "404-page"
+
+  // Cloudflare Email Routing. Sends only to addresses verified as destinations
+  // on this account, which is exactly what the owner notification needs.
+  "send_email": [{ "name": "NOTIFY_EMAIL" }],
+
+  // Not secrets — safe in the repo. The rest (TURNSTILE_SECRET,
+  // SHEET_WEBHOOK_URL, SHEET_SECRET) are set with `wrangler secret put`.
+  "vars": {
+    "NOTIFY_TO": "isseumspace@gmail.com",
+    "NOTIFY_FROM": "no-reply@isseum.com"
   }
 }

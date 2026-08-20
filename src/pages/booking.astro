@@ -14,7 +14,7 @@ import {
   signature,
   steps,
 } from '../data/booking';
-import { business } from '../config/site';
+import { business, turnstileSiteKey } from '../config/site';
 import { policyGroups, refundSection, lastRevised } from '../data/rules';
 
 // The regulations shown in step 2 come from the same source as /rules, so the
@@ -43,7 +43,28 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     lead="아래 내용을 작성해 주시면 영업일 기준 1일 내에 담당자가 연락드립니다. 최종 금액과 예약 확정은 확인 후 안내됩니다."
   />
 
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+    async
+    defer></script>
+
   <section class="container form-section">
+    {/* Turnstile and the signature canvas both require JS, so the form as a
+        whole now does. Say so plainly and give a route that still works. */}
+    <noscript>
+      <div class="nojs">
+        <p><strong>이 신청서는 자바스크립트가 필요합니다.</strong></p>
+        <p>
+          브라우저에서 자바스크립트를 허용하시거나, 아래로 직접 연락해 주시면 동일하게
+          접수해 드립니다.
+        </p>
+        <p>
+          <a href={`tel:${business.phone}`}>{business.phone}</a> ·
+          <a href={`mailto:${business.email}`}>{business.email}</a>
+        </p>
+      </div>
+    </noscript>
     {/* Progress. Hidden until JS turns the form into a wizard — without JS all
         four sections are simply visible in order, which still works. */}
     <ol class="progress" data-progress hidden>
@@ -57,7 +78,23 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       }
     </ol>
 
-    <form class="form" method="POST" action="/api/booking" data-form novalidate>
+    {/* Shown in place of the form once the endpoint confirms receipt. */}
+    <div class="done" data-success hidden>
+      <p class="eyebrow">REQUEST RECEIVED</p>
+      <h2 class="done__title">예약 신청이 접수되었습니다.</h2>
+      <p class="done__body">
+        영업일 기준 1일 내에 담당자가 연락드립니다. 최종 금액과 예약 확정은 확인 후
+        안내됩니다.
+      </p>
+      <p class="done__body">
+        급하신 경우 <a href={`tel:${business.phone}`}>{business.phone}</a> 으로 연락 주세요.
+      </p>
+      <div class="done__actions">
+        <a href="/" class="btn btn--ghost">홈으로</a>
+      </div>
+    </div>
+
+    <form class="form" method="POST" action="/api/booking" data-form data-sitekey={turnstileSiteKey} novalidate>
       {/* ---------------- 1. 기본 정보 ---------------- */}
       <fieldset class="step" data-step="0">
         <legend class="step__legend">
@@ -213,13 +250,7 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
           </div>
           <input type="hidden" name="signatureImage" data-sig-value />
 
-          {/* Only reachable without JS, where there is no canvas to draw on.
-              JS removes this the moment the pad initialises. */}
-          <p class="field" data-sig-fallback>
-            <label class="field__label field__label--sm" for="signatureName">{signature.typeLabel}</label>
-            <input class="input" type="text" id="signatureName" name="signatureName" placeholder="성함을 입력해 주세요" autocomplete="off" />
-            <span class="field__note">{signature.fallbackHint}</span>
-          </p>
+
         </div>
       </fieldset>
 
@@ -318,6 +349,10 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
         <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off" />
       </p>
 
+      {/* Rendered explicitly when the last step opens — mounting it inside a
+          hidden fieldset makes Turnstile misbehave. */}
+      <div class="turnstile" data-turnstile hidden></div>
+
       <p class="form__error" role="alert" data-error hidden></p>
 
       <div class="nav">
@@ -369,6 +404,7 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       if (nextBtn) nextBtn.hidden = step === stepEls.length - 1;
       if (submitBtn) submitBtn.hidden = step !== stepEls.length - 1;
       if (errorEl) errorEl.hidden = true;
+      if (step === stepEls.length - 1) mountTurnstile();
       form.querySelector<HTMLElement>(`[data-step="${step}"]`)?.scrollIntoView({ block: 'nearest' });
     };
 
@@ -445,18 +481,12 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     const pad = form.querySelector<HTMLElement>('[data-sig]');
     const canvas = form.querySelector<HTMLCanvasElement>('[data-sig-canvas]');
     const sigValue = form.querySelector<HTMLInputElement>('[data-sig-value]');
-    let sigName = form.querySelector<HTMLInputElement>('#signatureName');
-    const sigFallback = form.querySelector<HTMLElement>('[data-sig-fallback]');
     let hasStrokes = false;
 
     if (pad && canvas) {
       pad.hidden = false;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        // The typed-name field exists only for the no-JS path. With a working
-        // canvas there is nothing to fall back from, so drop it entirely.
-        sigFallback?.remove();
-        sigName = null;
         // Match the backing store to the display size so strokes aren't blurry.
         const scale = window.devicePixelRatio || 1;
         const cssW = canvas.width;
@@ -510,20 +540,46 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     }
 
     function checkSignature(report = false) {
-      const typed = sigName?.value.trim() ?? '';
-      if (hasStrokes || typed) {
-        // Serialize the drawing only if there is one.
-        if (sigValue) sigValue.value = hasStrokes && canvas ? canvas.toDataURL('image/png') : '';
+      if (hasStrokes && canvas) {
+        if (sigValue) sigValue.value = canvas.toDataURL('image/png');
         return true;
       }
-      if (report) {
-        showError(
-          sigName ? '서명하거나 성함을 입력해 주세요.' : '이용 규정 동의 서명을 해주세요.',
-          sigName ?? canvas ?? undefined
-        );
-      }
+      if (report) showError('이용 규정 동의 서명을 해주세요.', canvas ?? undefined);
       return false;
     }
+
+    /* ---------- turnstile ---------- */
+
+    const turnstileEl = form.querySelector<HTMLElement>('[data-turnstile]');
+    const SITE_KEY = form.dataset.sitekey ?? '';
+    let turnstileId: string | undefined;
+
+    let turnstileTries = 0;
+
+    /** Mounts once, the first time the last step is shown. */
+    const mountTurnstile = () => {
+      if (!turnstileEl || turnstileId !== undefined) return;
+      const api = (window as any).turnstile;
+      if (!api) {
+        // api.js may still be loading. Retry for ~10s, then give up loudly
+        // rather than polling forever.
+        if (turnstileTries++ > 50) {
+          showError('보안 확인을 불러오지 못했습니다. 광고 차단기를 끄거나 새로고침 후 다시 시도해 주세요.');
+          return;
+        }
+        window.setTimeout(mountTurnstile, 200);
+        return;
+      }
+      turnstileEl.hidden = false;
+      turnstileId = api.render(turnstileEl, {
+        sitekey: SITE_KEY,
+        language: 'ko',
+        'error-callback': () => showError('보안 확인을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'),
+      });
+    };
+
+    const turnstileToken = () =>
+      (form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '').trim();
 
     /* ---------- nav ---------- */
 
@@ -537,21 +593,79 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       render();
     });
 
-    form.addEventListener('submit', (event) => {
+    /** Collects the whole form, with checkbox groups as arrays. */
+    const collect = () => {
+      const fd = new FormData(form);
+      const data: Record<string, unknown> = {};
+      for (const key of new Set(Array.from(fd.keys()))) {
+        const values = fd.getAll(key).map((v) => String(v));
+        data[key] = key === 'referral' || key === 'addons' ? values : values[0];
+      }
+      data.agreeRules = form.querySelector<HTMLInputElement>('[name="agreeRules"]')?.checked ?? false;
+      data.agreePrivacy = form.querySelector<HTMLInputElement>('[name="agreePrivacy"]')?.checked ?? false;
+      return data;
+    };
+
+    const setBusy = (busy: boolean) => {
+      if (!submitBtn) return;
+      submitBtn.disabled = busy;
+      submitBtn.textContent = busy ? '전송 중…' : '예약 신청 제출';
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
       // Validate every step, not just the visible one.
       for (let i = 0; i < stepEls.length; i++) {
         step = i;
         render();
-        if (!validateStep()) {
-          event.preventDefault();
-          return;
-        }
+        if (!validateStep()) return;
       }
       checkSignature();
-      // TODO: endpoint not built yet — stop here so nothing 404s during review.
-      event.preventDefault();
-      showError('제출 기능은 아직 연결되지 않았습니다. (Turnstile · 메일 · 시트 연동 예정)');
+
+      if (!turnstileToken()) {
+        showError('보안 확인을 완료해 주세요.');
+        return;
+      }
+
+      setBusy(true);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(collect()),
+        });
+        const result = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+        if (!res.ok || !result.ok) {
+          setBusy(false);
+          // A spent Turnstile token can't be reused, so make the visitor solve
+          // a fresh one rather than failing repeatedly.
+          if (turnstileId !== undefined) (window as any).turnstile?.reset(turnstileId);
+          showError(result.error || '접수에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+          return;
+        }
+
+        showSuccess();
+      } catch {
+        setBusy(false);
+        if (turnstileId !== undefined) (window as any).turnstile?.reset(turnstileId);
+        showError('네트워크 오류로 접수하지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.');
+      }
     });
+
+    /** Replaces the form with a confirmation, so nobody submits twice. */
+    const formEl: HTMLFormElement = form;
+    function showSuccess() {
+      const done = document.querySelector<HTMLElement>('[data-success]');
+      if (!done) return;
+      formEl.hidden = true;
+      if (progress) progress.hidden = true;
+      done.hidden = false;
+      done.setAttribute('tabindex', '-1');
+      done.focus();
+      done.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
 
     if (progress) progress.hidden = false;
     render();
@@ -1078,6 +1192,69 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+
+  .turnstile {
+    margin-top: var(--space-6);
+  }
+
+  .done {
+    max-width: 44em;
+    padding: var(--space-panel);
+    border: var(--border-emphasis);
+  }
+
+  .done:focus {
+    outline: none;
+  }
+
+  .done__title {
+    margin-top: var(--space-4);
+    font-family: var(--font-serif);
+    font-size: var(--display-group);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .done__body {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .done__body a {
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .done__actions {
+    margin-top: var(--space-6);
+    display: flex;
+  }
+
+  .done__actions .btn {
+    text-decoration: none;
+  }
+
+  .nojs {
+    margin-bottom: var(--space-6);
+    padding: var(--space-5);
+    border: var(--border-emphasis);
+    background: var(--surface);
+    font-size: var(--text-sm);
+    line-height: var(--leading-compact);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .nojs p + p {
+    margin-top: var(--space-2);
+  }
+
+  .nojs a {
+    font-weight: 600;
+    text-decoration: underline;
   }
 
   .form__error {
