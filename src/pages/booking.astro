@@ -11,7 +11,7 @@ import {
   optionsIntro,
   privacy,
   referralSources,
-  signature,
+  reviewGroups,
   steps,
 } from '../data/booking';
 import { business, turnstileSiteKey } from '../config/site';
@@ -50,8 +50,8 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     defer></script>
 
   <section class="container form-section">
-    {/* Turnstile and the signature canvas both require JS, so the form as a
-        whole now does. Say so plainly and give a route that still works. */}
+    {/* Turnstile requires JS, so the form as a whole does. Say so plainly and
+        give a route that still works. */}
     <noscript>
       <div class="nojs">
         <p><strong>이 신청서는 자바스크립트가 필요합니다.</strong></p>
@@ -236,22 +236,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
           <span>위 대관 규정 및 환불 정책을 모두 확인하였으며, 이에 동의합니다. <span class="req">*</span></span>
         </label>
 
-        <div class="sig">
-          <p class="field__label">{signature.title} <span class="req">*</span></p>
-          <p class="field__note">{signature.body}</p>
-
-          {/* Canvas is revealed by JS; the text input below always works. */}
-          <div class="sig__pad" data-sig hidden>
-            <canvas class="sig__canvas" data-sig-canvas width="640" height="200"
-              aria-label="서명란 — 마우스나 손가락으로 서명해 주세요"></canvas>
-            <div class="sig__actions">
-              <button type="button" class="sig__clear" data-sig-clear>{signature.clearLabel}</button>
-            </div>
-          </div>
-          <input type="hidden" name="signatureImage" data-sig-value />
-
-
-        </div>
       </fieldset>
 
       {/* ---------------- 3. 추가 옵션 ---------------- */}
@@ -271,7 +255,7 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
                 <span class="option__body">
                   <span class="option__head">
                     <span class="option__title">{addon.title}</span>
-                    <span class="option__price">{addon.price}</span>
+                    {addon.price && <span class="option__price">{addon.price}</span>}
                   </span>
                   <span class="option__notes">
                     {addon.notes.map((note) => <span class="option__note">{note}</span>)}
@@ -343,6 +327,43 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
         </label>
       </fieldset>
 
+      {/* ---------------- 5. 신청 내용 확인 ---------------- */}
+      <fieldset class="step" data-step="4">
+        <legend class="step__legend">
+          <span class="eyebrow">STEP 05</span>
+          <span class="step__title">신청 내용 확인</span>
+        </legend>
+        <p class="step__hint">
+          아래 내용으로 접수됩니다. 수정이 필요하면 각 항목의 <strong>수정</strong>을 눌러
+          해당 단계로 돌아가세요.
+        </p>
+
+        <div class="review" data-review>
+          {
+            reviewGroups.map((group) => (
+              <section class="review__group" data-review-group={group.step}>
+                <div class="review__head">
+                  <h3 class="review__title">{group.title}</h3>
+                  <button type="button" class="review__edit" data-goto-step={group.step}>
+                    수정
+                  </button>
+                </div>
+                <dl class="review__list">
+                  {
+                    group.fields.map(([key, label]) => (
+                      <div class="review__row" data-review-row={key}>
+                        <dt>{label}</dt>
+                        <dd data-review-value={key}>—</dd>
+                      </div>
+                    ))
+                  }
+                </dl>
+              </section>
+            ))
+          }
+        </div>
+      </fieldset>
+
       {/* Honeypot — real people never fill this. */}
       <p class="honeypot" aria-hidden="true">
         <label for="company_website">웹사이트</label>
@@ -368,6 +389,8 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
   const form = document.querySelector<HTMLFormElement>('[data-form]');
 
   if (form) {
+    // Captured once: TS loses the null-narrowing inside hoisted functions.
+    const formEl: HTMLFormElement = form;
     const stepEls = Array.from(form.querySelectorAll<HTMLFieldSetElement>('[data-step]'));
     const progress = document.querySelector<HTMLElement>('[data-progress]');
     const progressItems = Array.from(document.querySelectorAll<HTMLElement>('[data-progress-item]'));
@@ -404,9 +427,30 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       if (nextBtn) nextBtn.hidden = step === stepEls.length - 1;
       if (submitBtn) submitBtn.hidden = step !== stepEls.length - 1;
       if (errorEl) errorEl.hidden = true;
-      if (step === stepEls.length - 1) mountTurnstile();
-      form.querySelector<HTMLElement>(`[data-step="${step}"]`)?.scrollIntoView({ block: 'nearest' });
+      if (step === stepEls.length - 1) {
+        mountTurnstile();
+        renderReview();
+      }
+      scrollToFormTop();
     };
+
+    /**
+     * Puts the top of the form just under the sticky header. scrollIntoView
+     * with block:'nearest' did nothing when the step was already partly in
+     * view, which left people mid-page on a new step.
+     */
+    function scrollToFormTop() {
+      const anchor = document.querySelector<HTMLElement>('.form-section') ?? form;
+      if (!anchor) return;
+      const header = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        10
+      );
+      const offset = (Number.isFinite(header) ? header : 100) + 16;
+      const y = anchor.getBoundingClientRect().top + window.scrollY - offset;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: Math.max(y, 0), behavior: reduced ? 'auto' : 'smooth' });
+    }
 
     const showError = (message: string, field?: HTMLElement) => {
       if (errorEl) {
@@ -442,7 +486,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       }
 
       if (step === 0 && !checkDuration(true)) return false;
-      if (step === 1 && !checkSignature(true)) return false;
       return true;
     };
 
@@ -476,77 +519,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     startSel?.addEventListener('change', () => checkDuration());
     endSel?.addEventListener('change', () => checkDuration());
 
-    /* ---------- signature ---------- */
-
-    const pad = form.querySelector<HTMLElement>('[data-sig]');
-    const canvas = form.querySelector<HTMLCanvasElement>('[data-sig-canvas]');
-    const sigValue = form.querySelector<HTMLInputElement>('[data-sig-value]');
-    let hasStrokes = false;
-
-    if (pad && canvas) {
-      pad.hidden = false;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // Match the backing store to the display size so strokes aren't blurry.
-        const scale = window.devicePixelRatio || 1;
-        const cssW = canvas.width;
-        const cssH = canvas.height;
-        canvas.width = cssW * scale;
-        canvas.height = cssH * scale;
-        canvas.style.aspectRatio = `${cssW} / ${cssH}`;
-        ctx.scale(scale, scale);
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#1c1c1a';
-
-        let drawing = false;
-        const pos = (event: PointerEvent) => {
-          const r = canvas.getBoundingClientRect();
-          return {
-            x: ((event.clientX - r.left) / r.width) * cssW,
-            y: ((event.clientY - r.top) / r.height) * cssH,
-          };
-        };
-
-        canvas.addEventListener('pointerdown', (event) => {
-          drawing = true;
-          hasStrokes = true;
-          canvas.setPointerCapture(event.pointerId);
-          const p = pos(event);
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-        });
-        canvas.addEventListener('pointermove', (event) => {
-          if (!drawing) return;
-          event.preventDefault();
-          const p = pos(event);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
-        });
-        const stop = () => {
-          drawing = false;
-        };
-        canvas.addEventListener('pointerup', stop);
-        canvas.addEventListener('pointercancel', stop);
-        canvas.addEventListener('pointerleave', stop);
-
-        form.querySelector('[data-sig-clear]')?.addEventListener('click', () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          hasStrokes = false;
-          if (sigValue) sigValue.value = '';
-        });
-      }
-    }
-
-    function checkSignature(report = false) {
-      if (hasStrokes && canvas) {
-        if (sigValue) sigValue.value = canvas.toDataURL('image/png');
-        return true;
-      }
-      if (report) showError('이용 규정 동의 서명을 해주세요.', canvas ?? undefined);
-      return false;
-    }
 
     /* ---------- turnstile ---------- */
 
@@ -580,6 +552,56 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
 
     const turnstileToken = () =>
       (form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '').trim();
+
+    /* ---------- review ---------- */
+
+    /** Fills the final screen from the live form values. */
+    function renderReview() {
+      const fd = new FormData(formEl);
+      const val = (k: string) => String(fd.get(k) ?? '').trim();
+      const all = (k: string) => fd.getAll(k).map(String);
+      const checked = (k: string) =>
+        formEl.querySelector<HTMLInputElement>(`[name="${k}"]`)?.checked ?? false;
+
+      const start = val('start');
+      const end = val('end');
+      const hours = start && end ? Number(end.split(':')[0]) - Number(start.split(':')[0]) : 0;
+
+      const values: Record<string, string> = {
+        name: val('name'),
+        org: val('org'),
+        phone: val('phone'),
+        email: val('email'),
+        date: val('date'),
+        __time: start && end ? `${start} ~ ${end} (${hours}시간)` : '',
+        guests: val('guests') ? `${val('guests')}명` : '',
+        purpose: val('purpose'),
+        referral: all('referral').join(' · '),
+        agreeRules: checked('agreeRules') ? '동의함' : '미동의',
+        addons: all('addons').join(' · ') || '선택 없음',
+        requests: val('requests'),
+        agreePrivacy: checked('agreePrivacy') ? '동의함' : '미동의',
+      };
+
+      for (const [key, text] of Object.entries(values)) {
+        const cell = formEl.querySelector<HTMLElement>(`[data-review-value="${key}"]`);
+        if (!cell) continue;
+        const empty = !text;
+        cell.textContent = empty ? '입력 없음' : text;
+        cell.classList.toggle('is-empty', empty);
+      }
+    }
+
+    // "수정" jumps back to the owning step.
+    formEl.querySelectorAll<HTMLButtonElement>('[data-goto-step]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = Number(btn.dataset.gotoStep) - 1;
+        if (Number.isInteger(target) && target >= 0 && target < stepEls.length) {
+          step = target;
+          render();
+        }
+      });
+    });
 
     /* ---------- nav ---------- */
 
@@ -621,8 +643,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
         render();
         if (!validateStep()) return;
       }
-      checkSignature();
-
       if (!turnstileToken()) {
         showError('보안 확인을 완료해 주세요.');
         return;
@@ -655,7 +675,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     });
 
     /** Replaces the form with a confirmation, so nobody submits twice. */
-    const formEl: HTMLFormElement = form;
     function showSuccess() {
       const done = document.querySelector<HTMLElement>('[data-success]');
       if (!done) return;
@@ -1053,55 +1072,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     cursor: pointer;
   }
 
-  /* ---------- signature ---------- */
-  .sig {
-    padding-top: var(--space-6);
-    border-top: var(--border-hairline);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .sig__pad {
-    margin-top: var(--space-3);
-  }
-
-  .sig__canvas {
-    width: 100%;
-    max-width: 32em;
-    display: block;
-    background: var(--bg);
-    border: var(--border-hairline);
-    touch-action: none;
-    cursor: crosshair;
-  }
-
-  .sig__actions {
-    display: flex;
-    margin-top: var(--space-2);
-  }
-
-  .sig__clear {
-    background: none;
-    border: var(--border-hairline);
-    border-radius: var(--radius);
-    padding: 8px 14px;
-    font-size: var(--text-meta);
-    font-weight: 600;
-    color: var(--text-body);
-    cursor: pointer;
-    transition: border-color var(--transition-fast);
-  }
-
-  .sig__clear:hover {
-    border-color: var(--ink);
-    color: var(--ink);
-  }
-
-  .sig .field {
-    margin-top: var(--space-5);
-    max-width: 24em;
-  }
 
   /* ---------- options ---------- */
   .notice-inline {
@@ -1192,6 +1162,78 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+
+  /* ---------- review ---------- */
+  .review__group + .review__group {
+    margin-top: var(--space-8);
+  }
+
+  .review__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border-emphasis);
+  }
+
+  .review__title {
+    font-size: var(--text-item-title);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+  }
+
+  .review__edit {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--text-body);
+    letter-spacing: var(--tracking-ui);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+
+  .review__edit:hover {
+    color: var(--ink);
+  }
+
+  .review__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .review__row dt {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .review__row dd {
+    font-size: var(--text-sm);
+    line-height: var(--leading-compact);
+    color: var(--ink);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .review__row dd.is-empty {
+    color: var(--text-tertiary);
+  }
+
+  @media (min-width: 560px) {
+    .review__row {
+      grid-template-columns: 132px 1fr;
+      gap: var(--space-4);
+      align-items: baseline;
+    }
   }
 
   .turnstile {

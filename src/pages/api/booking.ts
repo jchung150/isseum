@@ -63,7 +63,6 @@ function validate(d: Payload): string | null {
   if (!arr(d.referral).length) return '유입 경로를 하나 이상 선택해 주세요.';
   if (!d.agreeRules) return '이용 규정에 동의해 주세요.';
   if (!d.agreePrivacy) return '개인정보 수집·이용에 동의해 주세요.';
-  if (!str(d.signatureImage)) return '이용 규정 동의 서명을 해주세요.';
 
   return null;
 }
@@ -158,14 +157,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     msg.addMessage({ contentType: 'text/plain', data: text });
     msg.addMessage({ contentType: 'text/html', data: html });
 
-    const sig = str(payload.signatureImage);
-    if (sig.includes('base64,')) {
-      msg.addAttachment({
-        filename: `signature_${str(payload.date)}_${str(payload.name)}.png`,
-        contentType: 'image/png',
-        data: sig.slice(sig.indexOf('base64,') + 7),
-      });
-    }
 
     await (env as any).NOTIFY_EMAIL.send(new EmailMessage(from, to, msg.asRaw()));
   } catch (err) {
@@ -210,7 +201,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
             requests: str(payload.requests),
             agreeRules: Boolean(payload.agreeRules),
             agreePrivacy: Boolean(payload.agreePrivacy),
-            signatureImage: str(payload.signatureImage),
             ip,
             userAgent: request.headers.get('user-agent') ?? '',
           },

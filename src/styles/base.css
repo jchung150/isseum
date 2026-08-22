@@ -23,6 +23,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
+  /* Korean has a break opportunity after every syllable, so the default lets
+     browsers split 어절 mid-word — "연락드립니다" becomes "연락드립 / 니다".
+     keep-all restricts breaks to spaces and punctuation, which is how Korean
+     is meant to wrap. overflow-wrap is the escape hatch for the one thing
+     keep-all can't handle: a long unbreakable string like a URL. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 h1,

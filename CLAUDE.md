@@ -8,10 +8,15 @@ workshops, book talks, pop-ups, fan meetings, showcases, and photo shoots.
 for Korean event organisers; keep that register. Latin text appears only as wide-tracked
 eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not translation.
 
-**Status: live.** Serving at **`https://www.isseum.com`** (and `isseum.com`, which does
-not yet redirect — see [Before launch](#before-launch)). Domain registered at 후이즈 /
-Whois, DNS delegated to Cloudflare. The booking form still requires a Google sign-in, so
-the site is not yet ready to promote.
+**Status: live, pre-announcement.** Serving at **`https://www.isseum.com`** (and
+`isseum.com`, which does not yet redirect — see [Before launch](#before-launch)). Domain
+registered at 후이즈 / Whois, DNS delegated to Cloudflare.
+
+A self-hosted booking form at **`/booking`** is built, deployed and verified end to end
+(Turnstile → notification email → Google Sheet row). It is **not yet linked**:
+the ten `대관 예약하기` CTAs still point at the old Google Form, which requires visitors
+to sign in to Google. Switching them over is the last step before the site can be
+promoted — see [The booking form](#the-booking-form).
 
 ---
 
@@ -25,6 +30,7 @@ the site is not yet ready to promote.
 | Interactivity | Vanilla `<script>` in `.astro` files. **No React/Vue/Svelte** |
 | Images | `astro:assets` (sharp) → WebP, responsive `srcset` |
 | Fonts | Pretendard + Noto Serif KR, currently via CDN |
+| Forms | Turnstile + Cloudflare Email Routing + Apps Script → Google Sheets |
 | SEO | `@astrojs/sitemap`, `public/robots.txt` (incl. Naver's `Yeti` crawler) |
 | Hosting | Cloudflare **Workers Static Assets** — see [Deployment](#deployment) |
 
@@ -42,7 +48,8 @@ npm run preview  # serve dist/
 Chosen deliberately, not by default:
 
 - **Zero JS by default.** The home page ships **no JavaScript at all**; Equipment, Rules and
-  Events each carry one small inlined module (~1.5 KB max). The site already pays for two
+  Events each carry one small inlined module (~1.5 KB max). `/booking` is the exception —
+  see [The booking form](#the-booking-form). The site already pays for two
   Korean webfonts, which are heavy — spending a framework runtime on a small brochure
   site on top of that would be the wrong trade.
 - **Naver.** The audience searches in Korean, and Naver's crawler handles static HTML far
@@ -76,7 +83,11 @@ src/
     base.css              globals, focus ring, reduced-motion, primitives
   components/             10 components, all scoped-CSS .astro
   layouts/BaseLayout.astro  head, SEO, JSON-LD, header/footer, skip link
-  pages/                  index · equipment · rules · events (hidden) · 404
+    booking.ts            form fields, add-ons, privacy consent text, constraints
+  cloudflare.d.ts         narrow declarations for the two Workers runtime modules
+  pages/                  index · equipment · rules · events (hidden) · booking · 404
+    api/booking.ts        the only on-demand route; everything else is prerendered
+scripts/booking-sheet/    Apps Script that appends submissions to Google Sheets
 ```
 
 ### Content lives in `src/data/*.ts`, not in markup
@@ -199,10 +210,77 @@ imports.)
   binaries badly — it would bloat every clone permanently. Host on Cloudflare Stream, Mux,
   or unlisted Vimeo and store the URL. `src/assets/` is already ~13 MB of photography.
 
-### The booking form is the only conversion path
+### Booking CTAs
 
 `bookingUrl` in `config/site.ts` feeds **10 CTAs** across the live pages (header, dark CTA
-banners, footer link, Rules TOC button and agreement gate). Change it in one place.
+banners, footer link, Rules TOC button and agreement gate). Change it in one place. It
+still points at the old Google Form; see below.
+
+---
+
+## The booking form
+
+`/booking` replaces a Google Form that required visitors to sign in to Google — the single
+biggest drop-off in the funnel. Five steps: 기본 정보 → 이용 규정 동의 → 추가 옵션 →
+개인정보 동의 → 신청 내용 확인.
+
+**Not yet linked from anywhere.** It is `noindex`, excluded from the sitemap, and the CTAs
+still go to the Google Form. Deploying it therefore exposes nothing; flip `bookingUrl` to
+`/booking` when you're ready (and drop `external` on those buttons so they don't open a new
+tab).
+
+### Flow
+
+```
+브라우저 → POST /api/booking
+             ├─ honeypot        (bots answered 200 so they don't retune)
+             ├─ Turnstile siteverify
+             ├─ server-side validation   ← the one that counts
+             ├─ email  (Cloudflare Email Routing)                          ← safety net
+             └─ sheet  (Apps Script → Google Sheets + Drive)                ← best effort
+```
+
+**Order is deliberate.** The email is the record that must not be lost, so it goes first
+and its failure returns an error telling the visitor to phone instead — we never claim to
+have received something we didn't. The sheet is a convenience mirror; if Google is down the
+visitor still succeeds and the enquiry is already in the inbox.
+
+### Constraints
+
+`src/data/booking.ts` holds `MIN_HOURS` (3), `MAX_GUESTS` (90) and `OPEN_HOUR`/`CLOSE_HOUR`
+(8–22). **Both the client and `api/booking.ts` enforce them** — client-side checks are a
+courtesy, trivially bypassed with devtools.
+
+### No signature
+
+A canvas signature was built and then removed at the owner's request. Nothing collects or
+stores one now — not the form, the email, the sheet, or the privacy notice. Turnstile still
+needs JS, so the form remains JS-only and the `<noscript>` block still offers phone/email.
+
+### Secrets and setup
+
+Set with `wrangler secret put`, never in the repo:
+
+| Name | Value |
+|---|---|
+| `TURNSTILE_SECRET` | Turnstile secret key (**not** the site key — they look alike) |
+| `SHEET_WEBHOOK_URL` | Apps Script web app `/exec` URL |
+| `SHEET_SECRET` | `SHARED_SECRET` printed by the Apps Script `setup()` |
+
+`NOTIFY_TO` / `NOTIFY_FROM` are plain vars in `wrangler.jsonc`. The Turnstile **site** key
+is public and lives in `config/site.ts`; dev falls back to Cloudflare's test key
+(`1x00000000000000000000AA`) because the real key is bound to the production hostnames and
+cannot work on localhost.
+
+Sheet setup is documented in `scripts/booking-sheet/README.md`. Apps Script needs a **new
+version deployed** after any edit — saving alone changes nothing.
+
+### Email
+
+Cloudflare Email Routing's `send_email` binding, not a third-party ESP. It can only send to
+**verified destination addresses**, which is exactly right for an owner notification and
+removed a processor from the privacy notice. It also means **the applicant confirmation
+email deferred to later cannot use this path** — that will need Resend or similar.
 
 ---
 
@@ -214,6 +292,18 @@ build produces static files and Cloudflare serves them from its edge.
 
 - **Project**: Cloudflare Workers → `isseum`. Direct URL `isseum.cloudfan150.workers.dev`
   stays live and is useful for checking a deploy before DNS-level changes.
+- **`run_worker_first: ["/api/*"]`** in the assets config. Without it a POST to
+  `/api/booking` returns **405**: the static-asset router runs first and only answers
+  GET/HEAD, so the request never reaches the Worker. Scoped to `/api/*` so content pages
+  are still served straight from the edge without invoking the Worker.
+- **`imageService: 'compile'`** on the adapter. It otherwise moves optimisation to the
+  runtime Cloudflare Images binding — billable, slower, and pointless when every page
+  carrying an image is prerendered. Symptom if it regresses: zero `.webp` in
+  `dist/client/_astro/` and `/_image?` URLs in the HTML.
+- **`session: false`** at the top level. Nothing here uses sessions; left on, the adapter
+  provisions a SESSION KV namespace and bundles the session runtime into the Worker.
+- The adapter splits output — static assets in `dist/client`, Worker in `dist/server`. The
+  assets directory in `wrangler.jsonc` must be `./dist/client`.
 - **`wrangler.jsonc`** declares the whole deploy: `assets.directory` = `./dist`, plus the
   custom domains as `routes` with `custom_domain: true`. **Attach domains here, not in the
   dashboard** — dashboard attempts failed silently, writing no DNS record while appearing to
@@ -230,6 +320,19 @@ build produces static files and Cloudflare serves them from its edge.
   disabled. Our own rules, including Naver's `Yeti` and the sitemap line, survive underneath.
 - **Node version** is supplied by the build image (24.x). The `NODE_VERSION` variable is not
   needed; an unused `nodeversion` variable may still be set in the dashboard and is harmless.
+
+### Confirming a deploy actually landed
+
+Build success in the dashboard is not proof the live site changed. Compare a hashed asset:
+
+```bash
+curl -s https://www.isseum.com/ | grep -o '/_astro/[A-Za-z0-9._-]*\.css'
+ls dist/client/_astro/*.css
+```
+
+The page loads **more than one** stylesheet, so compare the whole list rather than the
+first match. A quicker functional check: `POST /api/booking` should answer **400**
+("보안 확인에 실패했습니다"), never 405.
 
 ### Deploy gotcha
 
@@ -328,11 +431,12 @@ caused the container-width drift.
 
 Blocking:
 
-1. **The Google Form requires a Google account.** Verified by loading
-   `https://forms.gle/HCXGP9p7tJiJYrMX8` in a signed-out browser — it shows Google's sign-in
-   screen, not the form. Fix in Forms settings: 이메일 주소 수집 → `수집 안 함` or
-   `응답자 입력` (not 확인된), turn off 응답 횟수 1개로 제한, and if it's a Workspace form
-   allow external respondents. **This is the site's only conversion path.**
+1. **Point the CTAs at `/booking`.** The self-hosted form is deployed and verified; the
+   ten `대관 예약하기` buttons still go to the Google Form, which requires a Google
+   sign-in and loses most visitors. One line: `bookingUrl` in `config/site.ts`. Also drop
+   `external` on those buttons, and repoint the Rules page agreement gate.
+   **Get the 개인정보 동의 wording reviewed by a professional before real submissions
+   accumulate** — see `scripts/`-adjacent notes and §The booking form.
 2. **`isseum.com` does not redirect to `www`.** Both hostnames currently serve the site
    directly, which reads as duplicate content. Every canonical tag points at `www`, so the
    damage is limited, but it should be a real 301. Fix with a Cloudflare **Redirect Rule**:
@@ -346,6 +450,10 @@ Blocking:
    this audience. Sitemap is at `/sitemap-index.xml`. Verification file goes in `public/`.
 5. **Event photography**, which is what `showEventsPage` is waiting on — see
    [Feature flags](#feature-flags).
+6. **Pricing is deliberately absent sitewide.** Base rate is 시간당 280,000원, currently
+   140,000원 as an opening rate, minimum 3 hours — the owner plans to surface this in a
+   popup later and asked that it appear nowhere for now. The add-on prices inside the
+   booking form are the only figures on the site, and the form never computes a total.
 
 ### Done
 
@@ -363,21 +471,21 @@ from the repo's own assets, so they can be regenerated:
 
 Should do:
 
-6. **Self-host and subset the fonts.** Currently CDN (`fonts.googleapis.com` +
+7. **Self-host and subset the fonts.** Currently CDN (`fonts.googleapis.com` +
    jsDelivr) — a third-party dependency on every page load, and Korean webfonts are large.
    Noto Serif KR is already trimmed to weights 400/500 (from five).
-7. **Map embed** — placeholder only; needs a Naver or Kakao Maps key.
-8. `isseum_control-room_mixer.jpg` is unused — no matching equipment item exists, though
+8. **Map embed** — placeholder only; needs a Naver or Kakao Maps key.
+9. `isseum_control-room_mixer.jpg` is unused — no matching equipment item exists, though
    the notes copy mentions 믹서. Either add an 음향 item or delete the file.
-9. 이동식 강연대 and 초고속 Wi-Fi have no photo (they fall back to placeholders).
+10. 이동식 강연대 and 초고속 Wi-Fi have no photo (they fall back to placeholders).
 
 Open product questions — **don't invent answers, ask**:
 
-10. **No pricing anywhere.** A venue's most-asked question. Deliberate (steer to inquiry) or
+11. **No pricing anywhere (by decision — see item 6).** A venue's most-asked question. Deliberate (steer to inquiry) or
     missing?
-11. **The home CTA promises date-availability checking** ("원하시는 날짜가 비어 있는지 먼저
+12. **The home CTA promises date-availability checking** ("원하시는 날짜가 비어 있는지 먼저
     확인해 보세요") but links to a static form. Needs a real calendar or softer copy.
-12. **Korean only** — no `hreflang`, no language switcher. Retrofitting is painful because
+13. **Korean only** — no `hreflang`, no language switcher. Retrofitting is painful because
     the letter-spacing scale is tuned for Korean.
 
 ---
@@ -396,6 +504,13 @@ Things that have actually bitten, in this order of likelihood:
 - **Renaming a file in `src/assets/` breaks its import.** The import path is a hard
   reference; there is no auto-discovery outside `src/assets/events/`.
 - **The dev server daemonises.** `npm run dev` returns immediately; use `astro dev stop`.
+  Restart it after changing `astro.config.mjs` — config changes are not hot-reloaded.
+- **Don't run `wrangler types`.** It writes a global `worker-configuration.d.ts` that
+  redeclares DOM types (`Element.remove()` returns `Element` in the Workers runtime, `void`
+  in the DOM) and every client `<script>` stops compiling. `src/cloudflare.d.ts` declares
+  just the two modules the endpoint imports; the generated file is gitignored.
+- **Turnstile tokens are single-use.** After a failed submit, call `turnstile.reset()` or
+  every retry fails with the same error.
 - **Chrome `--dump-dom` output contains NUL bytes**, so `grep` treats it as binary and
   prints nothing. Pipe through node, or use `grep -a`.
 - The logo asset was originally 88% transparent padding (a 496×984 mark on a 2000×2000

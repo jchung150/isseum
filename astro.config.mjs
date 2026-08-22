@@ -16,6 +16,9 @@ export default defineConfig({
   // opts out via `export const prerender = false`, so the site keeps shipping
   // plain HTML from the edge and one route runs on demand.
   output: 'static',
+  // Nothing on this site uses sessions. Left on, the adapter provisions a
+  // SESSION KV namespace and bundles the session runtime into the Worker.
+  session: false,
   adapter: cloudflare({
     // Keep optimising images with sharp at build time. The adapter otherwise
     // switches to the runtime Cloudflare Images binding, which turns every
