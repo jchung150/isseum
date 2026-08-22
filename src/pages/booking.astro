@@ -28,8 +28,14 @@ const closingItemNumber = itemCounter + 1;
 
 const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
   const h = OPEN_HOUR + i;
-  return { value: `${String(h).padStart(2, '0')}:00`, label: `${h}:00` };
+  return { hour: h, value: `${String(h).padStart(2, '0')}:00`, label: `${h}:00` };
 });
+
+// A booking runs at least MIN_HOURS, so a start after CLOSE_HOUR - MIN_HOURS
+// can never be completed and an end before OPEN_HOUR + MIN_HOURS can never be
+// reached. Offering either would only lead to an error message later.
+const startTimes = times.filter((t) => t.hour <= CLOSE_HOUR - MIN_HOURS);
+const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
 ---
 
 <BaseLayout
@@ -94,7 +100,7 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       </div>
     </div>
 
-    <form class="form" method="POST" action="/api/booking" data-form data-sitekey={turnstileSiteKey} novalidate>
+    <form class="form" method="POST" action="/api/booking" data-form data-sitekey={turnstileSiteKey} data-min-hours={MIN_HOURS} novalidate>
       {/* ---------------- 1. 기본 정보 ---------------- */}
       <fieldset class="step" data-step="0">
         <legend class="step__legend">
@@ -142,13 +148,13 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
             <label class="visually-hidden" for="start">시작 시간</label>
             <select class="input" id="start" name="start" required>
               <option value="">시작</option>
-              {times.map((t) => <option value={t.value}>{t.label}</option>)}
+              {startTimes.map((t) => <option value={t.value}>{t.label}</option>)}
             </select>
             <span class="timerange__sep" aria-hidden="true">~</span>
             <label class="visually-hidden" for="end">종료 시간</label>
             <select class="input" id="end" name="end" required>
               <option value="">종료</option>
-              {times.map((t) => <option value={t.value}>{t.label}</option>)}
+              {endTimes.map((t) => <option value={t.value}>{t.label}</option>)}
             </select>
           </div>
           <span class="field__note" data-duration aria-live="polite"></span>
@@ -402,7 +408,8 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     const startSel = form.querySelector<HTMLSelectElement>('#start');
     const endSel = form.querySelector<HTMLSelectElement>('#end');
 
-    const MIN_HOURS = 3;
+    // Carried on the form so the constant lives only in data/booking.ts.
+    const MIN_HOURS = Number(form.dataset.minHours) || 3;
 
     // ?step=2 opens straight to a step. Handy for reviewing the later steps
     // without filling the earlier ones; harmless in production since the
@@ -525,8 +532,32 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
       return true;
     }
 
-    startSel?.addEventListener('change', () => checkDuration());
+    /**
+     * Hides every end time that would make the booking shorter than the
+     * minimum — pick 13:00 and the end list starts at 16:00. Cheaper for the
+     * visitor than letting them choose 14:00 and then rejecting it.
+     */
+    function syncEndOptions() {
+      if (!startSel || !endSel) return;
+      const earliest = startSel.value ? hourOf(startSel.value) + MIN_HOURS : 0;
+      let clearedSelection = false;
+      for (const opt of Array.from(endSel.options)) {
+        if (!opt.value) continue;
+        const tooEarly = hourOf(opt.value) < earliest;
+        opt.hidden = tooEarly;
+        // Safari ignores `hidden` on <option>; `disabled` stops it either way.
+        opt.disabled = tooEarly;
+        if (tooEarly && opt.selected) clearedSelection = true;
+      }
+      if (clearedSelection) endSel.value = '';
+    }
+
+    startSel?.addEventListener('change', () => {
+      syncEndOptions();
+      checkDuration();
+    });
     endSel?.addEventListener('change', () => checkDuration());
+    syncEndOptions();
 
 
     /* ---------- turnstile ---------- */
@@ -868,6 +899,19 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     gap: var(--space-2);
   }
 
+  /* A <legend> is the fieldset's rendered legend, not a flex item, so the
+     `gap` above never applies below it — 대관 시간 and 유입 경로 sat flush
+     against their controls while every .field kept its 8px. */
+  .subfield > legend {
+    margin-bottom: var(--space-2);
+  }
+
+  /* The note sits on the same line as the label, and the markup newline
+     between the two spans is compiled away — so it needs a real gap. */
+  .subfield > legend .field__note {
+    margin-left: var(--space-2);
+  }
+
   .timerange {
     display: flex;
     align-items: center;
@@ -884,7 +928,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin-top: var(--space-1);
   }
 
   .chip {

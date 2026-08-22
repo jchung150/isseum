@@ -141,10 +141,11 @@ import { equipment } from '../data/equipment';
     <SectionHeader eyebrow="FAQ" title="자주 묻는 질문" />
     <div class="faq">
       {
-        faq.map((item) => (
+        faq.map((item, i) => (
           <details class="faq__item">
             <summary class="faq__q">
-              <span>{item.q}</span>
+              <span class="mono-num faq__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="faq__text">{item.q}</span>
               <span class="faq__mark" aria-hidden="true" />
             </summary>
             <div class="faq__a">
@@ -475,6 +476,18 @@ import { equipment } from '../data/equipment';
     color: var(--link-hover);
   }
 
+  /* Same 26px numeral column as the equipment list, so the two lists on this
+     page read as one system. */
+  .faq__num {
+    flex: none;
+    width: 26px;
+    font-weight: 400;
+  }
+
+  .faq__text {
+    flex: 1;
+  }
+
   /* Plus that becomes a minus — drawn, not a glyph, so it lines up exactly. */
   .faq__mark {
     flex: none;
@@ -746,6 +759,12 @@ import { equipment } from '../data/equipment';
   @media (min-width: 640px) {
     .spaces {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Align the answer under the question text rather than the numeral. Left
+       flush on mobile, where 42px of indent costs more than it buys. */
+    .faq__a {
+      padding-left: calc(26px + var(--space-4));
     }
   }
 
