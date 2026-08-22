@@ -40,24 +40,6 @@ import { equipment } from '../data/equipment';
     </dl>
   </section>
 
-  {/* ---------- Why ISSEUM ---------- */}
-  <section class="container section">
-    <SectionHeader eyebrow="WHY ISSEUM" title="공간 특징" />
-    <div class="why hairline-grid">
-      {
-        features.map((feature, i) => (
-          <article class="why__card">
-            <span class="mono-num">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3 class="display why__title">{feature.title}</h3>
-              <p class="why__body">{feature.body}</p>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </section>
-
   {/* ---------- Space ---------- */}
   <section id="space" class="container section space-section">
     <SectionHeader eyebrow="SPACE & EQUIPMENT" title="공간 안내" />
@@ -105,6 +87,24 @@ import { equipment } from '../data/equipment';
         }
       </ul>
       <p class="eq__note">전 장비 대관료에 포함 · 사전 요청 시 세팅 지원</p>
+    </div>
+  </section>
+
+  {/* ---------- Why ISSEUM ---------- */}
+  <section class="container section">
+    <SectionHeader eyebrow="WHY ISSEUM" title="공간 특징" />
+    <div class="why hairline-grid">
+      {
+        features.map((feature, i) => (
+          <article class="why__card">
+            <span class="mono-num">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3 class="display why__title">{feature.title}</h3>
+              <p class="why__body">{feature.body}</p>
+            </div>
+          </article>
+        ))
+      }
     </div>
   </section>
 
