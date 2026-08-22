@@ -36,7 +36,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // /booking is noindex (it's a form, not content), and /events is hidden
-      // until there is real photography.
+      // until there is real photography. Everything else lives on one page.
       filter: (page) =>
         !page.includes('/booking') && (showEventsPage || !page.includes('/events')),
     }),

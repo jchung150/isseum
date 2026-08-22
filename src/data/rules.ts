@@ -200,13 +200,3 @@ export const refundSection = {
     body: '행사 중 발생하는 참여자의 개인 소지품 분실, 도난 및 부주의로 인한 안전사고에 대한 모든 책임은 주최 측(예약자)에게 있습니다.',
   },
 };
-
-export const agreement = {
-  statement: '위 대관 규정 및 환불 정책을 모두 확인하였으며, 이에 동의합니다.',
-  hintBefore: '동의 후 예약 신청이 가능합니다.',
-  hintAfter: '동의 완료 — 예약 신청서로 이동할 수 있습니다.',
-};
-
-/** Total policy items, derived so the header count can never drift. */
-export const totalItems =
-  policyGroups.reduce((n, g) => n + g.items.length, 0) + 1; // +1 for closingItem

@@ -31,8 +31,6 @@ export type EquipmentItem = {
   spec: string;
   qty: string;
   place: string;
-  /** Fallback caption — the Placeholder hatch renders when `src` is absent. */
-  slot: string;
   src?: ImageMetadata;
   alt?: string;
   /**
@@ -42,13 +40,6 @@ export type EquipmentItem = {
    * where letterboxing beats cropping.
    */
   fit?: 'cover' | 'contain';
-  /**
-   * CSS object-position. The frame is square and the set is mixed portrait /
-   * landscape, so every photo loses 25% on one axis — nudge this if a crop
-   * clips the subject ('center top', '40% center', …).
-   */
-  focus?: string;
-  summary: { name: string; spec: string };
 };
 
 export const equipment: EquipmentItem[] = [
@@ -60,10 +51,8 @@ export const equipment: EquipmentItem[] = [
     spec: 'JBL 6채널 · 전 영역 분산 배치',
     qty: '6채널',
     place: '메인 홀 (스피커 전 영역 분산)',
-    slot: 'JBL 음향 시스템 (1800×1200)',
     src: jblSpeakers,
     alt: '벽걸이형 JBL 스피커 한 쌍',
-    summary: { name: 'JBL 6채널 입체 음향 시스템', spec: '공간 전 영역 분산 배치' },
   },
   {
     category: '음향',
@@ -73,10 +62,8 @@ export const equipment: EquipmentItem[] = [
     spec: 'SHURE 무선 · 4채널 동시 운용',
     qty: '4채널',
     place: '메인 홀',
-    slot: 'SHURE 무선 마이크 (1800×1200)',
     src: mic,
     alt: '슈어 무선 핸드 마이크',
-    summary: { name: '슈어 무선 마이크', spec: '4채널 동시 운용' },
   },
   {
     category: '영상',
@@ -86,10 +73,8 @@ export const equipment: EquipmentItem[] = [
     spec: '100인치 TV · 미러링 · HDMI',
     qty: '1대',
     place: '메인 홀 정면 벽면 고정',
-    slot: '100인치 삼성 스마트 TV (1800×1200)',
     src: smartTv,
     alt: '메인 홀 벽면에 설치된 100인치 스마트 TV',
-    summary: { name: '100인치 삼성 4K 스마트 TV', spec: '미러링 & HDMI 지원' },
   },
   {
     category: '영상',
@@ -99,10 +84,8 @@ export const equipment: EquipmentItem[] = [
     spec: '이동식 스탠드 · 바퀴 이동',
     qty: '1대',
     place: '메인 홀 · 프로젝트 룸',
-    slot: '이동형 TV (1800×1200)',
     src: portableTv,
     alt: '바퀴가 달린 스탠드에 설치된 이동형 TV',
-    summary: { name: '이동형 TV', spec: '이동식 스탠드 · 바퀴 이동' },
   },
   {
     category: '가구',
@@ -112,10 +95,8 @@ export const equipment: EquipmentItem[] = [
     spec: '등·좌판 패딩 · 적층 보관',
     qty: '75개',
     place: '메인 홀 · 프로젝트 룸',
-    slot: '기본 의자 (1800×1200)',
     src: chair,
     alt: '등판과 좌판에 패딩이 있는 기본 의자',
-    summary: { name: '기본 의자', spec: '등·좌판 패딩 · 자유로운 레이아웃 구성' },
   },
   {
     category: '가구',
@@ -125,10 +106,8 @@ export const equipment: EquipmentItem[] = [
     spec: '2인·3인용 · 바퀴 · 접이식',
     qty: '25개',
     place: '메인 홀 · 프로젝트 룸 (창고 보관)',
-    slot: '이동식 다목적 테이블 (1800×1200)',
     src: table,
     alt: '바퀴가 달린 흰색 접이식 다목적 테이블',
-    summary: { name: '이동식 다목적 테이블', spec: '퍼시스 2인·3인용 접이식 · 바퀴 이동' },
   },
   {
     category: '가구',
@@ -138,10 +117,8 @@ export const equipment: EquipmentItem[] = [
     spec: '3인용 소파 · 1인용 라운지 체어 · 커버 교체 가능',
     qty: '소파 1개 · 체어 3개',
     place: '메인 홀',
-    slot: '3인용 소파 & 1인용 라운지 체어 (1800×1200)',
     src: sofa,
     alt: '원목 프레임의 3인용 패브릭 소파',
-    summary: { name: '3인용 소파 & 1인용 라운지 체어', spec: '톤앤매너 맞춤 커버 교체 가능' },
   },
   {
     category: '가구',
@@ -151,10 +128,8 @@ export const equipment: EquipmentItem[] = [
     spec: '이동식 · 노트북 거치 가능',
     qty: '2개',
     place: '메인 홀',
-    slot: '강연대 (1800×1200)',
     src: podium,
     alt: '이동식 강연대',
-    summary: { name: '강연대', spec: '이동식 · 노트북 거치 가능' },
   },
   {
     category: '가구',
@@ -164,10 +139,8 @@ export const equipment: EquipmentItem[] = [
     spec: '이동식 · 플로어 스탠드',
     qty: '문의',
     place: '메인 홀 · 프로젝트 룸',
-    slot: '스탠드 조명 (1800×1200)',
     src: standingLight,
     alt: '패브릭 갓이 달린 플로어 스탠드 조명',
-    summary: { name: '스탠드 조명', spec: '이동식 · 분위기 연출용' },
   },
   {
     category: '기타',
@@ -177,31 +150,9 @@ export const equipment: EquipmentItem[] = [
     spec: '기가 인터넷',
     qty: '-',
     place: '전 영역',
-    slot: '초고속 와이파이 (1800×1200)',
     src: wifi,
     alt: '와이파이 아이콘',
     // A flat vector mark, not a photo: cover would crop it to nothing.
     fit: 'contain',
-    summary: { name: '초고속 기가 Wi-Fi', spec: '행사 전용 분리 회선' },
-  },
-];
-
-export const equipmentNotes = [
-  {
-    label: '사전 요청 — ',
-    text: "'사전 요청' 표기 장비는 창고에 보관 중입니다. 이용일 3일 전까지 알려 주시면 입실 전에 세팅해 드립니다.",
-  },
-  { label: '추가 비용 — ', text: '위 장비는 모두 대관료에 포함되어 있으며, 별도 사용료는 없습니다.' },
-  {
-    label: '조작 주의 — ',
-    text: '믹서·TV 설정을 임의로 변경하거나 케이블을 분리하지 말아 주세요. 문제가 있을 경우 호스트에게 바로 연락 주시면 됩니다.',
-  },
-  {
-    label: '파손 및 분실 — ',
-    text: '장비 파손 또는 부속품 분실 시 수리비 또는 동일 제품 교체 비용이 청구될 수 있습니다.',
-  },
-  {
-    label: '보유 내역 변동 — ',
-    text: '가구와 소품은 상시 업데이트되어 수량이 변동될 수 있습니다. 정확한 수량이 필요한 경우 별도로 문의해 주세요.',
   },
 ];

@@ -3,7 +3,6 @@
 export const site = {
   name: '이씀',
   nameLatin: 'ISSEUM',
-  tagline: 'PRIVATE MULTI CULTURE SPACE',
   description:
     '홍대입구역 인근 동교동에 위치한 약 68평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
   locale: 'ko_KR',
@@ -48,40 +47,35 @@ export const socialLinks = [
 ] as const;
 
 
-export type NavItem = {
-  label: string;
-  href: string;
-  /** Matched against Astro.url.pathname to set the active state. */
-  match: string;
-};
-
 /**
- * 지난 행사 page — off until there is real event photography (all 23 gallery
- * tiles are still placeholder hatches).
- *
- * While false the page is still BUILT, so you can review it at /events, but it
- * is unlinked from the nav and footer, dropped from the Rules page CTA, marked
- * noindex and excluded from the sitemap. Nobody can stumble onto a
- * half-finished archive, and search engines won't cache one.
- *
- * Flip to true to reopen — every one of those follows automatically.
+ * 지난 행사 page — off until there is real event photography. The page still
+ * builds (reviewable at /events) but is unlinked, noindexed and out of the
+ * sitemap. astro.config.mjs imports this same flag for the sitemap filter.
  */
 export const showEventsPage = false;
 
+export type NavItem = {
+  label: string;
+  href: string;
+};
+
+/**
+ * Single-page anchors. There is no active-state tracking: that needs a scroll
+ * observer, and the home page is otherwise nearly JS-free. Plain anchors work
+ * without a line of script.
+ */
 const allNav: NavItem[] = [
-  { label: '공간 소개', href: '/', match: '/' },
-  { label: '보유 장비', href: '/equipment', match: '/equipment' },
-  { label: '대관 규정', href: '/rules', match: '/rules' },
-  { label: '지난 행사', href: '/events', match: '/events' },
+  { label: '공간 안내', href: '/#space' },
+  { label: '보유 장비', href: '/#equipment' },
+  { label: '대관 절차', href: '/#process' },
+  { label: '자주 묻는 질문', href: '/#faq' },
 ];
 
-export const nav: NavItem[] = allNav.filter(
-  (item) => showEventsPage || item.href !== '/events'
-);
+export const nav: NavItem[] = allNav;
 
 const allFooterLinks = [
-  { label: '보유 장비 안내', href: '/equipment', external: false },
-  { label: '대관 규정 및 이용 안내', href: '/rules', external: false },
+  { label: '보유 장비 안내', href: '/#equipment', external: false },
+  { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
   { label: '대관 예약하기', href: bookingUrl, external: false },
 ];

@@ -147,19 +147,6 @@ button {
   padding-top: var(--space-section);
 }
 
-.section--sm {
-  padding-top: var(--space-section-sm);
-}
-
-/* Hairline grid: the grid background shows through 1px gaps, giving perfect
-   interior rules with no double-border seams. See design/TOKENS.md §5. */
-.hairline-grid {
-  display: grid;
-  gap: 1px;
-  background: var(--border);
-  border: var(--border-hairline);
-}
-
 .hairline-grid > * {
   background: var(--bg);
 }
@@ -222,12 +209,3 @@ button {
   );
 }
 
-.ph__label {
-  font-family: var(--font-mono);
-  font-size: var(--mono-slot);
-  letter-spacing: 0.12em;
-  color: var(--text-secondary);
-  background: var(--bg);
-  border: var(--border-hairline);
-  padding: 7px 12px;
-}

@@ -4,7 +4,29 @@ import SectionHeader from '../components/SectionHeader.astro';
 import { Image } from 'astro:assets';
 import DarkCta from '../components/DarkCta.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
-import { hero, heroSlides, stats, features, steps } from '../data/home';
+import { hero, heroSlides, stats, steps } from '../data/home';
+import { faq } from '../data/faq';
+import { refundSection } from '../data/rules';
+import { getImage } from 'astro:assets';
+
+// Photos for the modal are generated at build time; the modal swaps the src.
+const eqDetails = await Promise.all(
+  equipment.map(async (item) => ({
+    name: item.name,
+    // Real alt text where the data has it; the name is a serviceable fallback.
+    alt: item.alt ?? item.name,
+    desc: item.desc,
+    spec: item.spec,
+    qty: item.qty,
+    place: item.place,
+    fit: item.fit ?? 'cover',
+    img: item.src
+      ? item.src.format === 'svg'
+        ? item.src.src
+        : (await getImage({ src: item.src, width: 900 })).src
+      : '',
+  }))
+);
 import { spaces } from '../data/spaces';
 import { equipment } from '../data/equipment';
 ---
@@ -41,7 +63,7 @@ import { equipment } from '../data/equipment';
   </section>
 
   {/* ---------- Space ---------- */}
-  <section id="space" class="container section space-section">
+  <section id="space" class="container section anchor space-section">
     <SectionHeader eyebrow="SPACE & EQUIPMENT" title="공간 안내" />
 
     <div class="spaces">
@@ -68,48 +90,33 @@ import { equipment } from '../data/equipment';
       }
     </div>
 
-    <div class="eq">
-      <div class="eq__head">
-        <h3 class="display eq__title">보유 장비</h3>
-        <a href="/equipment" class="eq__link">
-          전체 장비 자세히 보기<span class="eq__arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-      <ul class="eq__list">
-        {
-          equipment.map((item, i) => (
-            <li class="eq__row">
-              <span class="mono-num eq__num">{String(i + 1).padStart(2, '0')}</span>
-              <span class="eq__name">{item.summary.name}</span>
-              <span class="eq__spec">{item.summary.spec}</span>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="eq__note">전 장비 대관료에 포함 · 사전 요청 시 세팅 지원</p>
-    </div>
   </section>
 
-  {/* ---------- Why ISSEUM ---------- */}
-  <section class="container section">
-    <SectionHeader eyebrow="WHY ISSEUM" title="공간 특징" />
-    <div class="why hairline-grid">
+
+  {/* ---------- 보유 장비 ---------- */}
+  <section id="equipment" class="container section anchor">
+    <SectionHeader eyebrow="EQUIPMENT & PROPS" title="보유 장비" />
+    <p class="eq__intro">
+      전 품목 대관료에 포함되어 있습니다. 항목을 누르면 사진과 상세 사양을 보실 수 있으며,
+      세팅이 필요한 품목은 이용일 3일 전까지 요청해 주세요.
+    </p>
+    <ul class="eq__list">
       {
-        features.map((feature, i) => (
-          <article class="why__card">
-            <span class="mono-num">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3 class="display why__title">{feature.title}</h3>
-              <p class="why__body">{feature.body}</p>
-            </div>
-          </article>
+        equipment.map((item, i) => (
+          <li>
+            <button type="button" class="eq__row" data-open-eq={i}>
+              <span class="mono-num eq__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="eq__name">{item.name}</span>
+              <span class="eq__more" aria-hidden="true">＋</span>
+            </button>
+          </li>
         ))
       }
-    </div>
+    </ul>
   </section>
 
   {/* ---------- Process ---------- */}
-  <section class="container section">
+  <section id="process" class="container section anchor">
     <SectionHeader eyebrow="RENTAL PROCESS" title="대관 절차" />
     <ol class="steps">
       {
@@ -125,6 +132,41 @@ import { equipment } from '../data/equipment';
         ))
       }
     </ol>
+  </section>
+
+  {/* ---------- FAQ ----------
+      <details>/<summary> gives an accordion with no JavaScript at all, which
+      keeps this page's script budget for the slideshow and the modal. */}
+  <section id="faq" class="container section anchor">
+    <SectionHeader eyebrow="FAQ" title="자주 묻는 질문" />
+    <div class="faq">
+      {
+        faq.map((item) => (
+          <details class="faq__item">
+            <summary class="faq__q">
+              <span>{item.q}</span>
+              <span class="faq__mark" aria-hidden="true" />
+            </summary>
+            <div class="faq__a">
+              {item.a.map((p) => <p class="prose">{p}</p>)}
+              {
+                item.refundTable && (
+                  <ul class="tiers">
+                    {refundSection.tiers.map((tier) => (
+                      <li class="tier">
+                        <span>{tier.when}</span>
+                        <span class="tier__rate">{tier.rate}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
+            </div>
+          </details>
+        ))
+      }
+    </div>
+
     <div class="closing">
       <DarkCta
         headline="원하시는 날짜가 비어 있는지 먼저 확인해 보세요."
@@ -132,7 +174,85 @@ import { equipment } from '../data/equipment';
       />
     </div>
   </section>
+
+  {/* Equipment detail. Native <dialog> brings focus trapping, Escape and an
+      inert background; the list itself stays in the HTML so it is still
+      readable and indexable without opening anything. */}
+  <script type="application/json" data-eq-data set:html={JSON.stringify(eqDetails)} is:inline></script>
+  <dialog class="eqmodal" data-eq-modal aria-label="장비 상세">
+    <article class="eqcard">
+      <header class="eqcard__bar">
+        <button type="button" class="eqcard__close" data-eq-close aria-label="닫기">✕</button>
+      </header>
+
+      <div class="eqcard__grid">
+        <div class="eqcard__media" data-eq-media></div>
+        <div class="eqcard__body">
+          <h2 class="display eqcard__name" data-eq-name></h2>
+          <p class="eqcard__desc" data-eq-desc></p>
+          <dl class="eqcard__spec">
+            <dt>규격</dt><dd data-eq-spec></dd>
+            <dt>보유 수량</dt><dd data-eq-qty></dd>
+            <dt>설치 장소</dt><dd data-eq-place></dd>
+          </dl>
+        </div>
+      </div>
+    </article>
+  </dialog>
 </BaseLayout>
+
+<script>
+  const modal = document.querySelector<HTMLDialogElement>('[data-eq-modal]');
+  const dataEl = document.querySelector<HTMLElement>('[data-eq-data]');
+
+  if (modal && dataEl) {
+    type Item = {
+      name: string; alt: string; desc: string;
+      spec: string; qty: string; place: string; fit: string; img: string;
+    };
+    const items = JSON.parse(dataEl.textContent || '[]') as Item[];
+    const q = <T extends Element>(sel: string) => modal.querySelector<T>(sel);
+
+    const open = (i: number) => {
+      const it = items[i];
+      if (!it) return;
+
+      const media = q<HTMLElement>('[data-eq-media]');
+      if (media) {
+        media.innerHTML = '';
+        if (it.img) {
+          const img = document.createElement('img');
+          img.src = it.img;
+          img.alt = it.alt;
+          img.className = `eqcard__img eqcard__img--${it.fit}`;
+          media.appendChild(img);
+        }
+      }
+
+      const set = (sel: string, text: string) => {
+        const el = q<HTMLElement>(sel);
+        if (el) el.textContent = text;
+      };
+      set('[data-eq-name]', it.name);
+      set('[data-eq-desc]', it.desc);
+      set('[data-eq-spec]', it.spec);
+      set('[data-eq-qty]', it.qty);
+      set('[data-eq-place]', it.place);
+
+      modal.showModal();
+    };
+
+    document.querySelectorAll<HTMLButtonElement>('[data-open-eq]').forEach((btn) => {
+      btn.addEventListener('click', () => open(Number(btn.dataset.openEq)));
+    });
+
+    q<HTMLButtonElement>('[data-eq-close]')?.addEventListener('click', () => modal.close());
+    // Click the backdrop (outside the panel) to dismiss. Escape is native.
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.close();
+    });
+  }
+</script>
 
 <style>
   /* ---------- Hero ---------- */
@@ -210,37 +330,8 @@ import { equipment } from '../data/equipment';
     text-wrap: balance;
   }
 
-  /* ---------- Why ---------- */
-  .why {
-    grid-template-columns: 1fr;
-    margin-top: var(--space-header-gap);
-  }
-
-  .why__card {
-    padding: var(--space-card);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  .why__title {
-    font-size: var(--display-card);
-    line-height: var(--leading-display-relaxed);
-  }
-
-  .why__body {
-    margin-top: var(--space-3);
-    font-size: var(--text-base);
-    line-height: 1.8;
-    color: var(--text-body);
-    letter-spacing: var(--tracking-body);
-  }
 
   /* ---------- Space ---------- */
-  .space-section {
-    scroll-margin-top: var(--scroll-offset);
-  }
-
   .spaces {
     display: grid;
     grid-template-columns: 1fr;
@@ -290,55 +381,44 @@ import { equipment } from '../data/equipment';
     letter-spacing: var(--tracking-meta);
   }
 
-  /* ---------- Equipment preview ---------- */
-  .eq {
-    margin-top: clamp(48px, 6vw, 92px);
-    border-top: var(--border-emphasis);
+  /* ---------- Anchors ---------- */
+  .anchor {
+    scroll-margin-top: var(--scroll-offset);
   }
 
-  .eq__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: clamp(22px, 2.6vw, 34px) 0 clamp(18px, 2vw, 26px);
-  }
-
-  .eq__title {
-    font-size: var(--display-sub);
-    letter-spacing: var(--tracking-title);
-  }
-
-  .eq__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-ui);
-    font-weight: 600;
+  /* ---------- 보유 장비 ---------- */
+  .eq__intro {
+    margin-top: var(--space-header-gap);
+    max-width: var(--measure-hero-lead);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    color: var(--text-body);
     letter-spacing: var(--tracking-body);
   }
 
-  .eq__arrow {
-    display: inline-block;
-    transition: transform var(--transition);
-  }
-
-  .eq__link:hover .eq__arrow {
-    transform: translateX(5px);
-  }
-
   .eq__list {
+    margin-top: var(--space-6);
     border-top: var(--border-hairline);
   }
 
   .eq__row {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2) var(--space-4);
     padding: 15px 0;
+    border: none;
     border-bottom: var(--border-hairline);
+    background: none;
+    font-family: var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+
+  .eq__row:hover {
+    background: var(--surface);
   }
 
   .eq__num {
@@ -346,27 +426,258 @@ import { equipment } from '../data/equipment';
     width: 26px;
   }
 
-  /* The flex-basis pair is what collapses this to two lines on narrow screens
-     without a media query. */
   .eq__name {
-    flex: 1 1 260px;
+    flex: 1;
     font-size: var(--text-list-name);
     font-weight: 600;
     letter-spacing: var(--tracking-title);
+    color: var(--ink);
   }
 
-  .eq__spec {
-    flex: 1 1 200px;
+  .eq__more {
+    flex: none;
+    color: var(--text-tertiary);
     font-size: var(--text-ui);
-    color: var(--text-secondary);
+  }
+
+  .eq__row:hover .eq__more {
+    color: var(--ink);
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq {
+    margin-top: var(--space-header-gap);
+    border-top: var(--border-hairline);
+  }
+
+  .faq__item {
+    border-bottom: var(--border-hairline);
+  }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    font-size: var(--text-item-title);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q:hover {
+    color: var(--link-hover);
+  }
+
+  /* Plus that becomes a minus — drawn, not a glyph, so it lines up exactly. */
+  .faq__mark {
+    flex: none;
+    position: relative;
+    width: 14px;
+    height: 14px;
+  }
+
+  .faq__mark::before,
+  .faq__mark::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    background: var(--ink);
+    transition: transform var(--transition-fast);
+  }
+
+  .faq__mark::after {
+    transform: rotate(90deg);
+  }
+
+  .faq__item[open] .faq__mark::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__a {
+    padding: 0 0 var(--space-6);
+    max-width: var(--measure-hero-lead);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .faq__a .tiers {
+    margin-top: var(--space-2);
+    border-top: var(--border-hairline);
+  }
+
+  .faq__a .tier {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 10px 0;
+    border-bottom: var(--border-hairline);
+    font-size: var(--text-ui);
+    color: var(--text-body);
+  }
+
+  .faq__a .tier__rate {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* ---------- 장비 모달 ----------
+     One solid panel on a dim backdrop, bordered and square-cornered like every
+     other surface on the site. The previous version floated the photo and the
+     text as two separate blocks over the backdrop, which read as broken. */
+  /* Author `display` beats the UA's `dialog:not([open]) { display: none }`
+     regardless of specificity, so the panel stayed on screen after close().
+     This rule hands the hiding back. */
+  .eqmodal:not([open]) {
+    display: none;
+  }
+
+  .eqmodal {
+    padding: var(--gutter);
+    border: none;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    overscroll-behavior: contain;
+  }
+
+  .eqmodal::backdrop {
+    background: var(--backdrop-lightbox);
+  }
+
+  .eqcard {
+    width: min(900px, 100%);
+    max-height: calc(100vh - var(--gutter) * 2);
+    overflow-y: auto;
+    background: var(--bg);
+    border: var(--border-emphasis);
+  }
+
+  /* Holds only the close button now, but stays sticky so ✕ is reachable while
+     the panel is scrolled. */
+  .eqcard__bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--space-3) var(--space-3);
+    background: var(--bg);
+    border-bottom: var(--border-hairline);
+  }
+
+  .eqcard__close {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: var(--text-ui);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .eqcard__close:hover {
+    border-color: var(--ink);
+    background: var(--surface);
+  }
+
+  .eqcard__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .eqcard__media {
+    background: var(--surface);
+    border-bottom: var(--border-hairline);
+  }
+
+  .eqcard__media :global(.eqcard__img) {
+    width: 100%;
+    aspect-ratio: var(--ratio-equipment);
+    display: block;
+  }
+
+  .eqcard__media :global(.eqcard__img--cover) {
+    object-fit: cover;
+  }
+
+  .eqcard__media :global(.eqcard__img--contain) {
+    object-fit: contain;
+    padding: clamp(24px, 3vw, 48px);
+  }
+
+  .eqcard__body {
+    padding: var(--space-6) var(--space-5) var(--space-8);
+  }
+
+  .eqcard__name {
+    font-size: var(--display-sub);
+    line-height: var(--leading-title);
+    letter-spacing: var(--tracking-display-tight);
+  }
+
+  .eqcard__desc {
+    margin-top: var(--space-3);
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .eqcard__spec {
+    margin-top: var(--space-6);
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    border-top: var(--border-hairline);
+    font-size: var(--text-ui);
     letter-spacing: var(--tracking-ui);
   }
 
-  .eq__note {
-    margin-top: var(--space-4);
-    font-size: var(--text-meta);
+  .eqcard__spec dt,
+  .eqcard__spec dd {
+    padding: 11px 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .eqcard__spec dt {
     color: var(--text-secondary);
-    letter-spacing: 0.02em;
+  }
+
+  .eqcard__spec dd {
+    color: var(--text-strong);
+  }
+
+  @media (min-width: 720px) {
+    .eqcard__grid {
+      grid-template-columns: 1fr 1.15fr;
+    }
+
+    .eqcard__media {
+      border-bottom: none;
+      border-right: var(--border-hairline);
+    }
+
+    .eqcard__body {
+      padding: var(--space-6) var(--space-6) var(--space-8);
+    }
   }
 
   /* ---------- Steps ---------- */
@@ -379,12 +690,12 @@ import { equipment } from '../data/equipment';
     border-bottom: var(--border-hairline);
   }
 
+  /* Spacing is set with margins rather than a flex `gap` so the three rows can
+     be tuned independently — a single gap forced number→title and title→body
+     to the same value, which left the cards airier than they read. */
   .step {
     background: var(--bg);
-    padding: clamp(24px, 2.6vw, 38px) clamp(20px, 2vw, 30px) clamp(30px, 3.4vw, 48px);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    padding: clamp(20px, 2vw, 28px) clamp(18px, 1.6vw, 24px) clamp(22px, 2.2vw, 30px);
     transition: background var(--transition);
   }
 
@@ -413,13 +724,14 @@ import { equipment } from '../data/equipment';
   }
 
   .step__title {
-    margin-top: 22px;
+    margin-top: 14px;
     font-size: var(--text-step-title);
     font-weight: 600;
     letter-spacing: var(--tracking-title);
   }
 
   .step__body {
+    margin-top: 7px;
     font-size: 14px;
     line-height: var(--leading-compact);
     color: var(--text-body);
@@ -434,12 +746,6 @@ import { equipment } from '../data/equipment';
   @media (min-width: 640px) {
     .spaces {
       grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 900px) {
-    .why {
-      grid-template-columns: repeat(3, 1fr);
     }
   }
 

@@ -79,7 +79,7 @@ src/
   styles/
     tokens.css            ★ every design value. Single source of truth
     base.css              globals, focus ring, reduced-motion, primitives
-  components/             10 components, all scoped-CSS .astro
+  components/             9 components, all scoped-CSS .astro
   layouts/BaseLayout.astro  head, SEO, JSON-LD, header/footer, skip link
     booking.ts            form fields, add-ons, privacy consent text, constraints
   cloudflare.d.ts         narrow declarations for the two Workers runtime modules
@@ -132,7 +132,8 @@ display: grid; gap: 1px; background: var(--border); border: var(--border-hairlin
 /* cells then set background: var(--bg) */
 ```
 
-`.hairline-grid` in `base.css`. Preserve it.
+There is no shared class for it — the utility in `base.css` went unused once every
+grid inlined the three declarations, so it was removed. Preserve the idiom, not a class.
 
 ### Breakpoints — only three
 
@@ -210,9 +211,10 @@ imports.)
 
 ### Booking CTAs
 
-`bookingUrl` in `config/site.ts` feeds **10 CTAs** across the live pages (header, dark CTA
-banners, footer link, Rules TOC button and agreement gate). Change it in one place. It
-still points at the old Google Form; see below.
+`bookingUrl` in `config/site.ts` feeds every booking CTA — **3 per page**: the header
+button, the closing dark CTA banner, and the footer link. It reaches them through only two
+components (`Header.astro`, `DarkCta.astro`) plus `footerLinks`, so changing it in one place
+still changes all of them.
 
 ---
 
@@ -488,6 +490,19 @@ Open product questions — **don't invent answers, ask**:
 ## Gotchas
 
 Things that have actually bitten, in this order of likelihood:
+
+- **Styling a `<dialog>` with `display:` keeps it visible after `close()`.** The UA
+  sheet hides a closed dialog with `dialog:not([open]) { display: none }`, but *any*
+  author `display` wins over a UA rule regardless of specificity. `.eqmodal { display:
+  grid }` meant `✕` fired `close()`, `open` flipped to `false`, and the panel stayed on
+  screen. Any dialog that sets `display` needs a matching `:not([open]) { display: none }`.
+- **Anchor offsets must subtract the target's own `padding-top`.** Every `.section` has
+  `padding-top: var(--space-section)` (up to 140px). Scrolling the section *box* clear of
+  the header stacked that padding on top of the offset and left ~150px of dead air above
+  the heading. `--scroll-offset` is therefore
+  `calc(var(--header-h) + var(--anchor-gap) - var(--space-section))` — negative on desktop,
+  which is legal. `--header-h` is measured at runtime in `Header.astro` because the mobile
+  header (bar + tab strip, 141px) is taller than the desktop bar (101px).
 
 - **`astro check` treats an unused `Props` interface as a hint.** Annotate the destructure
   (`const { … }: Props = Astro.props`) rather than leaving it inferred.

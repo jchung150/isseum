@@ -3,8 +3,8 @@
  * Button — renders <a> when href is given, <button> otherwise.
  * Variants map to design/COMPONENTS.md §5–§8.
  */
-type Variant = 'primary' | 'inverted' | 'outline' | 'outline-on-ink';
-type Size = 'sm' | 'md' | 'lg' | 'block';
+type Variant = 'primary' | 'inverted';
+type Size = 'md' | 'lg';
 
 interface Props {
   href?: string;
@@ -56,11 +56,6 @@ const linkAttrs = href
       border-color var(--transition-fast);
   }
 
-  /* --- sizes --- */
-  .btn--sm {
-    font-size: var(--text-meta);
-    padding: var(--space-3) 6px;
-  }
   .btn--md {
     font-size: var(--text-ui);
     padding: 13px var(--space-6);
@@ -68,12 +63,6 @@ const linkAttrs = href
   .btn--lg {
     font-size: var(--text-sm);
     padding: 17px var(--space-8);
-  }
-  .btn--block {
-    display: flex;
-    width: 100%;
-    font-size: var(--text-ui);
-    padding: 15px 18px;
   }
 
   /* --- variants --- */
@@ -93,29 +82,5 @@ const linkAttrs = href
   .btn--inverted:hover {
     background: var(--border);
     color: var(--ink);
-  }
-
-  .btn--outline {
-    border-color: var(--ink);
-    background: transparent;
-    color: var(--ink);
-  }
-  .btn--outline:hover {
-    background: var(--ink);
-    color: var(--bg);
-  }
-
-  /* 1px less padding than a filled sibling so optical heights match. */
-  .btn--outline-on-ink {
-    border-color: var(--link-hover);
-    background: transparent;
-    color: var(--bg);
-  }
-  .btn--outline-on-ink:hover {
-    border-color: var(--bg);
-    color: var(--bg);
-  }
-  .btn--outline-on-ink.btn--lg {
-    padding: 16px 31px;
   }
 </style>

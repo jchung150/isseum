@@ -4,8 +4,6 @@ import logo from '../assets/isseum-logo.png';
 import { nav, bookingUrl, site } from '../config/site';
 import Button from './Button.astro';
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isActive = (match: string) => (match === '/' ? path === '/' : path.startsWith(match));
 ---
 
 <header>
@@ -19,8 +17,7 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
         nav.map((item) => (
           <a
             href={item.href}
-            class:list={['gnb__link', { 'is-active': isActive(item.match) }]}
-            aria-current={isActive(item.match) ? 'page' : undefined}
+            class="gnb__link"
           >
             {item.label}
           </a>
@@ -36,8 +33,7 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
       nav.map((item) => (
         <a
           href={item.href}
-          class:list={['tabs__link', { 'is-active': isActive(item.match) }]}
-          aria-current={isActive(item.match) ? 'page' : undefined}
+          class="tabs__link"
         >
           {item.label}
         </a>
@@ -87,12 +83,6 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
     letter-spacing: var(--tracking-ui);
   }
 
-  .gnb__link.is-active {
-    font-weight: 600;
-    border-bottom: var(--border-active);
-    padding-bottom: 3px;
-  }
-
   /* Mobile: a horizontally-scrolling tab strip, not a hamburger.
      Better for a 4-item nav — see design/COMPONENTS.md §14. */
   .tabs {
@@ -114,11 +104,6 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
     border-left: var(--border-hairline);
   }
 
-  .tabs__link.is-active {
-    font-weight: 700;
-    background: var(--surface);
-  }
-
   @media (min-width: 900px) {
     .gnb {
       display: flex;
@@ -128,3 +113,19 @@ const isActive = (match: string) => (match === '/' ? path === '/' : path.startsW
     }
   }
 </style>
+
+<script>
+  // The sticky header is 101px on desktop but taller on mobile, where the tab
+  // strip sits under the bar. Anchor offsets depend on it, so measure rather
+  // than hard-code two numbers that drift apart.
+  const header = document.querySelector('header');
+  if (header) {
+    const sync = () =>
+      document.documentElement.style.setProperty(
+        '--header-h',
+        `${Math.round(header.getBoundingClientRect().height)}px`,
+      );
+    sync();
+    new ResizeObserver(sync).observe(header);
+  }
+</script>

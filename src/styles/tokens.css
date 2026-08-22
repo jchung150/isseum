@@ -43,8 +43,6 @@
   --display-hero: clamp(24px, 3.2vw, 44px);
   --display-section: clamp(28px, 4vw, 52px);
   --display-group: clamp(22px, 2.8vw, 34px);
-  --display-item: clamp(21px, 2.6vw, 32px);
-  --display-figure: clamp(24px, 2.6vw, 34px);
   --display-cta: clamp(20px, 2.4vw, 30px);
   --display-sub: clamp(20px, 2.2vw, 28px);
   --display-card: clamp(19px, 2vw, 24px);
@@ -66,11 +64,9 @@
   /* ---------- Eyebrow / mono ---------- */
   --eyebrow-size: 11.5px;
   --eyebrow-step-size: 11px;
-  --mono-slot-lg: 11.5px;
   --mono-slot: 10.5px;
   --mono-slot-xs: 9.5px;
   --mono-num: 11px;
-  --mono-num-lg: 11.5px;
 
   /* ---------- Letter-spacing ---------- */
   --tracking-display: -0.03em;
@@ -101,8 +97,6 @@
   --space-section: clamp(70px, 10vw, 140px);
   --space-section-sm: clamp(46px, 6vw, 90px);
   --space-header-gap: clamp(28px, 3.6vw, 52px);
-  --space-group: clamp(38px, 5vw, 68px);
-  --space-card: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px) clamp(32px, 3.6vw, 50px);
   --space-panel: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 44px);
   --space-notice: clamp(24px, 3vw, 40px);
   --gap-lg: clamp(32px, 4vw, 64px);
@@ -116,8 +110,6 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
-  --space-12: 48px;
-  --space-16: 64px;
 
   /* ---------- Layout ---------- */
   --container: 1440px;
@@ -129,7 +121,13 @@
   /* Header nav sits a step above body UI text so the menu reads clearly
      against the logo. */
   --text-nav: 16px;
-  --scroll-offset: 112px;
+  /* Anchor landing. A section's own padding-top (--space-section) is already
+     empty space, so scrolling the section *box* below the header stacked the
+     two and left ~150px of air above the heading. Subtracting the padding
+     lands the heading itself --anchor-gap below the header. --header-h is
+     measured at runtime in Header.astro (the mobile bar is taller). */
+  --anchor-gap: 28px;
+  --scroll-offset: calc(var(--header-h, 101px) + var(--anchor-gap) - var(--space-section));
   --measure-display: 24em;
   --measure-body: 36em;
   --measure-lead: 62em;
@@ -161,9 +159,5 @@
      subjects are centred product shots that survive that. A 4:3 frame instead
      clips 44% of height off the portraits, cutting chair legs and podium base. */
   --ratio-equipment: 1 / 1;
-  /* Caps the equipment photo so a row stays around 430px tall — roughly two
-     items per screen, scrolling into the third and fourth. Letting the photo
-     take a full grid fraction made each row fill the viewport on its own. */
-  --equipment-media: clamp(200px, 26vw, 360px);
   --ratio-map: 16 / 10;
 }

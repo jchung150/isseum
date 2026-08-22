@@ -415,6 +415,8 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
 
     /* ---------- wizard ---------- */
 
+    let firstRender = true;
+
     const render = () => {
       stepEls.forEach((el, i) => {
         el.hidden = i !== step;
@@ -431,7 +433,11 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
         mountTurnstile();
         renderReview();
       }
-      scrollToFormTop();
+      // The very first render just paints step 1 — the visitor has only this
+      // second arrived from a CTA, so moving the page under them reads as a
+      // glitch. Only a deliberate step change earns a scroll.
+      if (!firstRender) scrollToFormTop();
+      firstRender = false;
     };
 
     /**
@@ -442,8 +448,11 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     function scrollToFormTop() {
       const anchor = document.querySelector<HTMLElement>('.form-section') ?? form;
       if (!anchor) return;
+      const css = getComputedStyle(document.documentElement);
+      // --header-h is measured at runtime by Header.astro; the static token is
+      // the desktop-only fallback.
       const header = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        css.getPropertyValue('--header-h') || css.getPropertyValue('--header-height'),
         10
       );
       const offset = (Number.isFinite(header) ? header : 100) + 16;
@@ -691,6 +700,13 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
   }
 </script>
 
+<style is:global>
+  /* Scoped styles can't reach <body>. Only this page loads it. */
+  body {
+    background: var(--surface);
+  }
+</style>
+
 <style>
   .form-section {
     padding-top: var(--space-header-gap);
@@ -733,6 +749,16 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
   }
 
   /* ---------- form shell ---------- */
+  /* The page sits on --surface and the form floats on --bg, so arriving here
+     reads as stepping onto a form rather than another page of the brochure.
+     Both neutrals are already in the palette — no new colour. */
+  .form,
+  .done {
+    background: var(--bg);
+    border: var(--border-hairline);
+    padding: clamp(20px, 3vw, 44px);
+  }
+
   .form {
     max-width: 58em;
   }
@@ -789,11 +815,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
     font-size: var(--text-ui);
     font-weight: 600;
     letter-spacing: var(--tracking-ui);
-  }
-
-  .field__label--sm {
-    font-weight: 500;
-    color: var(--text-body);
   }
 
   .req {
@@ -1242,7 +1263,6 @@ const times = Array.from({ length: CLOSE_HOUR - OPEN_HOUR + 1 }, (_, i) => {
 
   .done {
     max-width: 44em;
-    padding: var(--space-panel);
     border: var(--border-emphasis);
   }
 
