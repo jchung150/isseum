@@ -12,11 +12,9 @@ eyebrow labels (`WHY ISSEUM`, `RENTAL PROCESS`) — it is decorative, not transl
 `isseum.com`, which does not yet redirect — see [Before launch](#before-launch)). Domain
 registered at 후이즈 / Whois, DNS delegated to Cloudflare.
 
-A self-hosted booking form at **`/booking`** is built, deployed and verified end to end
-(Turnstile → notification email → Google Sheet row). It is **not yet linked**:
-the ten `대관 예약하기` CTAs still point at the old Google Form, which requires visitors
-to sign in to Google. Switching them over is the last step before the site can be
-promoted — see [The booking form](#the-booking-form).
+The self-hosted booking form at **`/booking`** is live and every `대관 예약하기` CTA now
+points at it. The Google Form is gone. **Real enquiries arrive through this form**, so treat
+changes to it and to `/api/booking` as production changes.
 
 ---
 
@@ -224,10 +222,9 @@ still points at the old Google Form; see below.
 biggest drop-off in the funnel. Five steps: 기본 정보 → 이용 규정 동의 → 추가 옵션 →
 개인정보 동의 → 신청 내용 확인.
 
-**Not yet linked from anywhere.** It is `noindex`, excluded from the sitemap, and the CTAs
-still go to the Google Form. Deploying it therefore exposes nothing; flip `bookingUrl` to
-`/booking` when you're ready (and drop `external` on those buttons so they don't open a new
-tab).
+**Linked from every page.** `bookingUrl` in `config/site.ts` is `/booking`; the buttons are
+internal links, so no `external` / `target="_blank"`. The page stays `noindex` and out of
+the sitemap — it's a form, not content — which is fine even though it's now linked.
 
 ### Flow
 
@@ -431,12 +428,10 @@ caused the container-width drift.
 
 Blocking:
 
-1. **Point the CTAs at `/booking`.** The self-hosted form is deployed and verified; the
-   ten `대관 예약하기` buttons still go to the Google Form, which requires a Google
-   sign-in and loses most visitors. One line: `bookingUrl` in `config/site.ts`. Also drop
-   `external` on those buttons, and repoint the Rules page agreement gate.
-   **Get the 개인정보 동의 wording reviewed by a professional before real submissions
-   accumulate** — see `scripts/`-adjacent notes and §The booking form.
+1. **Get the 개인정보 동의 wording reviewed by a professional.** The form is live and
+   collecting real personal data into a Google Sheet with a 3-year retention claim. The
+   wording in `data/booking.ts` follows general PIPA practice but was not written by a
+   lawyer, and PIPA breaches carry fines.
 2. **`isseum.com` does not redirect to `www`.** Both hostnames currently serve the site
    directly, which reads as duplicate content. Every canonical tag points at `www`, so the
    damage is limited, but it should be a real 301. Fix with a Cloudflare **Redirect Rule**:

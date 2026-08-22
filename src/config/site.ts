@@ -10,8 +10,12 @@ export const site = {
   lang: 'ko',
 } as const;
 
-/** 대관 예약 신청서 (Google Form). Single source for every booking CTA on the site. */
-export const bookingUrl = 'https://forms.gle/HCXGP9p7tJiJYrMX8';
+/**
+ * 대관 예약 신청서. Single source for every booking CTA on the site.
+ * Self-hosted since the Google Form required visitors to sign in to Google,
+ * which lost most of them at the door.
+ */
+export const bookingUrl = '/booking';
 
 /**
  * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
@@ -35,15 +39,14 @@ export const business = {
   registrationNumber: '105-04-11192',
 } as const;
 
+/** 네이버 지도 공유 링크. The footer map is a static image that opens this. */
+export const naverMapUrl = 'https://naver.me/xuFnrHaN';
+
 export const socialLinks = [
   { label: '인스타그램', href: '#', glyph: 'square' },
   { label: '네이버 블로그', href: '#', glyph: 'circle' },
 ] as const;
 
-export const mapLinks = [
-  { label: '네이버 지도', href: '#' },
-  { label: '카카오맵', href: '#' },
-] as const;
 
 export type NavItem = {
   label: string;
@@ -80,7 +83,7 @@ const allFooterLinks = [
   { label: '보유 장비 안내', href: '/equipment', external: false },
   { label: '대관 규정 및 이용 안내', href: '/rules', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
-  { label: '대관 예약하기', href: bookingUrl, external: true },
+  { label: '대관 예약하기', href: bookingUrl, external: false },
 ];
 
 export const footerLinks = allFooterLinks.filter(

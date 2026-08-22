@@ -7,13 +7,15 @@
 import type { ImageMetadata } from 'astro';
 
 import jblSpeakers from '../assets/jbl_speakers.jpg';
-import smartTv from '../assets/samsung_smart_tv.jpg';
+import smartTv from '../assets/samsung_smart_tv.png';
 import chair from '../assets/basic_chair.jpg';
 import table from '../assets/portable_table.jpg';
 import sofa from '../assets/sofa_and_lounge_chair.jpg';
 import podium from '../assets/podium.jpg';
 import mic from '../assets/shure_mic.jpg';
-import wifi from '../assets/wifi.jpg';
+import portableTv from '../assets/portable_tv.png';
+import standingLight from '../assets/standing_light.png';
+import wifi from '../assets/wifi.svg';
 
 export const CATEGORIES = ['전체', '음향', '영상', '가구', '기타'] as const;
 export type Category = (typeof CATEGORIES)[number];
@@ -90,6 +92,19 @@ export const equipment: EquipmentItem[] = [
     summary: { name: '100인치 삼성 4K 스마트 TV', spec: '미러링 & HDMI 지원' },
   },
   {
+    category: '영상',
+    name: '이동형 TV',
+    req: '사전 요청',
+    desc: '바퀴가 달린 스탠드형 TV입니다. 필요한 위치로 옮겨 세울 수 있어 프로젝트 룸 미팅이나 메인 홀 보조 화면 등에 활용됩니다.',
+    spec: '이동식 스탠드 · 바퀴 이동',
+    qty: '1대',
+    place: '메인 홀 · 프로젝트 룸',
+    slot: '이동형 TV (1800×1200)',
+    src: portableTv,
+    alt: '바퀴가 달린 스탠드에 설치된 이동형 TV',
+    summary: { name: '이동형 TV', spec: '이동식 스탠드 · 바퀴 이동' },
+  },
+  {
     category: '가구',
     name: '기본 의자',
     req: '상시 세팅',
@@ -142,6 +157,19 @@ export const equipment: EquipmentItem[] = [
     summary: { name: '강연대', spec: '이동식 · 노트북 거치 가능' },
   },
   {
+    category: '가구',
+    name: '스탠드 조명',
+    req: '사전 요청',
+    desc: '분위기 연출과 보조 조명으로 사용하는 이동식 스탠드 조명입니다. 필요한 위치에 세워 라운지 구성이나 촬영 보조광으로 활용할 수 있습니다.',
+    spec: '이동식 · 플로어 스탠드',
+    qty: '문의',
+    place: '메인 홀 · 프로젝트 룸',
+    slot: '스탠드 조명 (1800×1200)',
+    src: standingLight,
+    alt: '패브릭 갓이 달린 플로어 스탠드 조명',
+    summary: { name: '스탠드 조명', spec: '이동식 · 분위기 연출용' },
+  },
+  {
     category: '기타',
     name: '초고속 Wi-Fi',
     req: '상시 제공',
@@ -151,7 +179,9 @@ export const equipment: EquipmentItem[] = [
     place: '전 영역',
     slot: '초고속 와이파이 (1800×1200)',
     src: wifi,
-    alt: '초고속 와이파이',
+    alt: '와이파이 아이콘',
+    // A flat vector mark, not a photo: cover would crop it to nothing.
+    fit: 'contain',
     summary: { name: '초고속 기가 Wi-Fi', spec: '행사 전용 분리 회선' },
   },
 ];

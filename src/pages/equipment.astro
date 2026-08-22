@@ -32,7 +32,15 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
           <article class="row" data-category={item.category} data-index={i}>
             <div class="row__media">
               {
-                item.src ? (
+                item.src && item.src.format === 'svg' ? (
+                  /* The sharp image service rejects SVG ("Unsupported format")
+                     and there is nothing to optimise anyway. The frame is a div
+                     rather than the <img> itself: an icon's own width/height
+                     attributes must never get to decide the row's height. */
+                  <div class="row__photo row__icon">
+                    <img src={item.src.src} alt={item.alt ?? item.name} loading="lazy" decoding="async" />
+                  </div>
+                ) : item.src ? (
                   <Image
                     class:list={['row__photo', `row__photo--${item.fit ?? 'cover'}`]}
                     src={item.src}
@@ -175,9 +183,30 @@ import { CATEGORIES, equipment, equipmentNotes } from '../data/equipment';
   }
 
   /* Product cut-outs: show the whole item, padded off the hairline. */
+  .row :global(.row__photo--cover),
+  .row :global(.row__photo--contain) {
+    display: block;
+  }
+
   .row :global(.row__photo--contain) {
     object-fit: contain;
     padding: clamp(16px, 2vw, 32px);
+  }
+
+  /* Vector icon in a photo frame: centred at a modest size rather than filling
+     it, so it reads as a mark and not a stretched image. */
+  .row__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 3vw, 48px);
+  }
+
+  .row__icon img {
+    width: auto;
+    height: auto;
+    max-width: 55%;
+    max-height: 55%;
   }
 
   .badges {

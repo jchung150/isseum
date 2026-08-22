@@ -1,9 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/isseum-logo.png';
-import { business, footerLinks, mapLinks, socialLinks, site } from '../config/site';
-import Button from './Button.astro';
-import Placeholder from './Placeholder.astro';
+import mapImage from '../assets/naver_map.png';
+import { business, footerLinks, naverMapUrl, socialLinks, site } from '../config/site';
 
 const info = [
   { term: '상호명', value: business.companyName },
@@ -35,10 +34,19 @@ const info = [
 
     <div>
       <p class="eyebrow eyebrow--label label">LOCATION</p>
-      <Placeholder label="MAP EMBED — 네이버 / 카카오맵" ratio="var(--ratio-map)" />
-      <div class="map-actions">
-        {mapLinks.map((link) => <Button href={link.href} variant="outline" size="sm" class="map-actions__btn">{link.label}</Button>)}
-      </div>
+      {/* A static image rather than an embed: the footer is on every page, and
+          a third-party map script would put external JS on all of them — plus
+          make the map provider a data processor. Tapping opens the real map. */}
+      <a class="map" href={naverMapUrl} target="_blank" rel="noopener">
+        <Image
+          class="map__img"
+          src={mapImage}
+          alt={`이씀 위치 지도 — ${business.address} (네이버 지도에서 열기)`}
+          widths={[400, 640, 900]}
+          sizes="(min-width: 900px) 32vw, 92vw"
+          loading="lazy"
+        />
+      </a>
     </div>
 
     <div class="col-links">
@@ -108,6 +116,25 @@ const info = [
     margin-bottom: var(--space-4);
   }
 
+  .map {
+    display: block;
+    position: relative;
+    border: var(--border-hairline);
+    transition: border-color var(--transition-fast);
+  }
+
+  .map:hover {
+    border-color: var(--ink);
+  }
+
+  .map :global(.map__img) {
+    width: 100%;
+    aspect-ratio: var(--ratio-map);
+    object-fit: cover;
+    display: block;
+  }
+
+
   .info {
     margin-top: 26px;
     display: grid;
@@ -125,15 +152,6 @@ const info = [
     color: var(--text-strong);
   }
 
-  .map-actions {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
-  }
-
-  .map-actions :global(.map-actions__btn) {
-    flex: 1;
-  }
 
   .col-links {
     display: flex;
