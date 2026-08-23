@@ -51,6 +51,9 @@ function validate(d: Payload): string | null {
   }
 
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str(d.email))) return '이메일 형식을 확인해 주세요.';
+  // Mirrors the pattern on the client input — client checks are a courtesy.
+  if (!/^0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4}$/.test(str(d.phone)))
+    return '전화번호 형식을 확인해 주세요.';
 
   const hours = hourOf(str(d.end)) - hourOf(str(d.start));
   if (hours < MIN_HOURS) return `대관은 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`;

@@ -23,6 +23,11 @@
   --bg: #fbfbf9;
   --placeholder-stripe: #eaeae3;
 
+  /* The one non-neutral in the palette, and only for form validation. A
+     warm red so it sits with the neutrals rather than cutting across them.
+     Never use it for emphasis or hierarchy — see CLAUDE.md §Design rules. */
+  --error: #b3392c;
+
   --bg-sticky: rgba(251, 251, 249, 0.88);
   --bg-glass: rgba(251, 251, 249, 0.86);
   --bg-glass-strong: rgba(251, 251, 249, 0.9);
@@ -59,6 +64,7 @@
   --text-ui: 13.5px;
   --text-ui-sm: 13px;
   --text-meta: 12.5px;
+  --text-fine: 12px;
   --text-xs: 12px;
 
   /* ---------- Eyebrow / mono ---------- */

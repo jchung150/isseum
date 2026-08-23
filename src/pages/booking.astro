@@ -120,7 +120,8 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
           </p>
           <p class="field">
             <label class="field__label" for="phone">전화번호 <span class="req">*</span></label>
-            <input class="input" type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel" placeholder="010-0000-0000" />
+            <input class="input" type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel"
+              pattern="0\d{1,2}[\-\s]?\d{3,4}[\-\s]?\d{4}" placeholder="010-0000-0000" />
           </p>
           <p class="field">
             <label class="field__label" for="email">이메일 <span class="req">*</span></label>
@@ -422,9 +423,7 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
 
     /* ---------- wizard ---------- */
 
-    let firstRender = true;
-
-    const render = () => {
+    const render = (scroll = false) => {
       stepEls.forEach((el, i) => {
         el.hidden = i !== step;
       });
@@ -436,24 +435,29 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
       if (nextBtn) nextBtn.hidden = step === stepEls.length - 1;
       if (submitBtn) submitBtn.hidden = step !== stepEls.length - 1;
       if (errorEl) errorEl.hidden = true;
+      clearFieldErrors();
       if (step === stepEls.length - 1) {
         mountTurnstile();
         renderReview();
       }
-      // The very first render just paints step 1 — the visitor has only this
-      // second arrived from a CTA, so moving the page under them reads as a
-      // glitch. Only a deliberate step change earns a scroll.
-      if (!firstRender) scrollToFormTop();
-      firstRender = false;
+      // Only a deliberate step change scrolls. The first paint must not (the
+      // visitor has just arrived from a CTA), and neither must the submit
+      // handler's sweep through every step to re-validate it.
+      if (scroll) scrollToStepTop();
     };
 
     /**
-     * Puts the top of the form just under the sticky header. scrollIntoView
-     * with block:'nearest' did nothing when the step was already partly in
-     * view, which left people mid-page on a new step.
+     * Puts the top of the *current step* just under the sticky header, so the
+     * progress strip and the card's own padding scroll out of the way. The
+     * earlier version anchored on .form-section, which left the progress strip
+     * filling the screen and the step heading pushed below the fold.
+     *
+     * Reading the anchor after a rAF matters: hiding one fieldset and showing
+     * another changes the document height, and a target computed against the
+     * old layout gets clamped to the old maximum scroll.
      */
-    function scrollToFormTop() {
-      const anchor = document.querySelector<HTMLElement>('.form-section') ?? form;
+    function scrollToStepTop() {
+      const anchor = stepEls[step] ?? form;
       if (!anchor) return;
       const css = getComputedStyle(document.documentElement);
       // --header-h is measured at runtime by Header.astro; the static token is
@@ -463,18 +467,118 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
         10
       );
       const offset = (Number.isFinite(header) ? header : 100) + 16;
-      const y = anchor.getBoundingClientRect().top + window.scrollY - offset;
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      window.scrollTo({ top: Math.max(y, 0), behavior: reduced ? 'auto' : 'smooth' });
+      requestAnimationFrame(() => {
+        const y = anchor.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(y, 0), behavior: reduced ? 'auto' : 'smooth' });
+      });
+    }
+
+    const FIELD_LABELS: Record<string, string> = {
+      name: '성함',
+      org: '소속',
+      phone: '전화번호',
+      email: '이메일',
+      date: '대관 날짜',
+      guests: '총 사용 인원',
+      start: '시작 시간',
+      end: '종료 시간',
+      purpose: '대관 설명',
+      requests: '요청 사항',
+    };
+
+    /** Consent checkboxes read as an action, not a missing value. */
+    const CONSENT_MESSAGES: Record<string, string> = {
+      agreeRules: '대관 규정 및 환불 정책에 동의해 주세요.',
+      agreePrivacy: '개인정보 수집·이용에 동의해 주세요.',
+    };
+
+    /** 을/를 — depends on whether the last syllable carries a final consonant. */
+    const eul = (word: string) => {
+      const last = word.charCodeAt(word.length - 1) - 0xac00;
+      return last >= 0 && last <= 11171 && last % 28 !== 0 ? '을' : '를';
+    };
+
+    /**
+     * The browser's own validationMessage follows the *browser's* locale, not
+     * the document's — an English-locale Chrome shows English on a Korean-only
+     * site. These are written here instead.
+     */
+    function messageFor(el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+      const v = el.validity;
+      if (CONSENT_MESSAGES[el.name]) return CONSENT_MESSAGES[el.name];
+      const label = FIELD_LABELS[el.name] ?? '항목';
+      const verb = el.tagName === 'SELECT' ? '선택' : '입력';
+      if (v.valueMissing) return `${label}${eul(label)} ${verb}해 주세요.`;
+      if (v.typeMismatch && el.type === 'email')
+        return '이메일 형식이 올바르지 않습니다. 예) example@email.com';
+      if (v.patternMismatch && el.name === 'phone')
+        return '전화번호 형식이 올바르지 않습니다. 예) 010-0000-0000';
+      if (v.rangeOverflow) return `최대 ${(el as HTMLInputElement).max}인까지 신청하실 수 있습니다.`;
+      if (v.rangeUnderflow) return '1인 이상 입력해 주세요.';
+      if (v.badInput || v.stepMismatch) return '숫자만 입력해 주세요.';
+      return `${label}${eul(label)} 확인해 주세요.`;
+    }
+
+    /** Wipes every inline field error. Called on each render and on edit. */
+    function clearFieldErrors() {
+      formEl.querySelectorAll('[data-field-error]').forEach((el) => el.remove());
+      formEl.querySelectorAll('[aria-invalid]').forEach((el) => {
+        el.removeAttribute('aria-invalid');
+        el.classList.remove('is-invalid');
+      });
+    }
+
+    /**
+     * Puts the message directly under the offending control. A banner down by
+     * the nav buttons meant the visitor read "이메일 형식이 아닙니다" a screen
+     * away from the field it was about.
+     */
+    function showFieldError(field: HTMLElement, message: string) {
+      // Several controls sit inside a wrapper — a consent <label>, the chip
+      // list, the start/end pair. Anchoring to the control itself would drop
+      // the message inside that box; anchor to the wrapper instead.
+      const consent = field.closest('.consent');
+      const group = field.closest('.chips, .timerange');
+      const note = document.createElement('span');
+      note.className = 'field__error';
+      note.setAttribute('data-field-error', '');
+      note.setAttribute('role', 'alert');
+      note.textContent = message;
+
+      if (consent) {
+        consent.insertAdjacentElement('afterend', note);
+      } else if (group) {
+        group.parentElement?.appendChild(note);
+      } else {
+        field.insertAdjacentElement('afterend', note);
+        field.classList.add('is-invalid');
+      }
+      field.setAttribute('aria-invalid', 'true');
+      field.focus({ preventScroll: true });
+      note.scrollIntoView({ block: 'nearest' });
     }
 
     const showError = (message: string, field?: HTMLElement) => {
+      if (field) {
+        showFieldError(field, message);
+        return;
+      }
       if (errorEl) {
         errorEl.textContent = message;
         errorEl.hidden = false;
       }
-      field?.focus();
     };
+
+    // Any edit clears the complaint about that control.
+    form.addEventListener('input', (event) => {
+      const el = event.target as HTMLElement;
+      if (el?.getAttribute?.('aria-invalid')) {
+        el.removeAttribute('aria-invalid');
+        el.classList.remove('is-invalid');
+        el.nextElementSibling?.matches('[data-field-error]') && el.nextElementSibling.remove();
+      }
+    });
 
     /** Validates only the fields inside the current step. */
     const validateStep = () => {
@@ -496,7 +600,7 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
           continue;
         }
         if (!el.checkValidity()) {
-          showError(el.validationMessage || '입력값을 확인해 주세요.', el);
+          showError(messageFor(el), el);
           return false;
         }
       }
@@ -520,12 +624,12 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
       const hours = hourOf(e) - hourOf(s);
       if (hours <= 0) {
         if (durationEl) durationEl.textContent = '종료 시간이 시작 시간보다 늦어야 합니다.';
-        if (report) showError('종료 시간이 시작 시간보다 늦어야 합니다.', endSel);
+        if (report) endSel.focus({ preventScroll: true });
         return false;
       }
       if (hours < MIN_HOURS) {
         if (durationEl) durationEl.textContent = `${hours}시간 — 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`;
-        if (report) showError(`대관은 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`, endSel);
+        if (report) endSel.focus({ preventScroll: true });
         return false;
       }
       if (durationEl) durationEl.textContent = `총 ${hours}시간`;
@@ -638,7 +742,7 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
         const target = Number(btn.dataset.gotoStep) - 1;
         if (Number.isInteger(target) && target >= 0 && target < stepEls.length) {
           step = target;
-          render();
+          render(true);
         }
       });
     });
@@ -648,11 +752,11 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
     nextBtn?.addEventListener('click', () => {
       if (!validateStep()) return;
       step = Math.min(step + 1, stepEls.length - 1);
-      render();
+      render(true);
     });
     prevBtn?.addEventListener('click', () => {
       step = Math.max(step - 1, 0);
-      render();
+      render(true);
     });
 
     /** Collects the whole form, with checkbox groups as arrays. */
@@ -722,8 +826,10 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
       if (progress) progress.hidden = true;
       done.hidden = false;
       done.setAttribute('tabindex', '-1');
-      done.focus();
-      done.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      // No scroll: the form it replaces was taller, so the page shortens and
+      // the panel lands in view on its own. Jumping the viewport after a
+      // successful submit only disorients.
+      done.focus({ preventScroll: true });
     }
 
     if (progress) progress.hidden = false;
@@ -735,6 +841,22 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
   /* Scoped styles can't reach <body>. Only this page loads it. */
   body {
     background: var(--surface);
+  }
+
+  /* Validation messages are created in JS, so they never carry Astro's scope
+     attribute and a scoped rule would not match them. */
+  .field__error {
+    font-size: var(--text-fine);
+    font-weight: 500;
+    color: var(--error);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  /* The consent checkbox sits in its own bordered block, so the message needs
+     a gap to read as belonging to it rather than to whatever follows. */
+  .consent + .field__error {
+    display: block;
+    margin-top: var(--space-3);
   }
 </style>
 
@@ -1360,6 +1482,10 @@ const endTimes = times.filter((t) => t.hour >= OPEN_HOUR + MIN_HOURS);
   .nojs a {
     font-weight: 600;
     text-decoration: underline;
+  }
+
+  .input.is-invalid {
+    border-color: var(--error);
   }
 
   .form__error {

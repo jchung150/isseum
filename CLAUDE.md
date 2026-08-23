@@ -109,9 +109,12 @@ site stops looking like ISSEUM:
    line. Elevation is border weight: `--border` hairline for internal separation,
    `--border-emphasis` (`--ink`) for section-level rules. That single contrast step carries
    the entire hierarchy.
-2. **No accent colour.** Twelve warm neutrals, no brand hue anywhere. Hierarchy *and
+2. **No accent colour, with one exception.** Warm neutrals, no brand hue. Hierarchy *and
    severity* are encoded by lightness — the refund tiers go 100% 환불 → 환불 불가 by fading
-   `--ink` → `--text-secondary`, never by turning red.
+   `--ink` → `--text-secondary`, never by turning red. The single exception is `--error`
+   (`#b3392c`, a warm red), added at the owner's request for **form validation only**:
+   the inline message under a field and that field's border. Never use it for emphasis,
+   hierarchy, or anything outside `/booking`.
 3. **Sharp corners.** `--radius` is `2px`. `--radius-full` (50%) is only for badges,
    bullet dots and circular marks.
 4. **Letter-spacing is load-bearing.** Korean is tight (`--tracking-body` -0.015em, display
@@ -490,6 +493,21 @@ Open product questions — **don't invent answers, ask**:
 ## Gotchas
 
 Things that have actually bitten, in this order of likelihood:
+
+- **Astro's scoped CSS never reaches an element created in JavaScript.** Scoping appends
+  `[data-astro-cid-…]` to every selector, and a `document.createElement` node carries no
+  such attribute — so `.field__error` styled in the page's `<style>` block rendered at the
+  inherited 16px ink. Styles for JS-built nodes go in `<style is:global>`. Toggling a class
+  on an element that is already in the markup is fine; it keeps its cid.
+- **`pattern` on an input is compiled with the regex `v` flag, and an invalid pattern is
+  ignored silently.** `pattern="0\d{1,2}[-\s]?…"` threw *Invalid character in character
+  class* — a bare `-` is not allowed inside a `v`-mode class — so `checkValidity()` returned
+  **true for every value**, including `abc`. Escape it (`[\-\s]`) and verify with a real
+  bad value; a pattern that silently validates nothing looks identical to one that works.
+- **`getComputedStyle` in headless CDP can return a stale colour.** Chasing a border that
+  reported `--border` while `.is-invalid` was demonstrably applied wasted several rounds —
+  the screenshot showed the correct red all along. Verify colour by sampling pixels from a
+  screenshot, not by reading computed styles over CDP.
 
 - **Styling a `<dialog>` with `display:` keeps it visible after `close()`.** The UA
   sheet hides a closed dialog with `dialog:not([open]) { display: none }`, but *any*
