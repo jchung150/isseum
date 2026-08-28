@@ -6,21 +6,27 @@ interface Props {
   /** Single-paragraph lead. For more than one paragraph use the `lead` slot. */
   lead?: string;
   meta?: string;
+  /**
+   * Drops the 42em measure so a short lead can run the full container width.
+   * Only for leads that are one or two sentences — the measure is there for a
+   * reason on anything longer.
+   */
+  wideLead?: boolean;
 }
 
-const { eyebrow, title, lead, meta }: Props = Astro.props;
+const { eyebrow, title, lead, meta, wideLead = false }: Props = Astro.props;
 
 // The slot wins over the prop; either may be used, so check both.
 const hasLead = Boolean(lead) || Astro.slots.has('lead');
 ---
 
-<section class="container hero">
+<section class="container hero" data-page-hero>
   <p class="eyebrow hero__eyebrow">{eyebrow}</p>
   <h1 class="display hero__title">{title}</h1>
   <div class="hero__foot">
     {
       hasLead && (
-        <div class="hero__lead">
+        <div class:list={['hero__lead', wideLead && 'hero__lead--wide']}>
           <slot name="lead">
             <p class="lead">{lead}</p>
           </slot>
@@ -66,6 +72,11 @@ const hasLead = Boolean(lead) || Astro.slots.has('lead');
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+  }
+
+  /* Doubled class so it outranks .hero__lead regardless of source order. */
+  .hero__lead.hero__lead--wide {
+    max-width: none;
   }
 
   .hero__meta {

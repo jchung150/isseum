@@ -33,7 +33,12 @@ const json = (body: unknown, status = 200) =>
 
 const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 const arr = (v: unknown) => (Array.isArray(v) ? v.map(String) : []);
-const hourOf = (v: string) => Number(v.split(':')[0]);
+/** Minutes from midnight — slots are half-hourly, so hour arithmetic is wrong. */
+const minOf = (v: string) => {
+  const [h, m] = v.split(':').map(Number);
+  return h * 60 + (m || 0);
+};
+const fmtHours = (h: number) => (Number.isInteger(h) ? String(h) : h.toFixed(1));
 
 /** Server-side validation. The client checks the same things; this is the one that counts. */
 function validate(d: Payload): string | null {
@@ -55,8 +60,13 @@ function validate(d: Payload): string | null {
   if (!/^0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4}$/.test(str(d.phone)))
     return '전화번호 형식을 확인해 주세요.';
 
-  const hours = hourOf(str(d.end)) - hourOf(str(d.start));
+  const hours = (minOf(str(d.end)) - minOf(str(d.start))) / 60;
   if (hours < MIN_HOURS) return `대관은 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`;
+
+  // Workers run on UTC; the venue books in Korean local time, so compare the
+  // requested date against today in Asia/Seoul rather than the server's day.
+  const todaySeoul = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  if (str(d.date) < todaySeoul) return '지난 날짜는 신청하실 수 없습니다.';
 
   const guests = Number(d.guests);
   if (!Number.isFinite(guests) || guests < 1 || guests > MAX_GUESTS) {
@@ -94,7 +104,7 @@ function buildEmailBody(d: Payload, hours: number, ip: string) {
     ['전화번호', str(d.phone)],
     ['이메일', str(d.email)],
     ['대관 날짜', str(d.date)],
-    ['대관 시간', `${str(d.start)} ~ ${str(d.end)} (${hours}시간)`],
+    ['대관 시간', `${str(d.start)} ~ ${str(d.end)} (${fmtHours(hours)}시간)`],
     ['총 사용 인원', `${str(d.guests)}명`],
     ['대관 설명', str(d.purpose)],
     ['유입 경로', arr(d.referral).join(' · ') || '—'],
@@ -145,7 +155,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const problem = validate(payload);
   if (problem) return json({ ok: false, error: problem }, 400);
 
-  const hours = hourOf(str(payload.end)) - hourOf(str(payload.start));
+  const hours = (minOf(str(payload.end)) - minOf(str(payload.start))) / 60;
   const { text, html } = buildEmailBody(payload, hours, ip);
 
   /* ---- 1. Email first: this is the record that must not be lost. ---- */

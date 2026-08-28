@@ -494,6 +494,16 @@ Open product questions — **don't invent answers, ask**:
 
 Things that have actually bitten, in this order of likelihood:
 
+- **`npm run build` while `npm run dev` is running corrupts the dev server.** Both share
+  `node_modules/.vite`, and the build rewrites the optimised-dependency directory the
+  running server still holds handles to. The dev server then 500s with *The file does not
+  exist at .../deps_ssr/astro_assets_runtime.js … Try adding it to `optimizeDeps.exclude`* —
+  which is a red herring; nothing is wrong with the config. Recover with:
+  ```bash
+  npx astro dev stop && rm -rf node_modules/.vite .astro && npm run dev
+  ```
+  Avoid it by stopping the dev server before building, or by only building when done.
+
 - **Astro's scoped CSS never reaches an element created in JavaScript.** Scoping appends
   `[data-astro-cid-…]` to every selector, and a `document.createElement` node carries no
   such attribute — so `.field__error` styled in the page's `<style>` block rendered at the
