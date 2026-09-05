@@ -4,7 +4,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import FilterChips from '../components/FilterChips.astro';
 import DarkCta from '../components/DarkCta.astro';
-import { EVENT_CATEGORIES, tiles } from '../data/events';
+import {
+  EVENT_CATEGORIES,
+  closingCta,
+  gallery as galleryCopy,
+  lightbox,
+  page,
+  tiles,
+} from '../data/events';
 import { showEventsPage } from '../config/site';
 
 // The lightbox reuses one <img>, so each tile carries the URL of its
@@ -17,19 +24,15 @@ const gallery = await Promise.all(
 );
 ---
 
-<BaseLayout
-  title="지난 행사"
-  description="이씀에서 실제 진행된 공연, 브랜드 행사, 촬영, 강연의 현장 사진과 영상 아카이브."
-  noindex={!showEventsPage}
->
-  <PageHero
-    eyebrow="PAST EVENTS · ARCHIVE"
-    title="이씀에서 열린 지난 행사"
-    lead="공연, 브랜드 행사, 촬영, 강연 — 실제 진행된 현장의 사진과 영상입니다. 이미지를 클릭하면 크게 넘겨 볼 수 있습니다."
-  />
+<BaseLayout title={page.title} description={page.description} noindex={!showEventsPage}>
+  <PageHero eyebrow={page.eyebrow} title={page.heroTitle} lead={page.lead} />
 
   <section class="container filters">
-    <FilterChips categories={EVENT_CATEGORIES} controls="event-gallery" label="행사 분류" />
+    <FilterChips
+      categories={EVENT_CATEGORIES}
+      controls="event-gallery"
+      label={galleryCopy.filterLabel}
+    />
     <p class="filters__count" role="status" aria-live="polite" data-count></p>
   </section>
 
@@ -48,7 +51,7 @@ const gallery = await Promise.all(
             data-date={tile.date}
             data-title={tile.title}
             data-video={tile.isVideo ? 'true' : 'false'}
-            aria-label={`${tile.title} — ${tile.shot} 크게 보기`}
+            aria-label={galleryCopy.tileLabel(tile.title, tile.shot)}
           >
             {tile.src ? (
               <Image
@@ -82,23 +85,18 @@ const gallery = await Promise.all(
       }
     </div>
 
-    <p class="empty" data-empty hidden>
-      해당 분류의 기록이 아직 없습니다. 다른 분류를 선택해 주세요.
-    </p>
+    <p class="empty" data-empty hidden>{galleryCopy.empty}</p>
 
-    <p class="gallery__note">현장 사진은 주최 측 동의를 받아 게시하며, 요청 시 즉시 삭제해 드립니다.</p>
+    <p class="gallery__note">{galleryCopy.note}</p>
   </section>
 
   <section class="container closing">
-    <DarkCta
-      headline="비슷한 행사를 기획하고 계신가요?"
-      sub="이전 사례의 세팅 그대로 준비해 드릴 수 있습니다. 신청서에 참고 행사명을 적어 주세요."
-    />
+    <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
   </section>
 
   {/* Native <dialog> gives focus trapping, Escape-to-close and an inert
       background for free — most of the accessibility floor, unpaid for. */}
-  <dialog class="lightbox" data-lightbox aria-label="행사 사진 크게 보기">
+  <dialog class="lightbox" data-lightbox aria-label={lightbox.label}>
     <div class="lightbox__inner">
       <div class="lightbox__bar">
         <p class="lightbox__meta">
@@ -108,9 +106,9 @@ const gallery = await Promise.all(
         </p>
         <div class="lightbox__controls">
           <span class="lightbox__count" data-lb-count></span>
-          <button type="button" class="lightbox__btn" data-lb-prev aria-label="이전 사진">←</button>
-          <button type="button" class="lightbox__btn" data-lb-next aria-label="다음 사진">→</button>
-          <button type="button" class="lightbox__btn" data-lb-close aria-label="닫기">✕</button>
+          <button type="button" class="lightbox__btn" data-lb-prev aria-label={lightbox.prev}>←</button>
+          <button type="button" class="lightbox__btn" data-lb-next aria-label={lightbox.next}>→</button>
+          <button type="button" class="lightbox__btn" data-lb-close aria-label={lightbox.close}>✕</button>
         </div>
       </div>
       <div class="lightbox__stage" data-lb-stage>
@@ -122,6 +120,10 @@ const gallery = await Promise.all(
 </BaseLayout>
 
 <script>
+  // Same copy source as the markup above; the tile/category data is read from
+  // the DOM, so only these strings cross over.
+  import { ALL, gallery, lightbox } from '../data/events';
+
   const list = document.querySelector<HTMLElement>('[data-list]');
   const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter-value]');
   const empty = document.querySelector<HTMLElement>('[data-empty]');
@@ -150,7 +152,7 @@ const gallery = await Promise.all(
       if (img && slot && stage) {
         if (full) {
           img.src = full;
-          img.alt = tile.getAttribute('aria-label')?.replace(' 크게 보기', '') ?? '';
+          img.alt = tile.getAttribute('aria-label')?.replace(gallery.openSuffix, '') ?? '';
           img.hidden = false;
           slot.hidden = true;
           stage.classList.remove('ph');
@@ -165,7 +167,7 @@ const gallery = await Promise.all(
 
       if (dateEl) dateEl.textContent = tile.dataset.date ?? '';
       if (titleEl) titleEl.textContent = tile.dataset.title ?? '';
-      if (countEl) countEl.textContent = `${index + 1} / ${visible.length}`;
+      if (countEl) countEl.textContent = lightbox.count(index + 1, visible.length);
     };
 
     const step = (delta: number) => {
@@ -176,13 +178,16 @@ const gallery = await Promise.all(
 
     const applyFilter = (value: string) => {
       visible = tiles.filter((tile) => {
-        const match = value === '전체' || tile.dataset.category === value;
+        const match = value === ALL || tile.dataset.category === value;
         tile.hidden = !match;
         return match;
       });
       if (empty) empty.hidden = visible.length > 0;
       if (count) {
-        count.textContent = `${value === '전체' ? '사진 · 영상' : value} ${visible.length}컷`;
+        count.textContent = gallery.count(
+          value === ALL ? gallery.allCountLabel : value,
+          visible.length
+        );
       }
     };
 
@@ -223,11 +228,11 @@ const gallery = await Promise.all(
           other.classList.toggle('is-active', isActive);
           other.setAttribute('aria-pressed', String(isActive));
         });
-        applyFilter(chip.dataset.filterValue ?? '전체');
+        applyFilter(chip.dataset.filterValue ?? ALL);
       });
     });
 
-    applyFilter('전체');
+    applyFilter(ALL);
   }
 </script>
 

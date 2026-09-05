@@ -4,9 +4,9 @@ import SectionHeader from '../components/SectionHeader.astro';
 import { Image } from 'astro:assets';
 import DarkCta from '../components/DarkCta.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
-import { hero, heroSlides, stats, steps } from '../data/home';
+import { closingCta, hero, heroSlides, page, sections, stats, steps } from '../data/home';
 import { faq } from '../data/faq';
-import { refundSection } from '../data/rules';
+import { refundSection } from '../data/booking';
 import { getImage } from 'astro:assets';
 
 // Photos for the modal are generated at build time; the modal swaps the src.
@@ -28,17 +28,17 @@ const eqDetails = await Promise.all(
   }))
 );
 import { spaces } from '../data/spaces';
-import { equipment } from '../data/equipment';
+import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
 ---
 
-<BaseLayout title="홈" isHome>
+<BaseLayout title={page.title} isHome>
   {/* ---------- Hero ---------- */}
   <section class="container hero">
     <HeroSlideshow slides={heroSlides} />
     <div class="hero__body">
       <p class="eyebrow hero__eyebrow">{hero.eyebrow}</p>
       <h1 class="display hero__title">
-        {hero.headline}{' '}<em class="hero__brand">{hero.brand}</em>
+        {hero.headline.map((line) => <span class="hero__line">{line}</span>)}
       </h1>
       <div class="hero__copy">
         {hero.body.map((p) => <p class="lead">{p}</p>)}
@@ -64,7 +64,7 @@ import { equipment } from '../data/equipment';
 
   {/* ---------- Space ---------- */}
   <section id="space" class="container section anchor space-section">
-    <SectionHeader eyebrow="SPACE" title="공간 안내" />
+    <SectionHeader eyebrow={sections.space.eyebrow} title={sections.space.title} />
 
     <div class="spaces">
       {
@@ -95,11 +95,8 @@ import { equipment } from '../data/equipment';
 
   {/* ---------- 보유 장비 ---------- */}
   <section id="equipment" class="container section anchor">
-    <SectionHeader eyebrow="EQUIPMENT & PROPS" title="보유 장비" />
-    <p class="eq__intro">
-      전 품목 대관료에 포함되어 있습니다. 항목을 누르면 사진과 상세 사양을 보실 수 있으며,
-      세팅이 필요한 품목은 이용일 3일 전까지 요청해 주세요.
-    </p>
+    <SectionHeader eyebrow={sections.equipment.eyebrow} title={sections.equipment.title} />
+    <p class="eq__intro">{equipmentIntro}</p>
     <ul class="eq__list">
       {
         equipment.map((item, i) => (
@@ -117,7 +114,7 @@ import { equipment } from '../data/equipment';
 
   {/* ---------- Process ---------- */}
   <section id="process" class="container section anchor">
-    <SectionHeader eyebrow="RENTAL PROCESS" title="대관 절차" />
+    <SectionHeader eyebrow={sections.process.eyebrow} title={sections.process.title} />
     <ol class="steps">
       {
         steps.map((step) => (
@@ -138,7 +135,7 @@ import { equipment } from '../data/equipment';
       <details>/<summary> gives an accordion with no JavaScript at all, which
       keeps this page's script budget for the slideshow and the modal. */}
   <section id="faq" class="container section anchor">
-    <SectionHeader eyebrow="FAQ" title="자주 묻는 질문" />
+    <SectionHeader eyebrow={sections.faq.eyebrow} title={sections.faq.title} />
     <div class="faq">
       {
         faq.map((item, i) => (
@@ -169,10 +166,7 @@ import { equipment } from '../data/equipment';
     </div>
 
     <div class="closing">
-      <DarkCta
-        headline="원하시는 날짜가 비어 있는지 먼저 확인해 보세요."
-        sub="신청서 접수 후 영업일 기준 1일 내 회신드립니다."
-      />
+      <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
     </div>
   </section>
 
@@ -180,10 +174,10 @@ import { equipment } from '../data/equipment';
       inert background; the list itself stays in the HTML so it is still
       readable and indexable without opening anything. */}
   <script type="application/json" data-eq-data set:html={JSON.stringify(eqDetails)} is:inline></script>
-  <dialog class="eqmodal" data-eq-modal aria-label="장비 상세">
+  <dialog class="eqmodal" data-eq-modal aria-label={equipmentModal.label}>
     <article class="eqcard">
       <header class="eqcard__bar">
-        <button type="button" class="eqcard__close" data-eq-close aria-label="닫기">✕</button>
+        <button type="button" class="eqcard__close" data-eq-close aria-label={equipmentModal.close}>✕</button>
       </header>
 
       <div class="eqcard__grid">
@@ -192,9 +186,9 @@ import { equipment } from '../data/equipment';
           <h2 class="display eqcard__name" data-eq-name></h2>
           <p class="eqcard__desc" data-eq-desc></p>
           <dl class="eqcard__spec">
-            <dt>규격</dt><dd data-eq-spec></dd>
-            <dt>보유 수량</dt><dd data-eq-qty></dd>
-            <dt>설치 장소</dt><dd data-eq-place></dd>
+            <dt>{equipmentModal.spec}</dt><dd data-eq-spec></dd>
+            <dt>{equipmentModal.qty}</dt><dd data-eq-qty></dd>
+            <dt>{equipmentModal.place}</dt><dd data-eq-place></dd>
           </dl>
         </div>
       </div>
@@ -275,9 +269,12 @@ import { equipment } from '../data/equipment';
     max-width: var(--measure-display);
   }
 
-  .hero__brand {
-    font-style: normal;
-    color: var(--text-strong);
+  /* One entry of `hero.headline` per line. A block span rather than <br> so the
+     break is a property of the data — add or reorder a phrase and the markup
+     needs no edit — and so a phrase longer than --measure-display still wraps
+     inside its own line instead of running past it. */
+  .hero__line {
+    display: block;
   }
 
   .hero__copy {
@@ -455,17 +452,19 @@ import { equipment } from '../data/equipment';
     border-bottom: var(--border-hairline);
   }
 
+  /* Deliberately identical to .eq__row. The two lists sit on the same page and
+     differ only in what a click does (modal vs accordion), so at rest they must
+     read as one component. Layout lives here; the type lives on .faq__text,
+     mirroring how .eq__row/.eq__name split it. */
   .faq__q {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding: var(--space-5) 0;
-    font-size: var(--text-item-title);
-    font-weight: 600;
-    letter-spacing: var(--tracking-title);
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    padding: 15px 0;
     cursor: pointer;
     list-style: none;
+    transition: background var(--transition-fast);
   }
 
   .faq__q::-webkit-details-marker {
@@ -473,27 +472,42 @@ import { equipment } from '../data/equipment';
   }
 
   .faq__q:hover {
-    color: var(--link-hover);
+    background: var(--surface);
   }
 
-  /* Same 26px numeral column as the equipment list, so the two lists on this
-     page read as one system. */
+  /* Same 26px numeral column as the equipment list. */
   .faq__num {
     flex: none;
     width: 26px;
-    font-weight: 400;
   }
 
+  /* = .eq__name */
   .faq__text {
     flex: 1;
+    font-size: var(--text-list-name);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
   }
 
-  /* Plus that becomes a minus — drawn, not a glyph, so it lines up exactly. */
+  /* Plus that becomes a minus. Drawn rather than the ＋ glyph .eq__more uses,
+     because it has to animate — but built to that glyph's own metrics so the
+     two lists carry the same mark at rest.
+
+     Measured from Pretendard at --text-ui: the ＋ ink is 6.17px square with its
+     centre 4.76px above the baseline. As a fraction of the em that is 0.46em
+     square, centre 0.35em up. The box is therefore 0.46em wide and 0.71em tall
+     and sits on the baseline (a flex item with no text baselines on its bottom
+     edge), which puts the bars at 0.355em — the glyph's own crossing point.
+     Both arms are the box width, since ::after is ::before rotated about its
+     centre. Everything is in em, so the mark tracks --text-ui if it changes. */
   .faq__mark {
     flex: none;
+    align-self: baseline;
     position: relative;
-    width: 14px;
-    height: 14px;
+    font-size: var(--text-ui);
+    width: 0.46em;
+    height: 0.71em;
   }
 
   .faq__mark::before,
@@ -501,13 +515,19 @@ import { equipment } from '../data/equipment';
     content: '';
     position: absolute;
     inset: 50% 0 auto 0;
-    height: 1.5px;
-    background: var(--ink);
-    transition: transform var(--transition-fast);
+    height: 1.2px;
+    background: var(--text-tertiary);
+    transition: transform var(--transition-fast), background var(--transition-fast);
   }
 
   .faq__mark::after {
     transform: rotate(90deg);
+  }
+
+  /* Matches .eq__row:hover .eq__more */
+  .faq__q:hover .faq__mark::before,
+  .faq__q:hover .faq__mark::after {
+    background: var(--ink);
   }
 
   .faq__item[open] .faq__mark::after {

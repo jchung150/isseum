@@ -3,28 +3,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import BulletList from '../components/BulletList.astro';
 import {
-  MAX_GUESTS,
   MIN_HOURS,
   OPEN_HOUR,
   CLOSE_HOUR,
   addOns,
+  basicFields,
+  basicStep,
+  honeypotLabel,
+  nav,
+  noscript,
   optionsIntro,
+  page,
+  policyGroups,
   privacy,
+  purposeField,
+  referralField,
   referralSources,
+  refundSection,
+  requestsField,
   reviewGroups,
+  reviewStep,
+  rulesStep,
   steps,
+  success,
+  timeField,
 } from '../data/booking';
 import { business, turnstileSiteKey } from '../config/site';
-import { policyGroups, refundSection, lastRevised } from '../data/rules';
 
-// The regulations shown in step 2 come from the same source as /rules, so the
-// two can never state different policies.
+// Item numbers are derived rather than stored — see data/booking.ts.
 let itemCounter = 0;
 const numberedGroups = policyGroups.map((group) => ({
   ...group,
   items: group.items.map((item) => ({ ...item, n: ++itemCounter })),
 }));
-const closingItemNumber = itemCounter + 1;
 
 // Half-hour slots, labelled 12-hour: 8:00am … 1:30pm … 10:00pm. The value stays
 // 24-hour so it sorts and compares as plain text.
@@ -48,17 +59,8 @@ const startTimes = times.filter((t) => t.minutes <= (CLOSE_HOUR - MIN_HOURS) * 6
 const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
 ---
 
-<BaseLayout
-  title="대관 예약 신청"
-  description="이씀 대관 예약 신청서. 기본 정보와 이용 규정 동의, 추가 옵션을 작성해 주시면 영업일 기준 1일 내에 회신드립니다."
-  noindex
->
-  <PageHero
-    eyebrow="BOOKING REQUEST"
-    title="대관 예약 신청"
-    lead="아래 내용을 작성해 주시면 영업일 기준 1일 내에 담당자가 연락드립니다. 최종 금액과 예약 확정은 확인 후 안내됩니다."
-    wideLead
-  />
+<BaseLayout title={page.title} description={page.description} noindex>
+  <PageHero eyebrow={page.eyebrow} title={page.title} lead={page.lead} wideLead />
 
   <script
     is:inline
@@ -71,11 +73,8 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         give a route that still works. */}
     <noscript>
       <div class="nojs">
-        <p><strong>이 신청서는 자바스크립트가 필요합니다.</strong></p>
-        <p>
-          브라우저에서 자바스크립트를 허용하시거나, 아래로 직접 연락해 주시면 동일하게
-          접수해 드립니다.
-        </p>
+        <p><strong>{noscript.title}</strong></p>
+        <p>{noscript.body}</p>
         <p>
           <a href={`tel:${business.phone}`}>{business.phone}</a> ·
           <a href={`mailto:${business.email}`}>{business.email}</a>
@@ -97,17 +96,15 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
 
     {/* Shown in place of the form once the endpoint confirms receipt. */}
     <div class="done" data-success hidden>
-      <p class="eyebrow">REQUEST RECEIVED</p>
-      <h2 class="done__title">예약 신청이 접수되었습니다.</h2>
+      <p class="eyebrow">{success.eyebrow}</p>
+      <h2 class="done__title">{success.title}</h2>
+      <p class="done__body">{success.body}</p>
       <p class="done__body">
-        영업일 기준 1일 내에 담당자가 연락드립니다. 최종 금액과 예약 확정은 확인 후
-        안내됩니다.
-      </p>
-      <p class="done__body">
-        급하신 경우 <a href={`tel:${business.phone}`}>{business.phone}</a> 으로 연락 주세요.
+        {success.urgent.before}<a href={`tel:${business.phone}`}>{business.phone}</a
+        >{success.urgent.after}
       </p>
       <div class="done__actions">
-        <a href="/" class="btn btn--ghost">홈으로</a>
+        <a href="/" class="btn btn--ghost">{success.home}</a>
       </div>
     </div>
 
@@ -115,56 +112,51 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       {/* ---------------- 1. 기본 정보 ---------------- */}
       <fieldset class="step" data-step="0">
         <legend class="step__legend">
-          <span class="eyebrow">STEP 01</span>
-          <span class="step__title">대관 예약자 기본 정보</span>
+          <span class="eyebrow">{basicStep.eyebrow}</span>
+          <span class="step__title">{basicStep.title}</span>
         </legend>
-        <p class="step__hint">예약하시는 분의 기본 정보를 입력해 주세요.</p>
+        <p class="step__hint">{basicStep.hint}</p>
 
         <div class="grid">
-          <p class="field">
-            <label class="field__label" for="name">성함 <span class="req">*</span></label>
-            <input class="input" type="text" id="name" name="name" required autocomplete="name" placeholder="홍길동" />
-          </p>
-          <p class="field">
-            <label class="field__label" for="org">소속</label>
-            <input class="input" type="text" id="org" name="org" autocomplete="organization" placeholder="소속 단체 (선택)" />
-          </p>
-          <p class="field">
-            <label class="field__label" for="phone">전화번호 <span class="req">*</span></label>
-            <input class="input" type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel"
-              pattern="0\d{1,2}[\-\s]?\d{3,4}[\-\s]?\d{4}" placeholder="010-0000-0000" />
-          </p>
-          <p class="field">
-            <label class="field__label" for="email">이메일 <span class="req">*</span></label>
-            <input class="input" type="email" id="email" name="email" required autocomplete="email" placeholder="example@email.com" />
-          </p>
-          <p class="field">
-            <label class="field__label" for="date">대관 날짜 <span class="req">*</span></label>
-            <input class="input" type="date" id="date" name="date" required />
-          </p>
-          <p class="field">
-            <label class="field__label" for="guests">
-              총 사용 인원 <span class="req">*</span>
-            </label>
-            <input class="input" type="number" id="guests" name="guests" required min="1" max={MAX_GUESTS} inputmode="numeric" placeholder="명" />
-          </p>
+          {
+            basicFields.map((f) => (
+              <p class="field">
+                <label class="field__label" for={f.id}>
+                  {f.label} {f.required && <span class="req">*</span>}
+                </label>
+                <input
+                  class="input"
+                  type={f.type}
+                  id={f.id}
+                  name={f.id}
+                  required={f.required}
+                  autocomplete={f.autocomplete}
+                  inputmode={f.inputmode}
+                  pattern={f.pattern}
+                  min={f.min}
+                  max={f.max}
+                  placeholder={f.placeholder}
+                />
+              </p>
+            ))
+          }
         </div>
 
         <fieldset class="subfield">
           <legend class="field__label">
-            대관 시간 <span class="req">*</span>
-            <span class="field__note">최소 {MIN_HOURS}시간</span>
+            {timeField.label} <span class="req">*</span>
+            <span class="field__note">{timeField.note}</span>
           </legend>
           <div class="timerange">
-            <label class="visually-hidden" for="start">시작 시간</label>
+            <label class="visually-hidden" for="start">{timeField.startLabel}</label>
             <select class="input" id="start" name="start" required>
-              <option value="">시작</option>
+              <option value="">{timeField.startEmpty}</option>
               {startTimes.map((t) => <option value={t.value}>{t.label}</option>)}
             </select>
             <span class="timerange__sep" aria-hidden="true">~</span>
-            <label class="visually-hidden" for="end">종료 시간</label>
+            <label class="visually-hidden" for="end">{timeField.endLabel}</label>
             <select class="input" id="end" name="end" required>
-              <option value="">종료</option>
+              <option value="">{timeField.endEmpty}</option>
               {endTimes.map((t) => <option value={t.value} data-label={t.label}>{t.label}</option>)}
             </select>
           </div>
@@ -172,15 +164,15 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         </fieldset>
 
         <p class="field">
-          <label class="field__label" for="purpose">대관 설명 <span class="req">*</span></label>
+          <label class="field__label" for="purpose">{purposeField.label} <span class="req">*</span></label>
           <textarea class="input input--area" id="purpose" name="purpose" required rows="3"
-            placeholder="예) 연말 모임, 워크숍, 팝업스토어, NGO 행사, 크리스마스 파티 등"></textarea>
+            placeholder={purposeField.placeholder}></textarea>
         </p>
 
         <fieldset class="subfield">
           <legend class="field__label">
-            유입 경로 <span class="req">*</span>
-            <span class="field__note">복수 선택 가능</span>
+            {referralField.label} <span class="req">*</span>
+            <span class="field__note">{referralField.note}</span>
           </legend>
           <div class="chips">
             {
@@ -198,14 +190,12 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       {/* ---------------- 2. 이용 규정 ---------------- */}
       <fieldset class="step" data-step="1">
         <legend class="step__legend">
-          <span class="eyebrow">STEP 02</span>
-          <span class="step__title">이용 규정 동의</span>
+          <span class="eyebrow">{rulesStep.eyebrow}</span>
+          <span class="step__title">{rulesStep.title}</span>
         </legend>
-        <p class="step__hint">
-          아래 규정을 확인해 주세요. 최종 개정 {lastRevised}
-        </p>
+        <p class="step__hint">{rulesStep.hint}</p>
 
-        <div class="policy" tabindex="0" role="region" aria-label="대관 규정 전문">
+        <div class="policy" tabindex="0" role="region" aria-label={rulesStep.regionLabel}>
           {
             numberedGroups.map((group) => (
               <section class="policy__group">
@@ -216,7 +206,8 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
                       <span class="policy__n">{item.n}</span>
                       {item.title}
                     </h4>
-                    <BulletList lines={item.lines} gap="10px" />
+                    {item.lines && <BulletList lines={item.lines} gap="10px" />}
+                    {item.body && <p class="prose">{item.body}</p>}
                   </article>
                 ))}
               </section>
@@ -238,19 +229,12 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
             <div class="policy__item">
               <BulletList lines={refundSection.exceptions} gap="10px" />
             </div>
-            <article class="policy__item">
-              <h4 class="policy__item-title">
-                <span class="policy__n">{closingItemNumber}</span>
-                {refundSection.closingItem.title}
-              </h4>
-              <p class="prose">{refundSection.closingItem.body}</p>
-            </article>
           </section>
         </div>
 
         <label class="consent">
           <input type="checkbox" name="agreeRules" required />
-          <span>위 대관 규정 및 환불 정책을 모두 확인하였으며, 이에 동의합니다. <span class="req">*</span></span>
+          <span>{rulesStep.consentLabel} <span class="req">*</span></span>
         </label>
 
       </fieldset>
@@ -258,7 +242,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       {/* ---------------- 3. 추가 옵션 ---------------- */}
       <fieldset class="step" data-step="2">
         <legend class="step__legend">
-          <span class="eyebrow">STEP 03</span>
+          <span class="eyebrow">{optionsIntro.eyebrow}</span>
           <span class="step__title">{optionsIntro.title}</span>
         </legend>
         <p class="step__hint">{optionsIntro.body}</p>
@@ -274,9 +258,11 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
                     <span class="option__title">{addon.title}</span>
                     {addon.price && <span class="option__price">{addon.price}</span>}
                   </span>
-                  <span class="option__notes">
-                    {addon.notes.map((note) => <span class="option__note">{note}</span>)}
-                  </span>
+                  {addon.notes && (
+                    <span class="option__notes">
+                      {addon.notes.map((note) => <span class="option__note">{note}</span>)}
+                    </span>
+                  )}
                 </span>
               </label>
             ))
@@ -284,20 +270,20 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         </div>
 
         <p class="field">
-          <label class="field__label" for="requests">그 외 요청 사항</label>
+          <label class="field__label" for="requests">{requestsField.label}</label>
           <textarea class="input input--area" id="requests" name="requests" rows="3"
-            placeholder="필요한 장비, 세팅 요청, 문의 사항 등을 자유롭게 적어 주세요. (선택)"></textarea>
+            placeholder={requestsField.placeholder}></textarea>
         </p>
       </fieldset>
 
       {/* ---------------- 4. 개인정보 동의 ---------------- */}
       <fieldset class="step" data-step="3">
         <legend class="step__legend">
-          <span class="eyebrow">STEP 04</span>
-          <span class="step__title">개인정보 수집·이용 동의</span>
+          <span class="eyebrow">{privacy.eyebrow}</span>
+          <span class="step__title">{privacy.title}</span>
         </legend>
 
-        <div class="policy policy--privacy" tabindex="0" role="region" aria-label="개인정보 수집·이용 동의 전문">
+        <div class="policy policy--privacy" tabindex="0" role="region" aria-label={privacy.regionLabel}>
           <section class="pblock">
             <p class="pblock__lead">{privacy.intro}</p>
             <dl class="pdl">
@@ -347,12 +333,11 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       {/* ---------------- 5. 신청 내용 확인 ---------------- */}
       <fieldset class="step" data-step="4">
         <legend class="step__legend">
-          <span class="eyebrow">STEP 05</span>
-          <span class="step__title">신청 내용 확인</span>
+          <span class="eyebrow">{reviewStep.eyebrow}</span>
+          <span class="step__title">{reviewStep.title}</span>
         </legend>
         <p class="step__hint">
-          아래 내용으로 접수됩니다. 수정이 필요하면 각 항목의 <strong>수정</strong>을 눌러
-          해당 단계로 돌아가세요.
+          {reviewStep.hint.before}<strong>{reviewStep.hint.strong}</strong>{reviewStep.hint.after}
         </p>
 
         <div class="review" data-review>
@@ -362,7 +347,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
                 <div class="review__head">
                   <h3 class="review__title">{group.title}</h3>
                   <button type="button" class="review__edit" data-goto-step={group.step}>
-                    수정
+                    {reviewStep.editLabel}
                   </button>
                 </div>
                 <dl class="review__list">
@@ -370,7 +355,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
                     group.fields.map(([key, label]) => (
                       <div class="review__row" data-review-row={key}>
                         <dt>{label}</dt>
-                        <dd data-review-value={key}>—</dd>
+                        <dd data-review-value={key}>{reviewStep.pending}</dd>
                       </div>
                     ))
                   }
@@ -383,7 +368,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
 
       {/* Honeypot — real people never fill this. */}
       <p class="honeypot" aria-hidden="true">
-        <label for="company_website">웹사이트</label>
+        <label for="company_website">{honeypotLabel}</label>
         <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off" />
       </p>
 
@@ -394,15 +379,19 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       <p class="form__error" role="alert" data-error hidden></p>
 
       <div class="nav">
-        <button type="button" class="btn btn--ghost" data-prev hidden>이전</button>
-        <button type="button" class="btn btn--next" data-next hidden>다음</button>
-        <button type="submit" class="btn btn--submit" data-submit>예약 신청 제출</button>
+        <button type="button" class="btn btn--ghost" data-prev hidden>{nav.prev}</button>
+        <button type="button" class="btn btn--next" data-next hidden>{nav.next}</button>
+        <button type="submit" class="btn btn--submit" data-submit>{nav.submit}</button>
       </div>
     </form>
   </section>
 </BaseLayout>
 
 <script>
+  // Same copy source as the markup above — the bundler tree-shakes the policy
+  // text, which this half never touches.
+  import { messages, nav, reviewValues } from '../data/booking';
+
   const form = document.querySelector<HTMLFormElement>('[data-form]');
 
   if (form) {
@@ -484,52 +473,20 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       });
     }
 
-    const FIELD_LABELS: Record<string, string> = {
-      name: '성함',
-      org: '소속',
-      phone: '전화번호',
-      email: '이메일',
-      date: '대관 날짜',
-      guests: '총 사용 인원',
-      start: '시작 시간',
-      end: '종료 시간',
-      purpose: '대관 설명',
-      requests: '요청 사항',
-    };
-
-    /** Consent checkboxes read as an action, not a missing value. */
-    const CONSENT_MESSAGES: Record<string, string> = {
-      agreeRules: '대관 규정 및 환불 정책에 동의해 주세요.',
-      agreePrivacy: '개인정보 수집·이용에 동의해 주세요.',
-    };
-
-    /** 을/를 — depends on whether the last syllable carries a final consonant. */
-    const eul = (word: string) => {
-      const last = word.charCodeAt(word.length - 1) - 0xac00;
-      return last >= 0 && last <= 11171 && last % 28 !== 0 ? '을' : '를';
-    };
-
-    /**
-     * The browser's own validationMessage follows the *browser's* locale, not
-     * the document's — an English-locale Chrome shows English on a Korean-only
-     * site. These are written here instead.
-     */
+    /** Picks the message for a failed control. All copy is in data/booking.ts. */
     function messageFor(el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
       const v = el.validity;
-      if (CONSENT_MESSAGES[el.name]) return CONSENT_MESSAGES[el.name];
-      const label = FIELD_LABELS[el.name] ?? '항목';
-      const verb = el.tagName === 'SELECT' ? '선택' : '입력';
-      if (v.valueMissing) return `${label}${eul(label)} ${verb}해 주세요.`;
-      if (v.typeMismatch && el.type === 'email')
-        return '이메일 형식이 올바르지 않습니다. 예) example@email.com';
-      if (v.patternMismatch && el.name === 'phone')
-        return '전화번호 형식이 올바르지 않습니다. 예) 010-0000-0000';
-      if (el.name === 'date' && v.rangeUnderflow)
-        return '지난 날짜는 선택하실 수 없습니다. 오늘 이후로 정해 주세요.';
-      if (v.rangeOverflow) return `최대 ${(el as HTMLInputElement).max}인까지 신청하실 수 있습니다.`;
-      if (v.rangeUnderflow) return '1인 이상 입력해 주세요.';
-      if (v.badInput || v.stepMismatch) return '숫자만 입력해 주세요.';
-      return `${label}${eul(label)} 확인해 주세요.`;
+      if (messages.consent[el.name]) return messages.consent[el.name];
+      const label = messages.fieldLabels[el.name] ?? messages.fallbackLabel;
+      const verb = el.tagName === 'SELECT' ? messages.verbSelect : messages.verbInput;
+      if (v.valueMissing) return messages.missing(label, verb);
+      if (v.typeMismatch && el.type === 'email') return messages.email;
+      if (v.patternMismatch && el.name === 'phone') return messages.phone;
+      if (el.name === 'date' && v.rangeUnderflow) return messages.pastDate;
+      if (v.rangeOverflow) return messages.tooManyGuests((el as HTMLInputElement).max);
+      if (v.rangeUnderflow) return messages.tooFewGuests;
+      if (v.badInput || v.stepMismatch) return messages.numberOnly;
+      return messages.invalid(label);
     }
 
     /** Wipes every inline field error. Called on each render and on edit. */
@@ -606,7 +563,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         if (el.type === 'checkbox' && el.name === 'referral') {
           const group = current.querySelectorAll<HTMLInputElement>('input[name="referral"]');
           if (!Array.from(group).some((c) => c.checked)) {
-            showError('유입 경로를 하나 이상 선택해 주세요.', el);
+            showError(messages.referralRequired, el);
             return false;
           }
           continue;
@@ -642,17 +599,16 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       }
       const hours = hoursBetween(s, e);
       if (hours <= 0) {
-        if (durationEl) durationEl.textContent = '종료 시간이 시작 시간보다 늦어야 합니다.';
+        if (durationEl) durationEl.textContent = messages.endBeforeStart;
         if (report) endSel.focus({ preventScroll: true });
         return false;
       }
       if (hours < MIN_HOURS) {
-        if (durationEl)
-          durationEl.textContent = `${fmtHours(hours)}시간 — 최소 ${MIN_HOURS}시간부터 신청할 수 있습니다.`;
+        if (durationEl) durationEl.textContent = messages.tooShort(fmtHours(hours), MIN_HOURS);
         if (report) endSel.focus({ preventScroll: true });
         return false;
       }
-      if (durationEl) durationEl.textContent = `총 ${fmtHours(hours)}시간`;
+      if (durationEl) durationEl.textContent = messages.totalHours(fmtHours(hours));
       return true;
     }
 
@@ -675,7 +631,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         opt.disabled = tooEarly;
         // Show what each end time actually buys: 9:00pm (3시간).
         opt.textContent = start && !tooEarly
-          ? `${base} (${fmtHours(hoursBetween(start, opt.value))}시간)`
+          ? `${base} ${messages.optionHours(fmtHours(hoursBetween(start, opt.value)))}`
           : base;
         if (tooEarly && opt.selected) clearedSelection = true;
       }
@@ -717,7 +673,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         // api.js may still be loading. Retry for ~10s, then give up loudly
         // rather than polling forever.
         if (turnstileTries++ > 50) {
-          showError('보안 확인을 불러오지 못했습니다. 광고 차단기를 끄거나 새로고침 후 다시 시도해 주세요.');
+          showError(messages.turnstileBlocked);
           return;
         }
         window.setTimeout(mountTurnstile, 200);
@@ -727,7 +683,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       turnstileId = api.render(turnstileEl, {
         sitekey: SITE_KEY,
         language: 'ko',
-        'error-callback': () => showError('보안 확인을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'),
+        'error-callback': () => showError(messages.turnstileFailed),
       });
     };
 
@@ -754,21 +710,21 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         phone: val('phone'),
         email: val('email'),
         date: val('date'),
-        __time: start && end ? `${start} ~ ${end} (${fmtHours(hours)}시간)` : '',
-        guests: val('guests') ? `${val('guests')}명` : '',
+        __time: start && end ? reviewValues.time(start, end, fmtHours(hours)) : '',
+        guests: val('guests') ? reviewValues.guests(val('guests')) : '',
         purpose: val('purpose'),
-        referral: all('referral').join(' · '),
-        agreeRules: checked('agreeRules') ? '동의함' : '미동의',
-        addons: all('addons').join(' · ') || '선택 없음',
+        referral: all('referral').join(reviewValues.separator),
+        agreeRules: checked('agreeRules') ? reviewValues.agreed : reviewValues.declined,
+        addons: all('addons').join(reviewValues.separator) || reviewValues.none,
         requests: val('requests'),
-        agreePrivacy: checked('agreePrivacy') ? '동의함' : '미동의',
+        agreePrivacy: checked('agreePrivacy') ? reviewValues.agreed : reviewValues.declined,
       };
 
       for (const [key, text] of Object.entries(values)) {
         const cell = formEl.querySelector<HTMLElement>(`[data-review-value="${key}"]`);
         if (!cell) continue;
         const empty = !text;
-        cell.textContent = empty ? '입력 없음' : text;
+        cell.textContent = empty ? reviewValues.empty : text;
         cell.classList.toggle('is-empty', empty);
       }
     }
@@ -812,7 +768,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
     const setBusy = (busy: boolean) => {
       if (!submitBtn) return;
       submitBtn.disabled = busy;
-      submitBtn.textContent = busy ? '전송 중…' : '예약 신청 제출';
+      submitBtn.textContent = busy ? nav.submitting : nav.submit;
     };
 
     form.addEventListener('submit', async (event) => {
@@ -825,7 +781,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
         if (!validateStep()) return;
       }
       if (!turnstileToken()) {
-        showError('보안 확인을 완료해 주세요.');
+        showError(messages.turnstileRequired);
         return;
       }
 
@@ -843,7 +799,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
           // A spent Turnstile token can't be reused, so make the visitor solve
           // a fresh one rather than failing repeatedly.
           if (turnstileId !== undefined) (window as any).turnstile?.reset(turnstileId);
-          showError(result.error || '접수에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+          showError(result.error || messages.submitFailed);
           return;
         }
 
@@ -851,7 +807,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       } catch {
         setBusy(false);
         if (turnstileId !== undefined) (window as any).turnstile?.reset(turnstileId);
-        showError('네트워크 오류로 접수하지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.');
+        showError(messages.networkFailed);
       }
     });
 

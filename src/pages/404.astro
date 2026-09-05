@@ -2,21 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import { footerLinks } from '../config/site';
+import { notFound } from '../data/notFound';
 ---
 
-<BaseLayout title="페이지를 찾을 수 없습니다" description="요청하신 페이지를 찾을 수 없습니다.">
+<BaseLayout title={notFound.title} description={notFound.description}>
   <section class="container notfound">
-    <p class="eyebrow notfound__eyebrow">404 — NOT FOUND</p>
-    <h1 class="display notfound__title">요청하신 페이지를 찾을 수 없습니다.</h1>
-    <p class="lead notfound__lead">
-      주소가 변경되었거나 삭제된 페이지일 수 있습니다. 아래에서 원하시는 안내를 찾아보세요.
-    </p>
+    <p class="eyebrow notfound__eyebrow">{notFound.eyebrow}</p>
+    <h1 class="display notfound__title">{notFound.headline}</h1>
+    <p class="lead notfound__lead">{notFound.lead}</p>
 
     <div class="notfound__actions">
-      <Button href="/" variant="primary" size="lg">홈으로 돌아가기</Button>
+      <Button href="/" variant="primary" size="lg">{notFound.home}</Button>
     </div>
 
-    <nav class="links" aria-label="주요 안내">
+    <nav class="links" aria-label={notFound.linksLabel}>
       {
         footerLinks.map((link) => (
           <a

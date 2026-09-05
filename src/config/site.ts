@@ -42,8 +42,8 @@ export const business = {
 export const naverMapUrl = 'https://naver.me/xuFnrHaN';
 
 export const socialLinks = [
-  { label: '인스타그램', href: '#', glyph: 'square' },
-  { label: '네이버 블로그', href: '#', glyph: 'circle' },
+  { label: '인스타그램', href: 'https://www.instagram.com/isseum.space/', glyph: 'square' },
+  { label: '네이버 블로그', href: 'https://blog.naver.com/isseumspace', glyph: 'circle' },
 ] as const;
 
 

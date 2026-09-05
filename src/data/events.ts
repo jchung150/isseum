@@ -176,3 +176,48 @@ export const tiles: Tile[] = eventsByNewest.flatMap((event, ei) => {
     };
   });
 });
+
+/* ─────────────────────  /events page copy  ───────────────────── */
+
+export const page = {
+  title: '지난 행사',
+  description: '이씀에서 실제 진행된 공연, 브랜드 행사, 촬영, 강연의 현장 사진과 영상 아카이브.',
+  eyebrow: 'PAST EVENTS · ARCHIVE',
+  heroTitle: '이씀에서 열린 지난 행사',
+  lead: '공연, 브랜드 행사, 촬영, 강연 — 실제 진행된 현장의 사진과 영상입니다. 이미지를 클릭하면 크게 넘겨 볼 수 있습니다.',
+};
+
+/**
+ * `ALL` is EVENT_CATEGORIES[0] rather than a second literal '전체' — the filter
+ * script compares against it, and a typo in a duplicate would silently show
+ * nothing. Rename the category and both the chip and the filter follow.
+ */
+export const ALL = EVENT_CATEGORIES[0];
+
+export const gallery = {
+  filterLabel: '행사 분류',
+  /** Shown in the live-region count. The 전체 chip names both media instead. */
+  allCountLabel: '사진 · 영상',
+  count: (label: string, n: number) => `${label} ${n}컷`,
+  empty: '해당 분류의 기록이 아직 없습니다. 다른 분류를 선택해 주세요.',
+  note: '현장 사진은 주최 측 동의를 받아 게시하며, 요청 시 즉시 삭제해 드립니다.',
+  /**
+   * Suffix on each tile's aria-label. The lightbox strips it back off to reuse
+   * the label as the enlarged image's alt, so both sides read it from here.
+   */
+  openSuffix: ' 크게 보기',
+  tileLabel: (title: string, shot: string) => `${title} — ${shot}${gallery.openSuffix}`,
+};
+
+export const lightbox = {
+  label: '행사 사진 크게 보기',
+  prev: '이전 사진',
+  next: '다음 사진',
+  close: '닫기',
+  count: (i: number, total: number) => `${i} / ${total}`,
+};
+
+export const closingCta = {
+  headline: '비슷한 행사를 기획하고 계신가요?',
+  sub: '이전 사례의 세팅 그대로 준비해 드릴 수 있습니다. 신청서에 참고 행사명을 적어 주세요.',
+};

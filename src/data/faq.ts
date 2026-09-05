@@ -3,7 +3,7 @@
  *
  * Answers are the same facts as the rental policy, phrased as replies. The
  * refund tiers are NOT copied here — the section renders `refundSection.tiers`
- * straight from rules.ts, so the FAQ and the booking form can never disagree.
+ * straight from booking.ts, so the FAQ and the booking form can never disagree.
  *
  * Two answers absorbed the deleted 공간 특징 section: parking and the basement
  * air-handling point, which had no other home on the page.
@@ -33,8 +33,7 @@ export const faq: FaqItem[] = [
   {
     q: '몇 명까지 이용할 수 있나요?',
     a: [
-      '메인 홀 기준 최대 90인까지 착석 가능합니다. 프로젝트 룸은 최대 10인입니다.',
-      '예약 인원을 초과하여 입실할 경우 사전 고지가 필요합니다.',
+      '메인 홀 기준 최대 90인까지 착석 가능합니다. 프로젝트 룸은 최대 10인입니다. 예약 인원을 초과하여 입실할 경우 사전 고지가 필요합니다.',
     ],
   },
   {
@@ -69,11 +68,5 @@ export const faq: FaqItem[] = [
   {
     q: '반려동물과 함께 갈 수 있나요?',
     a: ['시각장애인 안내견을 제외한 모든 반려동물의 출입은 사전 협의 후 가능합니다.'],
-  },
-  {
-    q: '미성년자만으로 대관할 수 있나요?',
-    a: [
-      '만 19세 미만은 법정대리인(보호자) 동반 없이 단독으로 대관 및 이용하실 수 없습니다. 규정 위반 시 환불 없이 퇴실 조치됩니다.',
-    ],
   },
 ];

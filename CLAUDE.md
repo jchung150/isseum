@@ -68,12 +68,18 @@ wrangler.jsonc            Cloudflare deploy config: static assets + custom domai
 design/                   READ-ONLY design reference — see §Design reference
 src/
   config/site.ts          business info, nav, bookingUrl, social/map links
-  data/                   all page content, plain typed TS modules
-    home.ts               hero slideshow + copy, stats, features, process steps
+  data/                   ★ every user-visible string on the site. See below
+    home.ts               / — page title, hero, stats, the 4 section headers,
+                          process steps, closing CTA
     spaces.ts             the 4 areas (메인 홀 · 프로젝트 룸 · 파우더 룸 · 바)
-    equipment.ts          7 equipment items + usage notes
-    rules.ts              rental policy: 4 groups, 11 items, refund tiers
-    events.ts             past events + disk-discovered gallery photos
+    equipment.ts          7 equipment items + intro copy + detail-modal labels
+    faq.ts                자주 묻는 질문; renders refundSection.tiers, never copies it
+    booking.ts            every /booking string, in flow order — including the
+                          rental policy (3 groups, 11 items) and refund tiers,
+                          which used to sit in their own rules.ts
+    events.ts             past events + disk-discovered gallery photos, plus all
+                          /events copy (hero, filters, lightbox, empty state)
+    notFound.ts           /404
   assets/                 images processed by Astro (see §Adding content)
     events/README.md      the event-photo folder convention
   styles/
@@ -81,18 +87,58 @@ src/
     base.css              globals, focus ring, reduced-motion, primitives
   components/             9 components, all scoped-CSS .astro
   layouts/BaseLayout.astro  head, SEO, JSON-LD, header/footer, skip link
-    booking.ts            form fields, add-ons, privacy consent text, constraints
   cloudflare.d.ts         narrow declarations for the two Workers runtime modules
-  pages/                  index · equipment · rules · events (hidden) · booking · 404
+  pages/                  index (one page: 공간·장비·규정·FAQ) · booking · events (hidden) · 404
     api/booking.ts        the only on-demand route; everything else is prerendered
 scripts/booking-sheet/    Apps Script that appends submissions to Google Sheets
 ```
 
-### Content lives in `src/data/*.ts`, not in markup
+### Every user-visible string lives in `src/data/*.ts`
+
+**Not one piece of copy is written into a `.astro` file.** Not a heading, not a button
+label, not a placeholder, not an `aria-label`, not a validation message, not a page
+`title`. If a human can read it, it is `export`ed from `src/data/` and referenced by name.
+The owner edits copy without opening a page file, and every string on the site is findable
+in one folder.
+
+The rule covers **both halves of a `.astro` file**. Client `<script>` blocks are bundled by
+Vite, so they `import` their strings from the same module the markup uses — see the imports
+at the top of the scripts in `booking.astro` and `events.astro`. Rollup tree-shakes what
+the client half doesn't touch, so importing from a module that also holds the whole rental
+policy costs the bundle nothing (verified: `booking.astro`'s script bundle is ~9 KB and
+contains no policy text).
 
 Plain typed TS modules rather than Astro content collections: this content is structured
 records, not prose documents, so collections' markdown/glob machinery buys nothing while TS
-gives full type-checking through `astro check`. Never hardcode copy into a `.astro` file.
+gives full type-checking through `astro check`.
+
+**Which module owns a string:** the one that owns the thing it names, not the page that
+happens to render it. 규격 · 보유 수량 · 설치 장소 label `spec`/`qty`/`place`, so they are in
+`equipment.ts` beside those fields even though `index.astro` renders them; the rental policy
+is in `booking.ts` because `/booking` is what renders it. A page's own chrome — its
+`title`, section headers, closing CTA — goes in that page's module.
+
+**One constant, never two literals.** Where a string is built in one place and consumed in
+another, both sides read the same export. Two live examples, both of which were silent bugs
+before they were centralised:
+
+- `events.ts` `gallery.openSuffix` — the tile `aria-label` appends ` 크게 보기`; the
+  lightbox strips it back off to reuse the label as the enlarged photo's `alt`. As two
+  matching literals, rewording the label silently emptied every alt.
+- `events.ts` `ALL` (= `EVENT_CATEGORIES[0]`) — the filter compares against it in three
+  places. As a repeated `'전체'`, one typo showed an empty gallery on load.
+
+**The one exception is icon glyphs** — `✕ ← → ＋ ·` and the like, always `aria-hidden`.
+They are symbols, not copy; routing them through a data file makes both files harder to
+read. Anything with a reading voice, including the `aria-label` that names such a button,
+follows the rule.
+
+**Still outstanding:** the components and `BaseLayout.astro` have not had this pass. Real
+copy is still hardcoded in `Footer.astro` (the 사업자 정보 term labels, 주요 안내 · 공식 채널,
+the map `alt`), `Header.astro` and `DarkCta.astro` (both spell out `대관 예약하기`),
+`HeroSlideshow.astro` (carousel labels) and `BaseLayout.astro` (the skip link, the OG image
+`alt`, and a JSON-LD address that restates `business.address` field by field). Move them
+when you next touch those files.
 
 ---
 

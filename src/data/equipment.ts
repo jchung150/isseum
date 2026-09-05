@@ -156,3 +156,19 @@ export const equipment: EquipmentItem[] = [
     fit: 'contain',
   },
 ];
+
+/** Sits under the 보유 장비 section header, above the list. */
+export const equipmentIntro =
+  '전 품목 대관료에 포함되어 있습니다. 항목을 누르면 사진과 상세 사양을 보실 수 있으며, 세팅이 필요한 품목은 이용일 3일 전까지 요청해 주세요.';
+
+/**
+ * The <dialog> that opens from a list row. `spec`/`qty`/`place` label the
+ * matching fields above, so they live here rather than in home.ts.
+ */
+export const equipmentModal = {
+  label: '장비 상세',
+  close: '닫기',
+  spec: '규격',
+  qty: '보유 수량',
+  place: '설치 장소',
+};
