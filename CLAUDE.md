@@ -41,6 +41,8 @@ npm run preview  # serve dist/
 `npm run build` runs `astro check` first, so **type errors block the build**. Keep it at
 0 errors / 0 warnings / 0 hints.
 
+Setting this up on a new machine: [Working from a fresh machine](#working-from-a-fresh-machine).
+
 ### Why this stack
 
 Chosen deliberately, not by default:
@@ -329,6 +331,63 @@ Cloudflare Email Routing's `send_email` binding, not a third-party ESP. It can o
 **verified destination addresses**, which is exactly right for an owner notification and
 removed a processor from the privacy notice. It also means **the applicant confirmation
 email deferred to later cannot use this path** — that will need Resend or similar.
+
+---
+
+## Working from a fresh machine
+
+The repo carries almost everything. This file is the handoff brief — a new Claude Code
+session reads it automatically, so the stack, design rules, accessibility floor and the
+gotchas below need no re-explaining.
+
+```bash
+git clone https://github.com/jchung150/isseum.git
+cd isseum
+npm ci          # not `npm install` — CI uses the lock as-is, so match it
+npm run dev
+```
+
+Node **24.x** (the Cloudflare build image supplies the same). Nothing else is required to
+run the site locally.
+
+### What does not travel with the repo
+
+| | |
+|---|---|
+| **Claude memory** | `~/.claude/projects/<project-path>/memory/` — the folder name is built from the project's **absolute path**, so copying it only works if the clone sits at exactly the same path. Re-teaching is more reliable; see the prompt below. |
+| **`.dev.vars`** | gitignored. One line, and its value is public: `TURNSTILE_SECRET="1x0000000000000000000000000000000AA"` — Cloudflare's published always-passes test secret. Without it `/api/booking` rejects every local submission. |
+| **`.claude/settings.local.json`** | untracked permission allowlist. Rebuilds itself as you work; ignore it. |
+| **Account logins** | Cloudflare, GitHub, 후이즈/Whois, Google (Apps Script + Sheets). |
+| **`node_modules`** | `npm ci` restores it. |
+
+**Cloudflare secrets do not need re-entering.** `TURNSTILE_SECRET`, `SHEET_WEBHOOK_URL` and
+`SHEET_SECRET` live on Cloudflare, not on any laptop. `wrangler login` is only needed to
+change a secret or deploy by hand — the normal deploy is `git push`.
+
+### Starting a new session
+
+Paste this. The two rules are the working agreement, and are not derivable from the code:
+
+```
+이 저장소는 ISSEUM(이씀) 복합문화공간 마케팅 사이트야.
+먼저 루트의 CLAUDE.md를 읽고 시작해줘.
+
+작업 규칙 두 가지를 지켜줘:
+
+1. 내가 명시적으로 요청하지 않는 한 git commit / push 하지 마.
+   main에 push하면 Cloudflare Workers Builds가 바로 라이브 배포돼.
+   수정하고 `npm run build`로 컴파일만 확인한 뒤 멈춰줘.
+   나는 localhost:4321에서 직접 보고 커밋해.
+
+2. CSS·카피·레이아웃 변경은 스크린샷 한 장으로 확인해줘.
+   getComputedStyle을 CDP로 재는 건 오래된 값을 돌려준 적이 있어서 믿지 마.
+   브라우저는 한 번 띄워서 재사용하고, 빌드는 편집 묶음이 끝난 뒤 한 번만.
+
+이 두 가지는 메모리에 저장해줘.
+```
+
+Then say what you are working on. **This file records the rules, not where you stopped** —
+that lives in the git log, so name the last commit and what is still half-done.
 
 ---
 
