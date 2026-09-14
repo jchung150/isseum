@@ -29,6 +29,15 @@ export const turnstileSiteKey = import.meta.env.DEV
   ? '1x00000000000000000000AA'
   : '0x4AAAAAAEWoGEkb4C3IUaVj';
 
+/**
+ * 네이버 서치어드바이저 소유확인 토큰. Public by design — it ships in the HTML.
+ *
+ * HTML-tag verification rather than the file upload: Cloudflare's
+ * `html_handling: "drop-trailing-slash"` 307s `/naverXXXX.html` to the
+ * extensionless path, so the file method depends on Yeti following a redirect.
+ */
+export const naverSiteVerification = '0d865f9446089a0f3e0d0c314d6976e29c814b0a';
+
 export const business = {
   companyName: '영준피엠씨(YOUNGJUN PMC)',
   representative: '정용철',

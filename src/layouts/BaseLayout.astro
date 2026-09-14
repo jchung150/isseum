@@ -1,7 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { business, site } from '../config/site';
+import { business, naverSiteVerification, site } from '../config/site';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
@@ -54,6 +54,7 @@ const jsonLd = {
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
+    <meta name="naver-site-verification" content={naverSiteVerification} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={`${site.name} ISSEUM`} />
