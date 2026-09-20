@@ -48,7 +48,7 @@ export const business = {
 } as const;
 
 /** 네이버 지도 공유 링크. The footer map is a static image that opens this. */
-export const naverMapUrl = 'https://naver.me/xuFnrHaN';
+export const naverMapUrl = 'https://naver.me/xRgs5iMX';
 
 export const socialLinks = [
   { label: '인스타그램', href: 'https://www.instagram.com/isseum.space/', glyph: 'square' },
