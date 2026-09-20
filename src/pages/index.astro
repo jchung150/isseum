@@ -6,6 +6,8 @@ import DarkCta from '../components/DarkCta.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
 import { closingCta, hero, heroSlides, page, sections, stats, steps } from '../data/home';
 import { faq } from '../data/faq';
+import { pricing, rates } from '../data/pricing';
+import BulletList from '../components/BulletList.astro';
 import { refundSection } from '../data/booking';
 import { getImage } from 'astro:assets';
 
@@ -112,6 +114,55 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     </ul>
   </section>
 
+  {/* ---------- 대관 요금 ----------
+      Sits after 장비 and before 절차 on purpose: the visitor has just seen what
+      the rate buys, and still needs the number before being walked through how
+      to book. A real <table> — the three figures per row are meant to be read
+      down the column as well as across. Figures come from pricing.ts; never
+      retype one here. */}
+  <section id="price" class="container section anchor">
+    <SectionHeader eyebrow={sections.price.eyebrow} title={sections.price.title} />
+
+    <p class="price__promo">{pricing.promo}</p>
+
+    <table class="ratetable">
+      <caption class="visually-hidden">{pricing.caption}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="rt__kind">{pricing.columns.kind}</th>
+          <th scope="col" class="rt__col-list">{pricing.columns.list}</th>
+          <th scope="col" class="rt__col-now">{pricing.columns.now}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rates.map((rate) => (
+            <tr>
+              <th scope="row" class="rt__kind">
+                <span class="rt__label">{rate.label}</span>
+                <span class="rt__when">{rate.when}</span>
+              </th>
+              <td class="rt__list">
+                {/* The column header carries this on desktop, where it is
+                    hidden; aria-hidden stops it being read out twice. */}
+                <span class="rt__head" aria-hidden="true">{pricing.columns.list}</span>
+                <s class="rt__struck">{rate.listLabel}</s>
+              </td>
+              <td class="rt__now">
+                <span class="rt__head" aria-hidden="true">{pricing.columns.now}</span>
+                <span class="display rt__amount">{rate.priceLabel}</span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <div class="price__notes">
+      <BulletList lines={pricing.notes} />
+    </div>
+  </section>
+
   {/* ---------- Process ---------- */}
   <section id="process" class="container section anchor">
     <SectionHeader eyebrow={sections.process.eyebrow} title={sections.process.title} />
@@ -147,6 +198,20 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
             </summary>
             <div class="faq__a">
               {item.a.map((p) => <p class="prose">{p}</p>)}
+              {
+                item.priceTable && (
+                  <ul class="tiers">
+                    {rates.map((rate) => (
+                      <li class="tier">
+                        <span>
+                          {rate.label} ({rate.when})
+                        </span>
+                        <span class="tier__rate">{rate.summary}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
               {
                 item.refundTable && (
                   <ul class="tiers">
@@ -440,6 +505,98 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
 
   .eq__row:hover .eq__more {
     color: var(--ink);
+  }
+
+  /* ---------- 대관 요금 ----------
+     Mobile-first: each rate stacks as its own block with 라벨/값 rows, and the
+     real table layout returns at 640px. The row labels inside the cells are the
+     mobile stand-in for the column headers, so exactly one of the two is
+     visible at any width. */
+  .price__promo {
+    display: inline-block;
+    margin-top: var(--space-header-gap);
+    padding: 7px 14px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-size: var(--eyebrow-size);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+  }
+
+  .ratetable {
+    width: 100%;
+    margin-top: var(--space-5);
+    border-collapse: collapse;
+    border-top: var(--border-hairline);
+  }
+
+  .ratetable thead {
+    display: none;
+  }
+
+  .ratetable tbody tr {
+    display: block;
+    padding: var(--space-5) 0;
+    border-bottom: var(--border-hairline);
+  }
+
+  .ratetable td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) 0 0;
+  }
+
+  .rt__kind {
+    display: block;
+    text-align: left;
+  }
+
+  .rt__label {
+    display: block;
+    font-size: var(--text-item-title);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+  }
+
+  .rt__when {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .rt__head {
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  /* 정상가. The strikethrough is visual only — the column header (desktop) and
+     the inline label (mobile) are what a screen reader gets. */
+  .rt__list {
+    color: var(--text-tertiary);
+    font-size: var(--text-ui);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .rt__struck {
+    text-decoration-thickness: 1px;
+  }
+
+  .rt__amount {
+    font-size: var(--display-group);
+    color: var(--ink);
+  }
+
+  .price__notes {
+    margin-top: var(--space-8);
+    max-width: var(--measure-lead);
   }
 
   /* ---------- FAQ ---------- */
@@ -779,6 +936,65 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
   @media (min-width: 640px) {
     .spaces {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Real table from here up: the three figures line up down their columns,
+       which is the whole point of showing 평일 and 주말 together. */
+    .ratetable thead {
+      display: table-header-group;
+    }
+
+    .ratetable tbody tr {
+      display: table-row;
+      padding: 0;
+      border-bottom: none;
+    }
+
+    .ratetable th,
+    .ratetable td {
+      display: table-cell;
+      padding: clamp(16px, 1.8vw, 22px) var(--space-5);
+      border-bottom: var(--border-hairline);
+      text-align: right;
+      vertical-align: baseline;
+    }
+
+    /* The 구분 column reads as a label, not a figure — it stays left while the
+       three money columns align right so the digits stack. */
+    .ratetable .rt__kind {
+      text-align: left;
+      width: 40%;
+    }
+
+    .rt__col-list {
+      width: 28%;
+    }
+
+    .rt__col-now {
+      width: 32%;
+    }
+
+    .ratetable thead th {
+      padding-top: var(--space-3);
+      padding-bottom: var(--space-3);
+      font-size: var(--text-meta);
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: var(--tracking-meta);
+    }
+
+    .ratetable th:first-child,
+    .ratetable td:first-child {
+      padding-left: 0;
+    }
+
+    .ratetable th:last-child,
+    .ratetable td:last-child {
+      padding-right: 0;
+    }
+
+    .rt__head {
+      display: none;
     }
 
     /* Align the answer under the question text rather than the numeral. Left

@@ -28,6 +28,7 @@ import {
   success,
   timeField,
 } from '../data/booking';
+import { bookingRateNote } from '../data/pricing';
 import { business, turnstileSiteKey } from '../config/site';
 
 // Item numbers are derived rather than stored — see data/booking.ts.
@@ -161,6 +162,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
             </select>
           </div>
           <span class="field__note" data-duration aria-live="polite"></span>
+          <p class="field__note rate-note">{bookingRateNote}</p>
         </fieldset>
 
         <p class="field">
@@ -1049,6 +1051,14 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
      between the two spans is compiled away — so it needs a real gap. */
   .subfield > legend .field__note {
     margin-left: var(--space-2);
+  }
+
+  /* 요금은 시간을 고르는 자리에서 보여야 한다. 합계는 여전히 계산하지 않는다 —
+     최종 금액은 신청 내용을 확인한 뒤 호스트가 안내한다. */
+  .rate-note {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--text-body);
   }
 
   .timerange {

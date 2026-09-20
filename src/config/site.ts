@@ -4,7 +4,7 @@ export const site = {
   name: '이씀',
   nameLatin: 'ISSEUM',
   description:
-    '홍대입구역 인근 동교동에 위치한 약 68평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
+    '홍대입구역 인근 동교동에 위치한 약 60평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
   locale: 'ko_KR',
   lang: 'ko',
 } as const;
@@ -76,6 +76,7 @@ export type NavItem = {
 const allNav: NavItem[] = [
   { label: '공간 안내', href: '/#space' },
   { label: '보유 장비', href: '/#equipment' },
+  { label: '대관 요금', href: '/#price' },
   { label: '대관 절차', href: '/#process' },
   { label: '자주 묻는 질문', href: '/#faq' },
 ];

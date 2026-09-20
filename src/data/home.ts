@@ -2,7 +2,7 @@
  * Main page content. Ported from design/ISSEUM Main.dc.html renderVals().
  *
  * Ordered the way the page renders it:
- *   page → hero → stats → sections (the four headers) → steps → closingCta
+ *   page → hero → stats → sections (the five headers) → steps → closingCta
  *
  * The records each section iterates live in their own modules — spaces.ts,
  * equipment.ts, faq.ts — but every string index.astro renders itself is here.
@@ -65,12 +65,13 @@ export const stats = [
 ];
 
 /**
- * The four SectionHeader pairs, keyed by the section's anchor id. The Latin
+ * The five SectionHeader pairs, keyed by the section's anchor id. The Latin
  * eyebrows are decorative wide-tracked labels, not translations — see CLAUDE.md.
  */
 export const sections = {
   space: { eyebrow: 'SPACE', title: '공간 안내' },
   equipment: { eyebrow: 'EQUIPMENT & PROPS', title: '보유 장비' },
+  price: { eyebrow: 'PRICE', title: '대관 요금' },
   process: { eyebrow: 'RENTAL PROCESS', title: '대관 절차' },
   faq: { eyebrow: 'FAQ', title: '자주 묻는 질문' },
 };
