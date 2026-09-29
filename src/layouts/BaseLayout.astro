@@ -1,7 +1,9 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { business, naverSiteVerification, site } from '../config/site';
+import { business, naverMapUrl, naverSiteVerification, site, socialLinks } from '../config/site';
+import { CLOSE_HOUR, OPEN_HOUR } from '../data/booking';
+import { rates } from '../data/pricing';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
@@ -24,13 +26,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 // Absolute URL required — Kakao, Slack and Facebook won't resolve a relative one.
 const ogImage = new URL('/og-image.jpg', Astro.site).href;
 
-// LocalBusiness structured data — matters for a venue, and for Naver/Google local results.
+const hhmm = (h: number) => `${String(h).padStart(2, '0')}:00`;
+/** 시간당 요금 범위. pricing.ts에서 계산하므로 요금이 바뀌면 따라온다. */
+const prices = rates.map((rate) => rate.price);
+
+// 구조화 데이터. EventVenue는 Place의 하위 타입이라 영업시간·가격대 같은 사업체
+// 속성을 받지 못한다. LocalBusiness를 함께 선언해 두 쪽 모두 유효하게 만든다 —
+// 지역 검색과 지도 노출이 이 사이트에는 일반 웹 검색만큼 중요하다.
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'EventVenue',
+  '@type': ['EventVenue', 'LocalBusiness'],
   name: `${site.name} ISSEUM`,
   description: site.description,
   url: Astro.site?.href,
+  image: ogImage,
   telephone: business.phone,
   email: business.email,
   address: {
@@ -40,6 +49,18 @@ const jsonLd = {
     addressRegion: '서울특별시',
     addressCountry: 'KR',
   },
+  // 같은 주체임을 검색엔진에 연결해 주는 계정들. config/site.ts가 단일 원천이다.
+  sameAs: socialLinks.map((link) => link.href),
+  hasMap: naverMapUrl,
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+    ],
+    opens: hhmm(OPEN_HOUR),
+    closes: hhmm(CLOSE_HOUR),
+  },
+  priceRange: `₩${Math.min(...prices).toLocaleString('en-US')}–₩${Math.max(...prices).toLocaleString('en-US')}`,
   maximumAttendeeCapacity: 90,
 };
 ---
