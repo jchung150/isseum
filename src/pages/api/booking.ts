@@ -19,7 +19,8 @@ import type { APIRoute } from 'astro';
 import { EmailMessage } from 'cloudflare:email';
 import { env } from 'cloudflare:workers';
 import { createMimeMessage } from 'mimetext';
-import { MAX_GUESTS, MIN_HOURS } from '../../data/booking';
+import { MAX_GUESTS, MIN_HOURS, messages } from '../../data/booking';
+import { business } from '../../config/site';
 
 export const prerender = false;
 
@@ -179,7 +180,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json(
       {
         ok: false,
-        error: '접수 처리 중 문제가 발생했습니다. 010-6899-4417 또는 isseumspace@gmail.com으로 연락해 주세요.',
+        error: messages.mailFailed(business.phone, business.email),
       },
       500
     );

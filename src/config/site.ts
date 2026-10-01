@@ -43,7 +43,7 @@ export const business = {
   representative: '정용철',
   address: '서울특별시 마포구 월드컵북로 22, 지하 1층',
   phone: '010-6899-4417',
-  email: 'isseumspace@gmail.com',
+  email: 'hello@isseum.com',
   registrationNumber: '105-04-11192',
 } as const;
 

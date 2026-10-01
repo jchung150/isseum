@@ -594,5 +594,8 @@ export const messages = {
   turnstileFailed: '보안 확인을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.',
   turnstileRequired: '보안 확인을 완료해 주세요.',
   submitFailed: '접수에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+  /** 이메일 발송이 실패해 접수를 보장할 수 없을 때. 연락처는 config/site.ts가 넘긴다. */
+  mailFailed: (phone: string, email: string) =>
+    `접수 처리 중 문제가 발생했습니다. ${phone} 또는 ${email}으로 연락해 주세요.`,
   networkFailed: '네트워크 오류로 접수하지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.',
 };
