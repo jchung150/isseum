@@ -163,6 +163,17 @@ import**해야 하며, 파일만 넣는 것으로는 아무 일도 일어나지 
 
 순서가 중요하다. 받지 않은 것을 받았다고 말하지 않기 위해 이메일이 먼저다.
 
+**`NOTIFY_TO`는 Email Routing에 destination으로 인증된 주소여야 한다.** 인증되지 않은 주소를
+넣으면 발송이 실패하고, 방문자는 접수 대신 "전화로 연락해 달라"는 에러를 본다 — 실제로 한 번
+그 상태로 배포된 적이 있다.
+
+**발신 도메인의 SPF에 Cloudflare를 포함시켜야 한다.** Worker는 `no-reply@isseum.com`으로
+Cloudflare IP에서 보내므로, isseum.com의 SPF가 구글만 허용하고 있으면 인증이 전부 실패해
+지메일이 스팸으로 분류한다(첫 실전 발송이 그랬다). 올바른 값:
+`v=spf1 include:_spf.google.com include:_spf.mx.cloudflare.net ~all` — SPF 레코드는 도메인당
+하나여야 하므로 반드시 기존 레코드를 **수정**한다. Cloudflare는 `send_email`에 DKIM 서명을
+해주지 않으므로 이 경로가 가질 수 있는 인증은 SPF뿐이다.
+
 제약값은 `booking.ts`에 있고(`MIN_HOURS` 3, `MAX_GUESTS` 90, `OPEN_HOUR`/`CLOSE_HOUR` 8–22)
 **클라이언트와 `api/booking.ts` 양쪽이 강제한다.** 클라이언트 검사는 예의일 뿐이다.
 

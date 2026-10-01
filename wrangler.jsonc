@@ -33,9 +33,17 @@
   // Cloudflare Email Routing. Sends only to addresses verified as destinations
   // on this account, which is exactly what the owner notification needs.
   //
-  // NOTIFY_TO must be a *destination* address, never a routing alias on a zone
-  // this account handles: hello@isseum.com forwards to the address below, so
-  // sending there would hand the message straight back to Email Routing.
+  // NOTIFY_TO must be an address verified under Email Routing → Destination
+  // addresses. hello@isseum.com is a Google Workspace mailbox (isseum.com's MX
+  // points at Google, not at Email Routing) and was never verified here, so the
+  // Worker addresses hello@theonhouse.com — the one destination on the account.
+  //
+  // Deliverability: the Worker sends as no-reply@isseum.com from Cloudflare's
+  // IPs, so isseum.com's SPF must include _spf.mx.cloudflare.net alongside
+  // Google's. Without it the mail is unauthenticated and Gmail filters it as
+  // spam — which is exactly what happened on the first live send. Cloudflare
+  // does not DKIM-sign for send_email, so SPF is the only authentication this
+  // path can have; an ESP (Resend) is the fix if it ever stops being enough.
   "send_email": [{ "name": "NOTIFY_EMAIL" }],
 
   // Not secrets — safe in the repo. The rest (TURNSTILE_SECRET,
