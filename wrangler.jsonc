@@ -32,12 +32,16 @@
 
   // Cloudflare Email Routing. Sends only to addresses verified as destinations
   // on this account, which is exactly what the owner notification needs.
+  //
+  // NOTIFY_TO must be a *destination* address, never a routing alias on a zone
+  // this account handles: hello@isseum.com forwards to the address below, so
+  // sending there would hand the message straight back to Email Routing.
   "send_email": [{ "name": "NOTIFY_EMAIL" }],
 
   // Not secrets — safe in the repo. The rest (TURNSTILE_SECRET,
   // SHEET_WEBHOOK_URL, SHEET_SECRET) are set with `wrangler secret put`.
   "vars": {
-    "NOTIFY_TO": "isseumspace@gmail.com",
+    "NOTIFY_TO": "hello@theonhouse.com",
     "NOTIFY_FROM": "no-reply@isseum.com"
   }
 }

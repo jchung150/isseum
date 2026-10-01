@@ -161,7 +161,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   /* ---- 1. Email first: this is the record that must not be lost. ---- */
   try {
-    const to = ((env as any).NOTIFY_TO as string) || 'isseumspace@gmail.com';
+    const to = ((env as any).NOTIFY_TO as string) || 'hello@theonhouse.com';
     const from = ((env as any).NOTIFY_FROM as string) || 'no-reply@isseum.com';
 
     const msg = createMimeMessage();
