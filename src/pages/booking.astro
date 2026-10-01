@@ -383,7 +383,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       <div class="nav">
         <button type="button" class="btn btn--ghost" data-prev hidden>{nav.prev}</button>
         <button type="button" class="btn btn--next" data-next hidden>{nav.next}</button>
-        <button type="submit" class="btn btn--submit" data-submit>{nav.submit}</button>
+        <button type="submit" class="btn btn--submit" data-submit aria-live="polite">{nav.submit}</button>
       </div>
     </form>
   </section>
@@ -767,10 +767,29 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
       return data;
     };
 
+    /** 제출 중 라벨을 교체하는 타이머. 응답이 오면 전부 취소한다. */
+    let stageTimers: number[] = [];
+    const clearStages = () => {
+      stageTimers.forEach((id) => window.clearTimeout(id));
+      stageTimers = [];
+    };
+
     const setBusy = (busy: boolean) => {
       if (!submitBtn) return;
+      clearStages();
       submitBtn.disabled = busy;
+      submitBtn.classList.toggle('is-busy', busy);
       submitBtn.textContent = busy ? nav.submitting : nav.submit;
+      if (!busy) return;
+      // 라벨이 끝까지 그대로면 멈춘 화면으로 읽힌다. 글자만 바뀌므로
+      // prefers-reduced-motion에서도 그대로 동작한다.
+      for (const stage of nav.submittingStages) {
+        stageTimers.push(
+          window.setTimeout(() => {
+            submitBtn.textContent = stage.label;
+          }, stage.after)
+        );
+      }
     };
 
     form.addEventListener('submit', async (event) => {
@@ -815,6 +834,7 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
 
     /** Replaces the form with a confirmation, so nobody submits twice. */
     function showSuccess() {
+      clearStages();
       const done = document.querySelector<HTMLElement>('[data-success]');
       if (!done) return;
       formEl.hidden = true;
@@ -1558,6 +1578,14 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
   .btn--next:hover,
   .btn--submit:hover {
     background: var(--ink-hover);
+  }
+
+  /* 제출 중에는 라벨이 세 번 바뀌는데(nav.submittingStages), 그대로 두면 버튼이
+     그때마다 넓어지며 옆의 '이전' 버튼까지 밀어낸다. 가장 긴 라벨이 196px(14.5px
+     기준 ≒13.5em)이므로 그만큼을 바닥값으로 잡아 둔다. 평상시 폭(147px)은 건드리지
+     않으려고 제출 중에만 적용한다. */
+  .btn--submit.is-busy {
+    min-width: 13.6em;
   }
 
   .btn--ghost {

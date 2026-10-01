@@ -519,6 +519,19 @@ export const nav = {
   next: '다음',
   submit: '예약 신청 제출',
   submitting: '전송 중…',
+  /**
+   * 제출이 길어질 때 버튼 라벨을 순서대로 교체한다. `after`는 제출 시점부터의
+   * 경과 밀리초.
+   *
+   * 서버는 한 번의 요청 안에서 Turnstile → 이메일 → 시트를 처리하지만 그 경계는
+   * 브라우저가 알 수 없다. 그래서 이 문구들은 진행 단계를 주장하지 않고 "아직
+   * 처리 중"이라는 사실만 전한다 — 알 수 없는 진행률을 숫자로 꾸며내지 않기 위한
+   * 선택이다.
+   */
+  submittingStages: [
+    { after: 1500, label: '접수 처리 중…' },
+    { after: 5000, label: '조금만 기다려 주세요…' },
+  ] as { after: number; label: string }[],
 };
 
 export const success = {
