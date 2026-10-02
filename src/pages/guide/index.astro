@@ -1,29 +1,40 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import { guidePages, page } from '../../data/guide';
+import { guideGroups, page } from '../../data/guide';
+
+// 번호는 그룹을 가로질러 이어진다 — 01부터 11까지가 매뉴얼 전체다.
+let n = 0;
 ---
 
 <BaseLayout title={page.title} description={page.description}>
   <PageHero eyebrow={page.eyebrow} title={page.heading} lead={page.lead} />
 
   <nav class="container toc" aria-label={page.tocLabel}>
-    <ol class="toc__list">
-      {
-        guidePages.map((section, i) => (
-          <li class="toc__item">
-            <a class="toc__link" href={`/guide/${section.slug}`}>
-              <span class="mono-num toc__num">{String(i + 1).padStart(2, '0')}</span>
-              <span class="toc__text">
-                <span class="toc__title">{section.title}</span>
-                <span class="toc__summary">{section.summary}</span>
-              </span>
-              <span class="toc__mark" aria-hidden="true">→</span>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+    {
+      guideGroups.map((group) => (
+        <section class="group">
+          <h2 class="group__title">{group.title}</h2>
+          <ol class="toc__list">
+            {group.pages.map((section) => {
+              n += 1;
+              return (
+                <li class="toc__item">
+                  <a class="toc__link" href={`/guide/${section.slug}`}>
+                    <span class="mono-num toc__num">{String(n).padStart(2, '0')}</span>
+                    <span class="toc__text">
+                      <span class="toc__title">{section.title}</span>
+                      <span class="toc__summary">{section.summary}</span>
+                    </span>
+                    <span class="toc__mark" aria-hidden="true">→</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))
+    }
   </nav>
 
 </BaseLayout>
@@ -31,6 +42,18 @@ import { guidePages, page } from '../../data/guide';
 <style>
   .toc {
     margin-top: var(--space-header-gap);
+  }
+
+  .group + .group {
+    margin-top: var(--space-section-sm);
+  }
+
+  .group__title {
+    font-size: var(--text-item-title);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+    padding-bottom: var(--space-4);
   }
 
   /* 한 줄에 하나씩. 목차 항목 전체가 탭 영역이 되어야 모바일에서 누르기 쉽다. */

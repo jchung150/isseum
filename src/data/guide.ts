@@ -29,6 +29,31 @@ import parking06 from '../assets/guide/parking/06.jpg';
 import parking07 from '../assets/guide/parking/07.jpg';
 import parking08 from '../assets/guide/parking/08.jpg';
 import parking10 from '../assets/guide/parking/10.jpg';
+import tv01 from '../assets/guide/tv/01.png';
+import tv02 from '../assets/guide/tv/02.png';
+import tv03 from '../assets/guide/tv/03.jpg';
+import tv04 from '../assets/guide/tv/04.jpg';
+import tv05 from '../assets/guide/tv/05.png';
+import tv06 from '../assets/guide/tv/06.jpg';
+import tv07 from '../assets/guide/tv/07.jpg';
+import light01 from '../assets/guide/lighting/01.jpg';
+import light02 from '../assets/guide/lighting/02.jpg';
+import light03 from '../assets/guide/lighting/03.jpg';
+import light04 from '../assets/guide/lighting/04.jpg';
+import sound01 from '../assets/guide/sound/01.jpg';
+import sound02 from '../assets/guide/sound/02.jpg';
+import sound03 from '../assets/guide/sound/03.jpg';
+import sound04 from '../assets/guide/sound/04.jpg';
+import sound05 from '../assets/guide/sound/05.jpg';
+import sound06 from '../assets/guide/sound/06.jpg';
+import sound07 from '../assets/guide/sound/07.jpg';
+import sound08 from '../assets/guide/sound/08.jpg';
+import bar01 from '../assets/guide/bar/01.jpg';
+import bar02 from '../assets/guide/bar/02.jpg';
+import bar03 from '../assets/guide/bar/03.jpg';
+import hvac01 from '../assets/guide/hvac/01.jpg';
+import hvac02 from '../assets/guide/hvac/02.png';
+import hvac03 from '../assets/guide/hvac/03.jpg';
 
 export type GuideShot = { src?: ImageMetadata; alt: string; caption?: string };
 
@@ -99,7 +124,7 @@ export const page = {
   pendingPrefix: '사진 준비 중 — ',
 };
 
-export const guidePages: GuidePage[] = [
+const spacePages: GuidePage[] = [
   /* ═══════════════  동선 및 공간 안내  ═══════════════ */
   {
     slug: 'route',
@@ -406,3 +431,395 @@ export const guidePages: GuidePage[] = [
     ],
   },
 ];
+
+/* ═══════════════  기기 및 시설 사용법  ═══════════════ */
+
+const devicePages: GuidePage[] = [
+  {
+    slug: 'wifi',
+    title: '와이파이 연결',
+    summary: '공간 전체에서 쓰는 무료 와이파이.',
+    blocks: [
+      {
+        kind: 'text',
+        body: '공간 내 무료 와이파이가 제공됩니다. 네트워크 이름과 비밀번호는 공간 내부 안내문과 이용 안내 문자에서 확인하실 수 있습니다.',
+      },
+    ],
+  },
+
+  {
+    slug: 'tv',
+    title: '스마트 TV 사용법',
+    summary: '메인 홀 100인치 TV와 프로젝트룸 TV에 화면을 띄우는 방법.',
+    blocks: [
+      { kind: 'heading', text: '메인 홀 TV' },
+      {
+        kind: 'figure',
+        src: tv01,
+        alt: '메인 홀 무대 정면에 설치된 100인치 삼성 스마트 TV',
+      },
+      { kind: 'text', body: '메인 홀 TV에 화면을 띄우는 방법은 세 가지입니다.' },
+      { kind: 'heading', text: '1. 음향실 PC 사용 (기본 세팅)' },
+      {
+        kind: 'steps',
+        items: [
+          {
+            text: '음향실 PC에 접속합니다. 잠금 해제 비밀번호는 공간 내부 안내문에서 확인해 주세요.',
+            shots: [{ src: tv02, alt: '음향 · PC 컨트롤 존 책상에 놓인 모니터와 본체, 키보드' }],
+          },
+          {
+            text: '구비된 리모컨으로 TV를 켭니다.',
+            shots: [{ src: tv03, alt: '메인 홀에 비치된 삼성 TV 리모컨' }],
+          },
+        ],
+      },
+      { kind: 'heading', text: '2. 강연대 앞에서 개인 노트북 연결' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '허브 위치 — ',
+            text: '개인 노트북을 쓰시려면 메인 홀 TV를 왼쪽으로 살짝 돌려 주세요(옆으로 돌아갑니다). TV 우측 뒷편에 멀티 허브가 있습니다.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: tv04,
+        alt: 'TV 뒷면에 연결된 멀티 허브와 HDMI 포트',
+      },
+      {
+        kind: 'steps',
+        items: [
+          { label: '전원 켜기 — ', text: '구비된 리모컨으로 TV를 켭니다.' },
+          {
+            label: '노트북 연결 — ',
+            text: 'TV 우측 뒷편 HDMI 허브의 포트에 케이블을 연결한 뒤, 리모컨에서 외부 입력을 변경해 주세요.',
+          },
+        ],
+      },
+      { kind: 'heading', text: '3. 음향실 안에서 개인 노트북 연결' },
+      { kind: 'heading', text: '프로젝트룸 TV' },
+      {
+        kind: 'figure',
+        src: tv05,
+        alt: '프로젝트룸 벽면에 설치된 스마트 TV',
+      },
+      {
+        kind: 'steps',
+        items: [
+          {
+            label: '전원 켜기 — ',
+            text: '구비된 리모컨으로 TV를 켭니다.',
+            shots: [{ src: tv06, alt: '프로젝트룸에 비치된 TV 리모컨' }],
+          },
+          {
+            label: '노트북 연결 — ',
+            text: 'TV에 HDMI 선이 구비되어 있습니다. 개인 노트북에 연결한 뒤 리모컨에서 외부 입력을 변경해 주세요.',
+            shots: [{ src: tv07, alt: 'TV 뒷면 HDMI 단자에 꽂혀 있는 케이블' }],
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'lighting',
+    title: '조명 및 스위치 사용법',
+    summary: '메인 홀 · 바 · 프로젝트 룸의 조명 스위치 위치와 기능.',
+    blocks: [
+      {
+        kind: 'text',
+        body: '공간별로 원하는 분위기를 연출하실 수 있도록 개별 조명 스위치가 설치되어 있습니다.',
+      },
+      { kind: 'heading', text: '메인 홀' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '조명 스위치 — ',
+            text: '음향실 내부, PC 본체 왼쪽 벽면(문 옆)에 있습니다.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: light01,
+        alt: '음향실 문 옆 벽면에 설치된 메인 홀 조명 스위치판',
+      },
+      {
+        kind: 'figure',
+        src: light02,
+        alt: '음향 · 원통 · T7 · 무대 · 간접 · 흡기 · 배기로 이름이 붙은 스위치 열',
+        caption: '스위치마다 이름이 붙어 있습니다.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          { label: '음향 — ', text: '음향 부스 조명.' },
+          { label: '원통 — ', text: '메인 홀 천장의 원통형 조명.' },
+          { label: 'T7 — ', text: '메인 홀 천장의 긴 막대 형태 조명.' },
+          { label: '무대 — ', text: 'TV 바로 위쪽 천장 조명과 노란빛 원통형 무드등.' },
+          { label: '간접 — ', text: '무대보다 한 줄 앞에 있는 노란빛 원통형 무드등.' },
+          { label: '흡기 · 배기 — ', text: '메인 홀 내부 공기 환기 팬.' },
+        ],
+      },
+      { kind: 'heading', text: '바(Bar) 공간' },
+      {
+        kind: 'bullets',
+        items: [{ label: '조명 스위치 — ', text: '싱크대 오른쪽 벽면에 있습니다.' }],
+      },
+      {
+        kind: 'figure',
+        src: light03,
+        alt: '바 공간 싱크대 오른쪽 벽면의 조명 스위치',
+      },
+      { kind: 'heading', text: '프로젝트 룸' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '조명 스위치 — ',
+            text: '프로젝트룸에 들어가 오른쪽 커튼을 걷고 들어가면(화장대 공간) 오른쪽 벽면에 있습니다.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: light04,
+        alt: '프로젝트룸 화장대 공간 오른쪽 벽면의 조명 스위치',
+      },
+    ],
+  },
+
+  {
+    slug: 'sound',
+    title: '음향기기 사용법',
+    summary: '마이크 · 스피커 · PC. 켜는 순서와 끄는 순서가 반대입니다.',
+    blocks: [
+      {
+        kind: 'bullets',
+        items: [{ label: '위치 — ', text: '음향 · PC 컨트롤 존 (바 공간 측면).' }],
+      },
+      { kind: 'figure', src: sound01, alt: '바 공간 측면에 마련된 음향 · PC 컨트롤 존' },
+      { kind: 'figure', src: sound02, alt: '믹서와 무선 마이크 수신기, 파워 앰프가 들어 있는 음향 랙' },
+      { kind: 'heading', text: '전원 켜기' },
+      {
+        kind: 'steps',
+        items: [
+          {
+            label: 'PC 먼저 — ',
+            text: '컨트롤 존의 메인 PC 전원을 가장 먼저 켭니다.',
+            shots: [{ src: sound03, alt: '컨트롤 존 책상 아래 놓인 PC 본체의 전원 버튼' }],
+          },
+          {
+            label: '상단 랙 장비 — ',
+            text: '랙 상단의 믹서 전원과 중단의 무선 마이크 수신기 전원을 켭니다. 마이크와 음원 신호를 먼저 활성화하는 순서입니다.',
+            shots: [
+              { src: sound04, alt: '랙 상단에 설치된 야마하 MGP16X 믹서', caption: '상단 믹서 (YAMAHA MGP16X)' },
+              {
+                src: sound05,
+                alt: '믹서 뒷면 오른쪽의 전원 스위치',
+                caption: '믹서 전원 스위치 — 상단 랙 우측 후면',
+              },
+              {
+                src: sound06,
+                alt: '중단 랙 전면의 무선 마이크 수신기와 전원 버튼 두 개',
+                caption: '무선 마이크 수신기 (EWI SRD3U) — 전원 버튼 2개',
+              },
+            ],
+          },
+          {
+            label: '하단 앰프 마지막 — ',
+            text: '하단의 파란색 프레임 파워 앰프 1, 2의 전원 버튼을 켭니다. 스피커 충격음과 고장을 막기 위해 가장 마지막입니다.',
+            shots: [
+              { src: sound07, alt: '랙 하단에 설치된 파란색 프레임의 파워 앰프 두 대' },
+              {
+                src: sound08,
+                alt: '파워 앰프 전면의 전원 스위치',
+                caption: '파워 앰프 1, 2 (YAMAHA PX3 / PX5) — 각 전원 스위치',
+              },
+            ],
+          },
+        ],
+      },
+      { kind: 'heading', text: '사용 및 음량 조절' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: 'PC와 마이크 볼륨을 서서히 올려 주세요. 갑자기 높이면 하울링이나 큰 소리가 발생할 수 있습니다.',
+          },
+          { text: '메인 홀 스피커에서 소리가 적당한 크기로 나오는지 확인합니다.' },
+        ],
+      },
+      { kind: 'heading', text: '퇴실 시 전원 끄기' },
+      {
+        kind: 'text',
+        body: '켤 때와 반대 순서입니다.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          {
+            label: '하단 앰프 먼저 — ',
+            text: '파워 앰프 1, 2의 전원을 가장 먼저 끕니다. 스피커 출력을 먼저 차단하는 순서입니다.',
+          },
+          { label: '중단 · 상단 장비 — ', text: '마이크 수신기와 믹서 전원을 끕니다.' },
+          { label: 'PC 마지막 — ', text: '메인 PC를 시스템 종료합니다.' },
+        ],
+      },
+      {
+        kind: 'note',
+        title: '주의',
+        body: [
+          '앰프의 볼륨 조절 노브와 세부 설정 버튼은 이미 맞춰져 있습니다. 전원 버튼 외에는 임의로 변경하지 말아 주세요.',
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'bar',
+    title: '바 공간 비품 및 식기류',
+    summary: '가전과 일회용품 위치, 사용 후 분리배출 방법.',
+    blocks: [
+      { kind: 'heading', text: '가전 및 일회용품 비치 장소' },
+      {
+        kind: 'bullets',
+        items: [
+          { label: '가전 — ', text: '냉장고, 정수기 등 비치된 가전은 자유롭게 이용하실 수 있습니다.' },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: route03,
+        alt: '냉장고와 정수기, 싱크대를 갖춘 바 공간',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '일회용품 — ',
+            text: '일회용 컵, 접시, 수저 등은 바 테이블 아래 수납장에 준비되어 있습니다. 필요하신 만큼 자유롭게 사용해 주세요.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: bar01,
+        alt: '바 테이블 아래 수납장에 정리된 일회용 컵과 접시, 수저',
+      },
+      { kind: 'heading', text: '사용 후 정리 수칙' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: '설거지는 하지 않으셔도 됩니다. 사용하신 일회용품은 남은 음식물과 내용물을 먼저 비워 주세요.',
+          },
+          {
+            text: '내용물을 비운 일회용품은 엘리베이터 옆 쓰레기통에 재활용품 · 종이 · 일반 쓰레기로 분리배출해 주세요.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: bar02,
+        alt: '엘리베이터 옆에 나란히 놓인 분리배출용 쓰레기통',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: '남은 음식물은 음식물 쓰레기 전용 봉투에 담아 1층 스타벅스 매장 옆 음식물 쓰레기통에 배출해 주세요.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: bar03,
+        alt: '건물 1층 스타벅스 매장 옆에 비치된 음식물 쓰레기통',
+      },
+    ],
+  },
+
+  {
+    slug: 'hvac',
+    title: '에어컨 및 제습기 사용법',
+    summary: '리모컨 위치와 권장 온도. 제습기는 상시 가동 중입니다.',
+    blocks: [
+      { kind: 'heading', text: '위치' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '에어컨 — ',
+            text: '메인 홀에 2대, 프로젝트룸에 1대 설치되어 있습니다. 리모컨은 바 공간에 1개 비치되어 있고, 이 하나로 전체 조작이 가능합니다.',
+          },
+        ],
+      },
+      { kind: 'figure', src: hvac01, alt: '천장에 매립된 시스템 에어컨 송풍구' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '제습기 — ',
+            text: '메인 홀과 프로젝트룸에 각각 설치되어 있습니다. 쾌적한 환경을 위해 상시 가동과 물통 관리를 운영진이 진행하고 있으니, 별도 조작 없이 이용해 주시면 됩니다.',
+          },
+        ],
+      },
+      { kind: 'figure', src: hvac02, alt: '메인 홀 한쪽에 놓인 제습기' },
+      { kind: 'heading', text: '에어컨 사용법' },
+      { kind: 'figure', src: hvac03, alt: '바 공간에 비치된 시스템 에어컨 리모컨' },
+      {
+        kind: 'steps',
+        items: [
+          { label: '전원 켜기 — ', text: '바 공간에 구비된 리모컨으로 에어컨을 켭니다.' },
+          { label: '권장 온도 — ', text: '냉방 24~26℃, 난방 20~22℃를 권장합니다.' },
+          { label: '개별 조작 — ', text: '메인 홀과 프로젝트룸을 공간별로 따로 조작할 수 있습니다.' },
+          { label: '퇴실 시 — ', text: '퇴실 전 반드시 전원을 꺼 주세요.' },
+        ],
+      },
+      { kind: 'heading', text: '제습기 사용법' },
+      {
+        kind: 'steps',
+        items: [
+          { label: '가동 — ', text: '습도가 높은 날 쾌적한 환경을 위해 가동해 주세요.' },
+          {
+            label: '물통 비우기 — ',
+            text: '물통이 가득 차 작동이 멈추면(만수 알림) 물통을 비워 주시면 다시 작동합니다.',
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'cctv',
+    title: 'CCTV 보안',
+    summary: '24시간 녹화되며, 임의 조작은 금지됩니다.',
+    blocks: [
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: 'CCTV 녹화 — ',
+            text: '공간 내 안전, 화재 예방, 방범 및 시설물 훼손 방지를 위해 24시간 CCTV가 녹화되고 있습니다.',
+          },
+          {
+            label: '임의 조작 금지 — ',
+            text: '안전을 위한 필수 장치이므로, CCTV 방향을 임의로 돌리거나 가리는 행위는 엄격히 금지합니다.',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+/** 목차에서 묶어 보여주는 단위. URL은 평평하게 유지한다(/guide/<slug>). */
+export const guideGroups = [
+  { title: '공간 안내 및 수칙', pages: spacePages },
+  { title: '기기 및 시설 사용법', pages: devicePages },
+];
+
+export const guidePages: GuidePage[] = guideGroups.flatMap((group) => group.pages);
