@@ -54,6 +54,14 @@ import bar03 from '../assets/guide/bar/03.jpg';
 import hvac01 from '../assets/guide/hvac/01.jpg';
 import hvac02 from '../assets/guide/hvac/02.png';
 import hvac03 from '../assets/guide/hvac/03.jpg';
+import recycle01 from '../assets/guide/recycling/01.jpg';
+import recycle02 from '../assets/guide/recycling/02.jpg';
+import recycle03 from '../assets/guide/recycling/03.jpg';
+import layout01 from '../assets/guide/layout/01.jpg';
+import safety01 from '../assets/guide/safety/01.jpg';
+import safety02 from '../assets/guide/safety/02.jpg';
+import safety03 from '../assets/guide/safety/03.jpg';
+import safety04 from '../assets/guide/safety/04.jpg';
 
 export type GuideShot = { src?: ImageMetadata; alt: string; caption?: string };
 
@@ -76,7 +84,9 @@ export type GuideBlock =
   | { kind: 'figure'; src?: ImageMetadata; alt: string; caption?: string }
   | { kind: 'link'; label: string; href: string; lines: GuideLine[] }
   /** 하위 페이지로 들어가는 카드. `to`는 현재 페이지 기준 한 토막. */
-  | { kind: 'pagelink'; to: string; label: string; note: string };
+  | { kind: 'pagelink'; to: string; label: string; note: string }
+  /** 퇴실 전처럼 하나씩 짚어 가며 확인하는 목록. */
+  | { kind: 'checklist'; items: string[] };
 
 export type GuidePage = {
   /** 부모 기준 한 토막. 전체 경로는 조상들을 이어 만든다. */
@@ -816,10 +826,210 @@ const devicePages: GuidePage[] = [
   },
 ];
 
+
+/* ═══════════════  퇴실 안내  ═══════════════ */
+
+const exitPages: GuidePage[] = [
+  {
+    slug: 'layout',
+    title: '자리 배치 및 가구 원상 복구',
+    summary: '퇴실 시 돌려놓아야 할 기본 배치.',
+    blocks: [
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: '원상 복구 — ',
+            text: '퇴실 시 사용하신 책상, 의자, 소품 등은 입실 전 기본 배치(초기 세팅 상태)로 모두 돌려놓아 주셔야 합니다.',
+          },
+        ],
+      },
+      { kind: 'heading', text: '강의형 · 세미나형' },
+      {
+        kind: 'figure',
+        src: route02,
+        alt: '책상과 의자를 강의식으로 배치한 메인 홀 기본 세팅',
+      },
+      { kind: 'heading', text: '북토크 · 강연형' },
+      {
+        kind: 'figure',
+        src: layout01,
+        alt: '책상 없이 의자만 무대를 향해 배치한 북토크 형태의 메인 홀',
+      },
+    ],
+  },
+
+  {
+    slug: 'recycling',
+    title: '분리수거',
+    summary: '쓰레기와 음식물을 어디에 어떻게 버리는지.',
+    blocks: [
+      { kind: 'heading', text: '엘리베이터 옆 쓰레기통' },
+      {
+        kind: 'bullets',
+        items: [
+          { text: '일반쓰레기와 재활용 쓰레기(플라스틱, 병, 종이류) 모두 배출 가능합니다.' },
+          { text: '재활용 쓰레기는 플라스틱과 병을 따로 나누지 않고 함께 모아서 버려 주시면 됩니다.' },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: recycle01,
+        alt: '엘리베이터 옆에 종류별로 놓인 쓰레기통',
+      },
+      { kind: 'heading', text: '실내 휴지통' },
+      {
+        kind: 'bullets',
+        items: [{ text: '공간 실내 휴지통에는 일반쓰레기만 배출해 주세요.' }],
+      },
+      { kind: 'figure', src: recycle02, alt: '메인 홀에 비치된 실내 휴지통' },
+      { kind: 'figure', src: recycle03, alt: '바 공간에 비치된 실내 휴지통' },
+      { kind: 'heading', text: '대량 쓰레기' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: '발생한 쓰레기가 많을 경우, 별도의 대형 쓰레기 봉투에 담아 엘리베이터 옆 쓰레기통 주변에 단정하게 모아 주시기 바랍니다.',
+          },
+        ],
+      },
+      { kind: 'heading', text: '음식물 정리' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: '취식 후 남은 음식물 쓰레기와 잔여물은 직접 수거해 치워 주세요. 음식물 쓰레기는 전용 봉투에 넣어 1층 스타벅스 매장 옆 음식물 쓰레기통에 배출해 주세요.',
+          },
+        ],
+      },
+      {
+        kind: 'figure',
+        src: bar03,
+        alt: '건물 1층 스타벅스 매장 옆에 비치된 음식물 쓰레기통',
+      },
+    ],
+  },
+
+  {
+    slug: 'checklist',
+    title: '퇴실 전 마무리 체크리스트',
+    summary: '나가기 전에 하나씩 짚어 보세요.',
+    blocks: [
+      {
+        kind: 'checklist',
+        items: [
+          '가구 및 소품이 원래 자리에 잘 정리되었나요?',
+          '쓰레기 분리배출 및 음식물 정리가 완료되었나요?',
+          '에어컨, 제습기, PC 전원을 끄셨나요?',
+          '메인 홀 · 프로젝트 룸 · 바(Bar)의 조명 스위치를 모두 끄셨나요?',
+          '나가실 때 출입문이 완전히 닫혔는지 밖에서 한 번 더 당겨 확인하셨나요?',
+        ],
+      },
+    ],
+  },
+];
+
+/* ═══════════════  안전 및 편의  ═══════════════ */
+
+const extraPages: GuidePage[] = [
+  {
+    slug: 'safety',
+    title: '긴급 연락처 및 안전 용품',
+    summary: '호스트 연락처, 소화기와 구급상자 위치.',
+    blocks: [
+      { kind: 'heading', text: '호스트 긴급 연락처' },
+      {
+        kind: 'text',
+        body: '공간 이용 중 기기 작동에 문제가 생기거나 긴급 상황이 발생하면 언제든 연락해 주세요.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          { label: '카카오톡 채널 — ', text: '@이씀' },
+          { label: '비상 연락처 — ', text: '심성호 매니저 010-6899-4417' },
+        ],
+      },
+      { kind: 'heading', text: '소화기' },
+      {
+        kind: 'bullets',
+        items: [
+          { text: '화재 대비용 소화기는 프로젝트룸 앞, 프로젝트룸 안, 화장실 복도 앞에 비치되어 있습니다.' },
+        ],
+      },
+      { kind: 'figure', src: safety01, alt: '프로젝트룸 앞에 비치된 소화기' },
+      { kind: 'figure', src: safety02, alt: '프로젝트룸 안에 비치된 소화기' },
+      { kind: 'figure', src: safety03, alt: '화장실 복도 앞에 비치된 소화기' },
+      { kind: 'heading', text: '구급상자' },
+      {
+        kind: 'bullets',
+        items: [
+          {
+            text: '가벼운 찰과상 등을 위한 구급상자(밴드, 연고 등)는 바(Bar) 공간 오른쪽 수납장에 있습니다.',
+          },
+        ],
+      },
+      { kind: 'figure', src: safety04, alt: '바 공간 오른쪽 수납장에 보관된 구급상자' },
+    ],
+  },
+
+  {
+    slug: 'food',
+    title: '주변 배달 맛집 및 편의점',
+    summary: '호스트가 추천하는 가까운 곳.',
+    blocks: [
+      { kind: 'heading', text: '배달 맛집' },
+      {
+        kind: 'text',
+        body: '공간에서 함께 먹기 좋은, 국물 없는 메뉴 위주로 골랐습니다.',
+      },
+      {
+        kind: 'link',
+        label: '더피자보이즈 홍대입구역점',
+        href: 'https://maps.google.com/?cid=2356130181912528518',
+        lines: [
+          { label: '메뉴 — ', text: '피자' },
+          {
+            label: '추천 이유 — ',
+            text: '홍대 로컬 피자 맛집. 네 가지 맛을 한 번에 나눠 먹기 좋은 사각 쿼터 피자와 푸짐한 토핑으로 모임 배달에 알맞습니다.',
+          },
+        ],
+      },
+      {
+        kind: 'link',
+        label: '비엔누아즈리 리에',
+        href: 'https://map.naver.com/p/search/%EC%83%8C%EB%93%9C%EC%9C%84%EC%B9%98/place/1288026099',
+        lines: [
+          { label: '메뉴 — ', text: '핑거푸드 · 샌드위치' },
+          {
+            label: '추천 이유 — ',
+            text: '매일 아침 구워내는 크로아상 샌드위치와 바삭한 파이지에 부드러운 필링이 들어간 에그타르트가 시그니처. 국물 없이 깔끔하게 나눠 먹기 좋은 페이스트리 맛집입니다.',
+          },
+        ],
+      },
+      {
+        kind: 'note',
+        body: [
+          '국물류와 냄새가 심한 음식(마라탕, 찌개류 등)은 반입이 불가하니 배달 주문 시 참고해 주세요.',
+        ],
+      },
+      { kind: 'heading', text: '가장 가까운 편의점' },
+      {
+        kind: 'link',
+        label: '세븐일레븐 동교스텔라',
+        href: 'https://map.naver.com/p/entry/place/2002886482',
+        lines: [{ label: '위치 — ', text: '스타벅스 옆, 도보 1분 거리' }],
+      },
+    ],
+  },
+];
+
+
 /** 목차에서 묶어 보여주는 단위. URL은 평평하게 유지한다(/guide/<slug>). */
 export const guideGroups = [
   { title: '공간 안내 및 수칙', pages: spacePages },
   { title: '기기 및 시설 사용법', pages: devicePages },
+  { title: '퇴실 안내', pages: exitPages },
+  { title: '안전 및 편의', pages: extraPages },
 ];
 
 export const guidePages: GuidePage[] = guideGroups.flatMap((group) => group.pages);
