@@ -95,6 +95,12 @@ export type GuidePage = {
   /** 목차 카드에 붙는 한 줄 설명. */
   summary: string;
   blocks: GuideBlock[];
+  /**
+   * 목차와 페이지 머리에 '필독' 표시를 붙인다. 안 읽으면 당일에 문제가 되는
+   * 것만 — 못 들어오거나, 공간이 상하거나, 퇴실이 끝나지 않는 경우. 표시가
+   * 늘어나면 표시가 아니게 되므로 늘릴 때는 한 번 더 생각할 것.
+   */
+  required?: boolean;
   /** 한 단계 더 들어가는 하위 페이지. */
   children?: GuidePage[];
 };
@@ -132,6 +138,8 @@ export const page = {
   tocLabel: '목차',
   /** 아직 사진이 들어오지 않은 자리에 붙는 캡션 접두어. */
   pendingPrefix: '사진 준비 중 — ',
+  /** 꼭 읽어야 하는 섹션에 붙는 표시. */
+  requiredLabel: '필독',
 };
 
 const spacePages: GuidePage[] = [
@@ -196,6 +204,7 @@ const spacePages: GuidePage[] = [
     slug: 'entry',
     title: '출입 방법',
     summary: '도어락으로 문을 여는 순서와, 퇴실할 때 문을 잠그는 방법.',
+    required: true,
     blocks: [
       {
         kind: 'note',
@@ -238,6 +247,7 @@ const spacePages: GuidePage[] = [
     slug: 'conduct',
     title: '공간 이용 기본 수칙',
     summary: '벽면 · 음식물 · 금연 · 반려동물 · 원상복구 · 쓰레기 배출.',
+    required: true,
     blocks: [
       { kind: 'heading', text: '공용 공간(복도 · 계단) 비우기' },
       {
@@ -914,6 +924,7 @@ const exitPages: GuidePage[] = [
     slug: 'checklist',
     title: '퇴실 전 마무리 체크리스트',
     summary: '나가기 전에 하나씩 짚어 보세요.',
+    required: true,
     blocks: [
       {
         kind: 'checklist',
@@ -946,7 +957,7 @@ const extraPages: GuidePage[] = [
         kind: 'bullets',
         items: [
           { label: '카카오톡 채널 — ', text: '@이씀' },
-          { label: '비상 연락처 — ', text: '심성호 매니저 010-6899-4417' },
+          { label: '비상 연락처 — ', text: '운영 매니저 010-6899-4417' },
         ],
       },
       { kind: 'heading', text: '소화기' },

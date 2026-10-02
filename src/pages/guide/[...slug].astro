@@ -23,7 +23,10 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
 
   <article class="container doc">
     <header class="doc__head">
-      <h1 class="display doc__title">{doc.title}</h1>
+      <h1 class="display doc__title">
+        {doc.title}
+        {doc.required && <span class="must">{page.requiredLabel}</span>}
+      </h1>
       <p class="doc__summary">{doc.summary}</p>
     </header>
 
@@ -181,6 +184,22 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
 
   .doc__title {
     font-size: var(--display-group);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  /* 목차의 배지와 같은 모양. 제목이 세리프라 배지만 산세리프로 둔다. */
+  .must {
+    padding: 4px 10px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-meta);
   }
 
   .doc__summary {

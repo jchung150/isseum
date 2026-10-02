@@ -22,7 +22,10 @@ let n = 0;
                 <li class="toc__item">
                   <a class="toc__link" href={`/guide/${section.slug}`}>
                     <span class="mono-num toc__num">{String(n).padStart(2, '0')}</span>
-                    <span class="toc__title">{section.title}</span>
+                    <span class="toc__title">
+                      {section.title}
+                      {section.required && <span class="must">{page.requiredLabel}</span>}
+                    </span>
                     <span class="toc__mark" aria-hidden="true">→</span>
                   </a>
                 </li>
@@ -78,10 +81,26 @@ let n = 0;
 
   .toc__title {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
     font-size: var(--text-list-name);
     font-weight: 600;
     letter-spacing: var(--tracking-title);
     color: var(--ink);
+  }
+
+  /* 액센트 색이 없는 사이트라 강조는 잉크 면으로 한다 — 요금의 특가 배지와
+     같은 방식. 세 곳에만 붙어서 눈에 걸린다. */
+  .must {
+    flex: none;
+    padding: 3px 8px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-size: var(--text-fine);
+    font-weight: 500;
+    letter-spacing: var(--tracking-meta);
   }
 
   .toc__mark {
