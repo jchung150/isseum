@@ -369,9 +369,14 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   /* ---------- 사진 ---------- */
+  /* 세로 사진은 같은 폭에서 가로 사진의 두 배 가까이 길어진다. 폭이 아니라
+     높이를 묶어서, 어느 방향이든 동선 안내의 가로 사진과 비슷한 면적을
+     차지하게 한다. */
   .shot :global(.shot__img) {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: auto;
+    max-height: clamp(300px, 34vw, 460px);
     border: var(--border-hairline);
   }
 

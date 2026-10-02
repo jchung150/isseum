@@ -289,10 +289,6 @@ export const guidePages: GuidePage[] = [
           },
         ],
       },
-      {
-        kind: 'figure',
-        alt: '야간과 주말에 이용할 수 있는 주차장 빈 공간',
-      },
 
       {
         kind: 'bullets',

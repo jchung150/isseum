@@ -1,9 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import DarkCta from '../../components/DarkCta.astro';
 import { guidePages, page } from '../../data/guide';
-import { closingCta } from '../../data/home';
 ---
 
 <BaseLayout title={page.title} description={page.description}>
@@ -28,9 +26,6 @@ import { closingCta } from '../../data/home';
     </ol>
   </nav>
 
-  <section class="container section">
-    <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
-  </section>
 </BaseLayout>
 
 <style>
