@@ -21,6 +21,13 @@ import route04 from '../assets/guide/route/04.jpg';
 import route05 from '../assets/guide/route/05.jpg';
 import entry01 from '../assets/guide/entry/01.jpg';
 import parking01 from '../assets/guide/parking/01.jpg';
+import parking02 from '../assets/guide/parking/02.jpg';
+import parking03 from '../assets/guide/parking/03.jpg';
+import parking04 from '../assets/guide/parking/04.jpg';
+import parking05 from '../assets/guide/parking/05.jpg';
+import parking06 from '../assets/guide/parking/06.jpg';
+import parking07 from '../assets/guide/parking/07.jpg';
+import parking08 from '../assets/guide/parking/08.jpg';
 import parking10 from '../assets/guide/parking/10.jpg';
 
 export type GuideShot = { src?: ImageMetadata; alt: string; caption?: string };
@@ -264,36 +271,46 @@ export const sections: GuideSection[] = [
         ],
       },
       { kind: 'heading', text: '수동 출차 조작 방법' },
-      { kind: 'figure', alt: '기계식 주차장 제어반 전경' },
+      {
+        kind: 'figure',
+        src: parking02,
+        alt: '스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반',
+      },
       {
         kind: 'steps',
         items: [
           {
             text: '제어반 키패드에서 [조작설명] 버튼을 누릅니다.',
-            shots: [{ alt: '제어반의 [조작설명] 버튼 위치' }],
+            shots: [{ src: parking03, alt: '제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼' }],
           },
           {
             label: '수동 모드 전환 — ',
             text: '화면 우측의 [게이트 닫힘대기 ON](파란색 버튼)을 5초 이상 길게 눌러 수동 조작 모드로 전환합니다.',
             shots: [
-              { alt: '제어반 화면 우측의 [게이트 닫힘대기 ON] 버튼' },
-              { alt: '수동 조작 모드로 전환된 제어반 화면' },
+              {
+                src: parking04,
+                alt: '조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다',
+              },
+              {
+                src: parking05,
+                alt: '붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대',
+              },
             ],
           },
           {
             label: '출입문 열기 — ',
             text: '메인 화면으로 돌아와 하단의 [출입문 열림(상)] 버튼을 눌러 문을 엽니다.',
-            shots: [{ alt: '제어반 하단의 [출입문 열림(상)] 버튼' }],
+            shots: [{ src: parking06, alt: '붉은 원으로 표시된 출입문 열림(상) 버튼 확대' }],
           },
           {
             label: '출고 진행 — ',
             text: '[출고] 버튼을 누르고, 키패드(우측 숫자 버튼)로 출고할 차량의 번호 4자리를 입력한 뒤 [운전시작] 버튼을 누릅니다. 기계가 작동하며 차량이 출차구로 이동하니 안전하게 대기해 주세요.',
-            shots: [{ alt: '차량 번호를 입력하는 출고 화면' }],
+            shots: [{ src: parking07, alt: '입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면' }],
           },
           {
             label: '출입문 닫기 — ',
             text: '하단의 [출입문 닫힘(하)] 버튼을 눌러 문을 닫습니다.',
-            shots: [{ alt: '제어반 하단의 [출입문 닫힘(하)] 버튼' }],
+            shots: [{ src: parking08, alt: '붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대' }],
           },
         ],
       },
