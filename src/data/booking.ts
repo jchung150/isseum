@@ -179,6 +179,13 @@ export const rulesStep = {
  * An item carries either `lines` (bulleted label + text) or a plain `body`.
  */
 export type PolicyLine = { label: string; text: string };
+/**
+ * 벽면 부착 규정. 규정(10번 항목)과 이용 안내의 '벽면 훼손 주의'가 같은 문장을
+ * 쓴다 — 예전에 세 곳이 제각각(허용 / 제공 / 사전 협의 시 제공)이었다.
+ */
+export const wallMounting =
+  '벽면에 테이프, 접착제, 못, 핀 사용은 불가하며, 갤러리 와이어와 전용 점착제(블루텍)만 허용됩니다. 두 가지는 사전 협의 시 제공해 드립니다.';
+
 export type PolicyItem = {
   title: string;
   lines?: PolicyLine[];
@@ -209,7 +216,7 @@ export const policyGroups: PolicyGroup[] = [
         lines: [
           {
             label: '미성년자 이용 — ',
-            text: '만 19세 미만은 법정대리인(보호자) 동반 없이 단독으로 공간을 대관 및 이용할 수 없습니다.',
+            text: '만 19세 미만은 법정대리인(보호자) 동반 없이 단독으로 공간을 대관 및 이용할 수 없습니다. 규정 위반 시 환불 없이 퇴실 조치됩니다.',
           },
           {
             label: '반려동물 출입 — ',
@@ -281,7 +288,7 @@ export const policyGroups: PolicyGroup[] = [
           },
           {
             label: '기기 조작 주의 — ',
-            text: '빔프로젝터, 마이크, 스피커 등 음향·영상 기기는 제공된 매뉴얼에 따라 주의하여 다뤄 주시기 바랍니다.',
+            text: '빔프로젝터, 마이크, 스피커 등 음향·영상 기기는 제공된 매뉴얼에 따라 주의하여 다뤄 주시고, 케이블을 임의로 뽑거나 설정을 변경하지 말아 주세요.',
           },
         ],
       },
@@ -321,7 +328,7 @@ export const policyGroups: PolicyGroup[] = [
           { label: '원상복구 — ', text: '퇴실 시 책상, 의자, 무대 등은 입실 전 기본 배치로 원상 복구해 주셔야 합니다.' },
           {
             label: '벽면 훼손 금지 — ',
-            text: '벽면에 테이프, 접착제, 못, 핀 사용은 불가하며, 부착물은 갤러리 와이어 및 전용 점착제(블루텍)를 제공해 드립니다.',
+            text: wallMounting,
           },
           {
             label: '손해 배상 — ',

@@ -14,6 +14,8 @@
 
 import type { ImageMetadata } from 'astro';
 
+import { wallMounting } from './booking';
+
 import route01 from '../assets/guide/route/01.jpg';
 import route02 from '../assets/guide/route/02.jpg';
 import route03 from '../assets/guide/route/03.jpg';
@@ -255,10 +257,8 @@ const spacePages: GuidePage[] = [
         body: '원활한 통행을 위해 복도나 계단에서의 대기 및 짐 보관은 피해 주세요. 모든 대기 인원과 짐은 공간 내부에 배치해 주세요.',
       },
       { kind: 'heading', text: '벽면 훼손 주의' },
-      {
-        kind: 'text',
-        body: '벽면에 테이프, 접착제, 못, 핀 사용은 불가합니다. 부착물이 필요할 경우 사전 협의하시면 갤러리 와이어 및 전용 점착제(블루텍)를 제공해 드립니다.',
-      },
+      // 규정 10번 항목과 같은 문장을 쓴다. booking.ts가 원본.
+      { kind: 'text', body: wallMounting },
       { kind: 'heading', text: '음식물 반입 (F&B)' },
       {
         kind: 'text',
