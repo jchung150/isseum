@@ -58,7 +58,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
                             class="shot__img"
                             src={shot.src}
                             alt={shot.alt}
-                            widths={[400, 700]}
+                            widths={[400, 700, 1040]}
                             sizes="(min-width: 900px) 520px, 100vw"
                             loading="lazy"
                           />
@@ -129,7 +129,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
                   class="shot__img"
                   src={block.src}
                   alt={block.alt}
-                  widths={[480, 800, 1200]}
+                  widths={[480, 800, 1200, 1600]}
                   sizes="(min-width: 900px) 760px, 100vw"
                   loading="lazy"
                 />
@@ -148,7 +148,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
 
     <footer class="doc__foot">
       <a class="back" href="/guide">
-        <span aria-hidden="true">←</span>
+        <span class="back__mark" aria-hidden="true">←</span>
         {page.backLabel}
       </a>
     </footer>
@@ -369,14 +369,9 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   /* ---------- 사진 ---------- */
-  /* 세로 사진은 같은 폭에서 가로 사진의 두 배 가까이 길어진다. 폭이 아니라
-     높이를 묶어서, 어느 방향이든 동선 안내의 가로 사진과 비슷한 면적을
-     차지하게 한다. */
   .shot :global(.shot__img) {
-    width: auto;
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    max-height: clamp(300px, 34vw, 460px);
     border: var(--border-hairline);
   }
 
@@ -400,20 +395,32 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   /* ---------- 돌아가기 ---------- */
   .doc__foot {
     margin-top: var(--space-8);
-    padding-top: var(--space-5);
-    border-top: var(--border-hairline);
   }
 
+  /* 문서 끝에서 되돌아가는 유일한 출구다. 본문 글자색의 작은 링크로 두면
+     스크롤 끝에서 눈에 걸리지 않아, 테두리를 두르고 폭을 채운다. */
   .back {
-    display: inline-flex;
-    align-items: baseline;
-    gap: var(--space-2);
-    font-size: var(--text-ui);
-    letter-spacing: var(--tracking-ui);
-    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: var(--border-emphasis);
+    font-size: var(--text-list-name);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+    transition: background var(--transition-fast);
   }
 
   .back:hover {
+    background: var(--surface);
+  }
+
+  .back__mark {
+    color: var(--text-tertiary);
+  }
+
+  .back:hover .back__mark {
     color: var(--ink);
   }
 </style>
