@@ -1036,10 +1036,27 @@ const extraPages: GuidePage[] = [
 
 
 /** 목차에서 묶어 보여주는 단위. URL은 평평하게 유지한다(/guide/<slug>). */
+/**
+ * 필독 세 개는 목차 맨 위로 끌어올리고 원래 그룹에서는 뺀다. 열여섯 개를
+ * 차례로 읽는 사람은 없으므로, 안 읽으면 당일에 문제가 되는 것부터 보이게 한다.
+ * slug로 집어내므로 이름이 바뀌면 빌드가 멈춘다 — 조용히 빠지는 것보다 낫다.
+ */
+const pick = (pages: GuidePage[], slug: string): GuidePage => {
+  const found = pages.find((page) => page.slug === slug);
+  if (!found) throw new Error(`guide: '${slug}' 페이지를 찾지 못했습니다.`);
+  return found;
+};
+const without = (pages: GuidePage[], slugs: string[]) =>
+  pages.filter((page) => !slugs.includes(page.slug));
+
 export const guideGroups = [
-  { title: '공간 안내 및 수칙', pages: spacePages },
+  {
+    title: '먼저 읽어 주세요',
+    pages: [pick(spacePages, 'entry'), pick(spacePages, 'conduct'), pick(exitPages, 'checklist')],
+  },
+  { title: '공간 안내 및 수칙', pages: without(spacePages, ['entry', 'conduct']) },
   { title: '기기 및 시설 사용법', pages: devicePages },
-  { title: '퇴실 안내', pages: exitPages },
+  { title: '퇴실 안내', pages: without(exitPages, ['checklist']) },
   { title: '안전 및 편의', pages: extraPages },
 ];
 

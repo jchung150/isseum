@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
-import { footerLinks } from '../config/site';
+import { notFoundLinks } from '../config/site';
 import { notFound } from '../data/notFound';
 ---
 
@@ -17,7 +17,7 @@ import { notFound } from '../data/notFound';
 
     <nav class="links" aria-label={notFound.linksLabel}>
       {
-        footerLinks.map((link) => (
+        notFoundLinks.map((link) => (
           <a
             href={link.href}
             class="links__row"

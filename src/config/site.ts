@@ -83,14 +83,21 @@ const allNav: NavItem[] = [
 
 export const nav: NavItem[] = allNav;
 
-const allFooterLinks = [
-  { label: '이용 안내', href: '/guide', external: false },
+/*
+ * 푸터의 '주요 안내' 링크 목록은 삭제됐다. 이용 안내 매뉴얼은 실제 대관하는
+ * 사람에게 주는 문서라 불특정 다수에게 내걸 이유가 없고, 나머지 링크도 같은
+ * 판단으로 함께 내렸다. 예약 CTA는 헤더 버튼과 마무리 배너 두 곳에 남는다.
+ *
+ * 404는 다른 상황이다 — 없는 주소에 도착한 사람에게 갈 곳을 줘야 하므로 목록을
+ * 남기되, 같은 이유로 /guide는 넣지 않는다.
+ */
+const allNotFoundLinks = [
   { label: '보유 장비 안내', href: '/#equipment', external: false },
   { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
   { label: '대관 예약하기', href: bookingUrl, external: false },
 ];
 
-export const footerLinks = allFooterLinks.filter(
+export const notFoundLinks = allNotFoundLinks.filter(
   (link) => showEventsPage || link.href !== '/events'
 );

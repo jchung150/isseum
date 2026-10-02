@@ -22,10 +22,7 @@ let n = 0;
                 <li class="toc__item">
                   <a class="toc__link" href={`/guide/${section.slug}`}>
                     <span class="mono-num toc__num">{String(n).padStart(2, '0')}</span>
-                    <span class="toc__title">
-                      {section.title}
-                      {section.required && <span class="must">{page.requiredLabel}</span>}
-                    </span>
+                    <span class="toc__title">{section.title}</span>
                     <span class="toc__mark" aria-hidden="true">→</span>
                   </a>
                 </li>
@@ -54,6 +51,18 @@ let n = 0;
     letter-spacing: var(--tracking-title);
     color: var(--ink);
     padding-bottom: var(--space-4);
+  }
+
+  /* 첫 그룹만 잉크 선으로 묶는다. 목차를 훑고 지나가는 눈에 걸리는 건
+     글자 크기가 아니라 면이다. */
+  .group:first-child .toc__list {
+    border-top: var(--border-emphasis);
+    border-bottom: var(--border-emphasis);
+  }
+
+  .group:first-child .toc__link:last-child,
+  .group:first-child .toc__item:last-child .toc__link {
+    border-bottom: none;
   }
 
   /* 한 줄에 하나씩. 목차 항목 전체가 탭 영역이 되어야 모바일에서 누르기 쉽다. */
@@ -88,19 +97,6 @@ let n = 0;
     font-weight: 600;
     letter-spacing: var(--tracking-title);
     color: var(--ink);
-  }
-
-  /* 액센트 색이 없는 사이트라 강조는 잉크 면으로 한다 — 요금의 특가 배지와
-     같은 방식. 세 곳에만 붙어서 눈에 걸린다. */
-  .must {
-    flex: none;
-    padding: 3px 8px;
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: var(--radius);
-    font-size: var(--text-fine);
-    font-weight: 500;
-    letter-spacing: var(--tracking-meta);
   }
 
   .toc__mark {
