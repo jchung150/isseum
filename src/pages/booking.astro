@@ -210,28 +210,25 @@ const endTimes = times.filter((t) => t.minutes >= (OPEN_HOUR + MIN_HOURS) * 60);
                     </h4>
                     {item.lines && <BulletList lines={item.lines} gap="10px" />}
                     {item.body && <p class="prose">{item.body}</p>}
+                    {item.refund && (
+                      <>
+                        <ul class="tiers">
+                          {refundSection.tiers.map((tier) => (
+                            <li class="tier">
+                              <span>{tier.when}</span>
+                              <span class="tier__rate">{tier.rate}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <BulletList lines={refundSection.exceptions} gap="10px" />
+                      </>
+                    )}
                   </article>
                 ))}
               </section>
             ))
           }
 
-          <section class="policy__group">
-            <h3 class="policy__group-title">{refundSection.title}</h3>
-            <ul class="tiers">
-              {
-                refundSection.tiers.map((tier) => (
-                  <li class="tier">
-                    <span>{tier.when}</span>
-                    <span class="tier__rate">{tier.rate}</span>
-                  </li>
-                ))
-              }
-            </ul>
-            <div class="policy__item">
-              <BulletList lines={refundSection.exceptions} gap="10px" />
-            </div>
-          </section>
         </div>
 
         <label class="consent">

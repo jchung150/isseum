@@ -32,31 +32,25 @@ const numbered = policyGroups.map((group) => ({
               <div class="item__body">
                 {item.lines && <BulletList lines={item.lines} gap="10px" />}
                 {item.body && <p class="prose">{item.body}</p>}
+                {item.refund && (
+                  <>
+                    <ul class="tiers">
+                      {refundSection.tiers.map((tier) => (
+                        <li class="tier">
+                          <span>{tier.when}</span>
+                          <span class="tier__rate">{tier.rate}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <BulletList lines={refundSection.exceptions} gap="10px" />
+                  </>
+                )}
               </div>
             </article>
           ))}
         </section>
       ))
     }
-
-    <section class="group">
-      <h2 class="group__title">{refundSection.title}</h2>
-      <article class="item">
-        <div class="item__body item__body--flush">
-          <ul class="tiers">
-            {
-              refundSection.tiers.map((tier) => (
-                <li class="tier">
-                  <span>{tier.when}</span>
-                  <span class="tier__rate">{tier.rate}</span>
-                </li>
-              ))
-            }
-          </ul>
-          <BulletList lines={refundSection.exceptions} gap="10px" />
-        </div>
-      </article>
-    </section>
 
     <div class="cta">
       <Button href={bookingUrl} variant="primary" size="lg">{page.ctaLabel}</Button>
@@ -108,10 +102,6 @@ const numbered = policyGroups.map((group) => ({
     margin-top: var(--space-3);
     padding-left: calc(26px + var(--space-4));
     max-width: var(--measure-body);
-  }
-
-  .item__body--flush {
-    padding-left: 0;
   }
 
   .tiers {

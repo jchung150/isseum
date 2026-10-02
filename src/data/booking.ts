@@ -179,7 +179,16 @@ export const rulesStep = {
  * An item carries either `lines` (bulleted label + text) or a plain `body`.
  */
 export type PolicyLine = { label: string; text: string };
-export type PolicyItem = { title: string; lines?: PolicyLine[]; body?: string };
+export type PolicyItem = {
+  title: string;
+  lines?: PolicyLine[];
+  body?: string;
+  /**
+   * 이 자리에 환불 등급표와 예외 조항이 들어간다. 표는 `refundSection`이 들고
+   * 있고 항목은 번호와 제목만 맡는다 — 등급 숫자를 두 벌로 만들지 않기 위해서.
+   */
+  refund?: boolean;
+};
 export type PolicyGroup = { id: string; title: string; items: PolicyItem[] };
 
 export const policyGroups: PolicyGroup[] = [
@@ -312,7 +321,7 @@ export const policyGroups: PolicyGroup[] = [
           { label: '원상복구 — ', text: '퇴실 시 책상, 의자, 무대 등은 입실 전 기본 배치로 원상 복구해 주셔야 합니다.' },
           {
             label: '벽면 훼손 금지 — ',
-            text: '벽면에 테이프, 접착제, 못, 핀 사용은 불가하며, 부착물은 갤러리 와이어 및 전용 점착제(블루택 등)을 제공해 드립니다.',
+            text: '벽면에 테이프, 접착제, 못, 핀 사용은 불가하며, 부착물은 갤러리 와이어 및 전용 점착제(블루텍)를 제공해 드립니다.',
           },
           {
             label: '손해 배상 — ',
@@ -320,14 +329,20 @@ export const policyGroups: PolicyGroup[] = [
           },
           {
             label: '쓰레기 분리배출 — ',
-            text: '행사 중 발생한 일반 쓰레기 및 플라스틱·종이컵은 엘레베이터 옆 쓰레기통에 분리 배출해 주시고, 대량으로 발생한 쓰레기는 별도 봉투에 담아 동일 장소에 배출해 주시기 바랍니다.',
+            text: '행사 중 발생한 일반 쓰레기 및 플라스틱·종이컵은 엘리베이터 옆 쓰레기통에 분리 배출해 주시고, 대량으로 발생한 쓰레기는 별도 봉투에 담아 동일 장소에 배출해 주시기 바랍니다.',
           },
         ],
       },
+    ],
+  },
+  {
+    // 노션 원문과 같은 번호 체계. 환불 정책이 11번, 안전 관리가 12번이고
+    // 총 12개 항목이 된다.
+    id: 'liability',
+    title: '규정 및 책임',
+    items: [
+      { title: '취소 및 환불 정책', refund: true },
       {
-        // Item 11. It sits here, as the last numbered item, rather than after the
-        // refund tiers — the refund section is a table plus exceptions and owns
-        // no number, so a numbered item trailing it read as an afterthought.
         title: '안전 관리 및 책임 안내',
         body: '행사 중 발생하는 참여자의 개인 소지품 분실, 도난 및 부주의로 인한 안전사고에 대한 모든 책임은 주최 측(예약자)에게 있습니다.',
       },
