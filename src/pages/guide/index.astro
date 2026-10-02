@@ -53,16 +53,35 @@ let n = 0;
     padding-bottom: var(--space-4);
   }
 
-  /* 첫 그룹만 잉크 선으로 묶는다. 목차를 훑고 지나가는 눈에 걸리는 건
-     글자 크기가 아니라 면이다. */
-  .group:first-child .toc__list {
-    border-top: var(--border-emphasis);
-    border-bottom: var(--border-emphasis);
+  /* 먼저 읽어 주세요만 카드로 떼어 놓는다. 위아래 굵은 선은 결국 목차의 다른
+     줄들과 같은 '선'이라 구분이 약했다. 면이 바뀌어야 다른 것으로 읽힌다. */
+  .group:first-child {
+    padding: var(--space-notice);
+    background: var(--surface);
+    border: var(--border-hairline);
   }
 
-  .group:first-child .toc__link:last-child,
+  .group:first-child .toc__list {
+    border-top: none;
+  }
+
+  .group:first-child .toc__item:first-child .toc__link {
+    padding-top: 0;
+  }
+
   .group:first-child .toc__item:last-child .toc__link {
+    padding-bottom: 0;
     border-bottom: none;
+  }
+
+  /* 카드 안에서는 배경이 이미 바뀌었으므로 행 사이 구분선만 남기고,
+     hover 면은 쓰지 않는다 — 같은 색으로 덮이기 때문이다. */
+  .group:first-child .toc__link:hover {
+    background: none;
+  }
+
+  .group:first-child .toc__link:hover .toc__title {
+    color: var(--link-hover);
   }
 
   /* 한 줄에 하나씩. 목차 항목 전체가 탭 영역이 되어야 모바일에서 누르기 쉽다. */
