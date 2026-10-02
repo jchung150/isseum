@@ -179,12 +179,18 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
     max-width: var(--measure-body);
   }
 
+  /* 단 자체는 사진이 들어갈 만큼 넓게 두고, 읽는 텍스트만 본문 폭으로 묶는다.
+     둘을 같은 폭으로 맞추면 사진이 작아지거나 글줄이 62자가 된다. */
   .doc__body {
     margin-top: var(--space-8);
-    max-width: var(--measure-lead);
+    max-width: var(--measure-column);
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+  }
+
+  .doc__body > :not(figure) {
+    max-width: var(--measure-body);
   }
 
   .doc__sub {
@@ -353,6 +359,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   .deeper__note {
+    max-width: var(--measure-body);
     font-size: var(--text-ui);
     line-height: var(--leading-compact);
     color: var(--text-secondary);
@@ -390,6 +397,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   .shot__cap {
+    max-width: var(--measure-body);
     margin-top: var(--space-3);
     font-size: var(--text-meta);
     color: var(--text-secondary);

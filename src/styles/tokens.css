@@ -134,9 +134,18 @@
      measured at runtime in Header.astro (the mobile bar is taller). */
   --anchor-gap: 28px;
   --scroll-offset: calc(var(--header-h, 101px) + var(--anchor-gap) - var(--space-section));
+  /* 읽는 폭(measure). em이라 글자 크기와 무관하게 "한 줄에 몇 글자"를 뜻한다.
+     한국어가 편하게 읽히는 범위는 35~45자다. 역할별로 하나씩만 쓸 것:
+       본문·목록·주석·캡션  → --measure-body       (36자)
+       리드·도입부          → --measure-hero-lead  (42자)
+       디스플레이 제목       → --measure-display    (24자)
+     --measure-lead(62자)는 읽는 폭이 아니라 사진이 들어가는 넓은 단 폭이다.
+     본문에 쓰면 한 줄이 62자가 되어 눈이 다음 줄 첫머리를 찾지 못한다. */
   --measure-display: 24em;
   --measure-body: 36em;
-  --measure-lead: 62em;
+  --measure-column: 62em;
+  /** @deprecated --measure-column을 쓸 것. 이름이 본문용처럼 읽힌다. */
+  --measure-lead: var(--measure-column);
   /* Subpage hero lead. em-based measures only scale with the type if the
      measured element carries the fluid font-size — see PageHero. ~42 Korean
      characters per line, within the comfortable range. */

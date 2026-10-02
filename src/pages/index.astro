@@ -347,7 +347,7 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     flex-direction: column;
     gap: clamp(16px, 1.8vw, 24px);
     margin-top: clamp(22px, 3vw, 36px);
-    max-width: var(--measure-lead);
+    max-width: var(--measure-hero-lead);
   }
 
   .hero__copy .lead {
@@ -596,7 +596,7 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
 
   .price__notes {
     margin-top: var(--space-8);
-    max-width: var(--measure-lead);
+    max-width: var(--measure-body);
   }
 
   /* ---------- FAQ ---------- */
@@ -691,9 +691,10 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     transform: rotate(0deg);
   }
 
+  /* 답변은 읽는 본문이므로 리드 폭이 아니라 본문 폭을 쓴다. */
   .faq__a {
     padding: 0 0 var(--space-6);
-    max-width: var(--measure-hero-lead);
+    max-width: var(--measure-body);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
