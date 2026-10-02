@@ -84,6 +84,7 @@ const allNav: NavItem[] = [
 export const nav: NavItem[] = allNav;
 
 const allFooterLinks = [
+  { label: '이용 안내', href: '/guide', external: false },
   { label: '보유 장비 안내', href: '/#equipment', external: false },
   { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
