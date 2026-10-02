@@ -49,13 +49,37 @@ export type GuideBlock =
   | { kind: 'steps'; items: GuideLine[] }
   | { kind: 'note'; title?: string; body: string[] }
   | { kind: 'figure'; src?: ImageMetadata; alt: string; caption?: string }
-  | { kind: 'link'; label: string; href: string; lines: GuideLine[] };
+  | { kind: 'link'; label: string; href: string; lines: GuideLine[] }
+  /** 하위 페이지로 들어가는 카드. `to`는 현재 페이지 기준 한 토막. */
+  | { kind: 'pagelink'; to: string; label: string; note: string };
 
-export type GuideSection = {
+export type GuidePage = {
+  /** 부모 기준 한 토막. 전체 경로는 조상들을 이어 만든다. */
   slug: string;
   title: string;
+  /** 목차 카드에 붙는 한 줄 설명. */
+  summary: string;
   blocks: GuideBlock[];
+  /** 한 단계 더 들어가는 하위 페이지. */
+  children?: GuidePage[];
 };
+
+/** 트리를 평탄화해 경로와 조상 목록을 만든다. 라우트와 목차가 같은 함수를 쓴다. */
+export type GuideEntry = {
+  path: string;
+  page: GuidePage;
+  /** 루트(이용 안내)를 제외한 조상들. 빵부스러기가 이걸 읽는다. */
+  trail: { path: string; title: string }[];
+};
+
+export function flatten(pages: GuidePage[], base = '/guide', trail: GuideEntry['trail'] = []): GuideEntry[] {
+  return pages.flatMap((page) => {
+    const path = `${base}/${page.slug}`;
+    const entry: GuideEntry = { path, page, trail };
+    const childTrail = [...trail, { path, title: page.title }];
+    return [entry, ...flatten(page.children ?? [], path, childTrail)];
+  });
+}
 
 export const page = {
   title: '이용 안내',
@@ -64,17 +88,23 @@ export const page = {
   eyebrow: 'GUIDE',
   heading: '이용 안내',
   lead: '공간에 비치된 기본 안내문보다 자세한 설명이 필요할 때 확인해 주세요.',
-  /** 섹션 바로가기 목록의 라벨. */
+  /** 빵부스러기의 뿌리이자 목차 페이지의 이름. */
+  rootLabel: '이용 안내',
+  breadcrumbLabel: '현재 위치',
+  /** 각 페이지 하단에서 목차로 돌아가는 링크. */
+  backLabel: '목차로 돌아가기',
+  /** 하위 페이지로 들어가는 카드의 화살표 대체 텍스트는 두지 않는다(aria-hidden). */
   tocLabel: '목차',
   /** 아직 사진이 들어오지 않은 자리에 붙는 캡션 접두어. */
   pendingPrefix: '사진 준비 중 — ',
 };
 
-export const sections: GuideSection[] = [
+export const guidePages: GuidePage[] = [
   /* ═══════════════  동선 및 공간 안내  ═══════════════ */
   {
     slug: 'route',
     title: '동선 및 공간 안내',
+    summary: '주 출입문에 들어서면 어디에 무엇이 있는지, 화장실은 어느 쪽인지.',
     blocks: [
       { kind: 'heading', text: '공간 안내 (주 출입문 진입 시)' },
       {
@@ -130,6 +160,7 @@ export const sections: GuideSection[] = [
   {
     slug: 'entry',
     title: '출입 방법',
+    summary: '도어락으로 문을 여는 순서와, 퇴실할 때 문을 잠그는 방법.',
     blocks: [
       {
         kind: 'note',
@@ -171,6 +202,7 @@ export const sections: GuideSection[] = [
   {
     slug: 'conduct',
     title: '공간 이용 기본 수칙',
+    summary: '벽면 · 음식물 · 금연 · 반려동물 · 원상복구 · 쓰레기 배출.',
     blocks: [
       { kind: 'heading', text: '공용 공간(복도 · 계단) 비우기' },
       {
@@ -224,6 +256,7 @@ export const sections: GuideSection[] = [
   {
     slug: 'parking',
     title: '주차 및 화물 반입 안내',
+    summary: '기계식 주차장 규격과 이용 방법, 인근 주차장, 화물 하차 공간.',
     blocks: [
       { kind: 'heading', text: '주차 안내' },
       {
@@ -266,61 +299,15 @@ export const sections: GuideSection[] = [
         items: [
           {
             label: '기존 차량 출차 — ',
-            text: '기계식 주차장에 이미 입고된 차량의 출차는 이용자가 직접 수동으로 조작하셔야 합니다. 조작 방법은 아래를 참고해 주세요.',
-          },
-        ],
-      },
-      { kind: 'heading', text: '수동 출차 조작 방법' },
-      {
-        kind: 'figure',
-        src: parking02,
-        alt: '스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반',
-      },
-      {
-        kind: 'steps',
-        items: [
-          {
-            text: '제어반 키패드에서 [조작설명] 버튼을 누릅니다.',
-            shots: [{ src: parking03, alt: '제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼' }],
-          },
-          {
-            label: '수동 모드 전환 — ',
-            text: '화면 우측의 [게이트 닫힘대기 ON](파란색 버튼)을 5초 이상 길게 눌러 수동 조작 모드로 전환합니다.',
-            shots: [
-              {
-                src: parking04,
-                alt: '조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다',
-              },
-              {
-                src: parking05,
-                alt: '붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대',
-              },
-            ],
-          },
-          {
-            label: '출입문 열기 — ',
-            text: '메인 화면으로 돌아와 하단의 [출입문 열림(상)] 버튼을 눌러 문을 엽니다.',
-            shots: [{ src: parking06, alt: '붉은 원으로 표시된 출입문 열림(상) 버튼 확대' }],
-          },
-          {
-            label: '출고 진행 — ',
-            text: '[출고] 버튼을 누르고, 키패드(우측 숫자 버튼)로 출고할 차량의 번호 4자리를 입력한 뒤 [운전시작] 버튼을 누릅니다. 기계가 작동하며 차량이 출차구로 이동하니 안전하게 대기해 주세요.',
-            shots: [{ src: parking07, alt: '입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면' }],
-          },
-          {
-            label: '출입문 닫기 — ',
-            text: '하단의 [출입문 닫힘(하)] 버튼을 눌러 문을 닫습니다.',
-            shots: [{ src: parking08, alt: '붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대' }],
+            text: '기계식 주차장에 이미 입고된 차량의 출차는 이용자가 직접 수동으로 조작하셔야 합니다.',
           },
         ],
       },
       {
-        kind: 'note',
-        title: '출고 시 주의사항',
-        body: [
-          '번호를 잘못 입력했을 경우 [취소] 또는 [CE] 버튼을 눌러 초기화하고 다시 입력하세요.',
-          '출고 진행 중에는 안전을 위해 주차기 내부나 반입구 근처에 접근하지 않도록 주의해 주세요.',
-        ],
+        kind: 'pagelink',
+        to: 'manual',
+        label: '수동 출차 조작 방법',
+        note: '제어반 조작을 사진과 함께 단계별로 안내합니다.',
       },
       { kind: 'heading', text: '인근 유료 주차장' },
       {
@@ -359,6 +346,66 @@ export const sections: GuideSection[] = [
         kind: 'figure',
         src: parking10,
         alt: '건물 1층 정문 옆, 붉은 타원으로 표시된 화물 하차용 임시 정차 공간',
+      },
+    ],
+    children: [
+      {
+        slug: 'manual',
+        title: '수동 출차 조작 방법',
+        summary: '이미 입고된 차량을 직접 꺼낼 때의 제어반 조작 순서.',
+        blocks: [
+          {
+            kind: 'figure',
+            src: parking02,
+            alt: '스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반',
+          },
+          {
+            kind: 'steps',
+            items: [
+              {
+                text: '제어반 키패드에서 [조작설명] 버튼을 누릅니다.',
+                shots: [{ src: parking03, alt: '제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼' }],
+              },
+              {
+                label: '수동 모드 전환 — ',
+                text: '화면 우측의 [게이트 닫힘대기 ON](파란색 버튼)을 5초 이상 길게 눌러 수동 조작 모드로 전환합니다.',
+                shots: [
+                  {
+                    src: parking04,
+                    alt: '조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다',
+                  },
+                  {
+                    src: parking05,
+                    alt: '붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대',
+                  },
+                ],
+              },
+              {
+                label: '출입문 열기 — ',
+                text: '메인 화면으로 돌아와 하단의 [출입문 열림(상)] 버튼을 눌러 문을 엽니다.',
+                shots: [{ src: parking06, alt: '붉은 원으로 표시된 출입문 열림(상) 버튼 확대' }],
+              },
+              {
+                label: '출고 진행 — ',
+                text: '[출고] 버튼을 누르고, 키패드(우측 숫자 버튼)로 출고할 차량의 번호 4자리를 입력한 뒤 [운전시작] 버튼을 누릅니다. 기계가 작동하며 차량이 출차구로 이동하니 안전하게 대기해 주세요.',
+                shots: [{ src: parking07, alt: '입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면' }],
+              },
+              {
+                label: '출입문 닫기 — ',
+                text: '하단의 [출입문 닫힘(하)] 버튼을 눌러 문을 닫습니다.',
+                shots: [{ src: parking08, alt: '붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대' }],
+              },
+            ],
+          },
+          {
+            kind: 'note',
+            title: '출고 시 주의사항',
+            body: [
+              '번호를 잘못 입력했을 경우 [취소] 또는 [CE] 버튼을 눌러 초기화하고 다시 입력하세요.',
+              '출고 진행 중에는 안전을 위해 주차기 내부나 반입구 근처에 접근하지 않도록 주의해 주세요.',
+            ],
+          },
+        ],
       },
     ],
   },

@@ -1,0 +1,414 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { Image } from 'astro:assets';
+import { flatten, guidePages, page } from '../../data/guide';
+import type { GuideEntry } from '../../data/guide';
+
+export function getStaticPaths() {
+  return flatten(guidePages).map((entry) => ({
+    params: { slug: entry.path.replace('/guide/', '') },
+    props: entry,
+  }));
+}
+
+const { page: doc, path, trail } = Astro.props as GuideEntry;
+
+// 빵부스러기의 뿌리는 언제나 목차다.
+const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
+---
+
+<BaseLayout title={`${doc.title} | ${page.title}`} description={doc.summary}>
+  <Breadcrumb trail={crumbs} current={doc.title} label={page.breadcrumbLabel} />
+
+  <article class="container doc">
+    <header class="doc__head">
+      <h1 class="display doc__title">{doc.title}</h1>
+      <p class="doc__summary">{doc.summary}</p>
+    </header>
+
+    <div class="doc__body">
+      {
+        doc.blocks.map((block) => {
+          if (block.kind === 'heading') return <h2 class="doc__sub">{block.text}</h2>;
+
+          if (block.kind === 'text') return <p class="prose">{block.body}</p>;
+
+          if (block.kind === 'bullets' || block.kind === 'steps') {
+            const Tag = block.kind === 'steps' ? 'ol' : 'ul';
+            return (
+              <Tag class:list={['lines', block.kind === 'steps' && 'lines--steps']}>
+                {block.items.map((line) => (
+                  <li class="line">
+                    <p class="prose">
+                      {line.label && <strong>{line.label}</strong>}
+                      {line.text}
+                    </p>
+                    {line.details && (
+                      <ul class="line__details">
+                        {line.details.map((d) => (
+                          <li>{d}</li>
+                        ))}
+                      </ul>
+                    )}
+                    {line.shots?.map((shot) => (
+                      <figure class="shot shot--inline">
+                        {shot.src ? (
+                          <Image
+                            class="shot__img"
+                            src={shot.src}
+                            alt={shot.alt}
+                            widths={[400, 700]}
+                            sizes="(min-width: 900px) 520px, 100vw"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div
+                            class="ph shot__ph"
+                            role="img"
+                            aria-label={page.pendingPrefix + shot.alt}
+                          />
+                        )}
+                        <figcaption class="shot__cap">
+                          {!shot.src && page.pendingPrefix}
+                          {shot.caption ?? shot.alt}
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </li>
+                ))}
+              </Tag>
+            );
+          }
+
+          if (block.kind === 'note') {
+            return (
+              <aside class="note">
+                {block.title && <p class="note__title">{block.title}</p>}
+                {block.body.map((p) => (
+                  <p class="note__body">{p}</p>
+                ))}
+              </aside>
+            );
+          }
+
+          if (block.kind === 'link') {
+            return (
+              <div class="refbox">
+                <a class="refbox__link" href={block.href} target="_blank" rel="noopener">
+                  {block.label}
+                </a>
+                <dl class="refbox__list">
+                  {block.lines.map((line) => (
+                    <div class="refbox__row">
+                      <dt>{line.label?.replace(/\s*—\s*$/, '')}</dt>
+                      <dd>{line.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            );
+          }
+
+          if (block.kind === 'pagelink') {
+            return (
+              <a class="deeper" href={`${path}/${block.to}`}>
+                <span class="deeper__text">
+                  <span class="deeper__label">{block.label}</span>
+                  <span class="deeper__note">{block.note}</span>
+                </span>
+                <span class="deeper__mark" aria-hidden="true">→</span>
+              </a>
+            );
+          }
+
+          return (
+            <figure class="shot">
+              {block.src ? (
+                <Image
+                  class="shot__img"
+                  src={block.src}
+                  alt={block.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 900px) 760px, 100vw"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="ph shot__ph" role="img" aria-label={page.pendingPrefix + block.alt} />
+              )}
+              <figcaption class="shot__cap">
+                {!block.src && page.pendingPrefix}
+                {block.caption ?? block.alt}
+              </figcaption>
+            </figure>
+          );
+        })
+      }
+    </div>
+
+    <footer class="doc__foot">
+      <a class="back" href="/guide">
+        <span aria-hidden="true">←</span>
+        {page.backLabel}
+      </a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .doc {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-section-sm);
+  }
+
+  .doc__head {
+    padding-bottom: var(--space-5);
+    border-bottom: var(--border-emphasis);
+  }
+
+  .doc__title {
+    font-size: var(--display-group);
+  }
+
+  .doc__summary {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: var(--leading-compact);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-body);
+    max-width: var(--measure-body);
+  }
+
+  .doc__body {
+    margin-top: var(--space-8);
+    max-width: var(--measure-lead);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .doc__sub {
+    margin-top: var(--space-6);
+    font-size: var(--text-item-title);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+  }
+
+  .doc__sub:first-child {
+    margin-top: 0;
+  }
+
+  /* ---------- 줄 목록 ---------- */
+  .lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    counter-reset: line;
+  }
+
+  .line {
+    position: relative;
+    padding-left: var(--space-6);
+  }
+
+  .lines:not(.lines--steps) .line::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 11px;
+    width: var(--space-1);
+    height: var(--space-1);
+    background: var(--text-tertiary);
+    border-radius: var(--radius-full);
+  }
+
+  .lines--steps .line {
+    counter-increment: line;
+  }
+
+  .lines--steps .line::before {
+    content: counter(line);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-mono);
+    font-size: var(--mono-num);
+    letter-spacing: var(--tracking-mono);
+    color: var(--text-tertiary);
+    line-height: var(--leading-body);
+  }
+
+  .line__details {
+    margin-top: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-ui);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .line__details li::before {
+    content: '·';
+    margin-right: var(--space-2);
+    color: var(--text-tertiary);
+  }
+
+  /* ---------- 강조 상자 ---------- */
+  .note {
+    padding: var(--space-5);
+    border: var(--border-hairline);
+    background: var(--surface);
+  }
+
+  .note__title {
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+    margin-bottom: var(--space-2);
+  }
+
+  .note__body {
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .note__body + .note__body {
+    margin-top: var(--space-2);
+  }
+
+  /* ---------- 외부 참조 ---------- */
+  .refbox {
+    padding: var(--space-5);
+    border: var(--border-hairline);
+  }
+
+  .refbox__link {
+    font-size: var(--text-list-name);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .refbox__link:hover {
+    color: var(--link-hover);
+    border-color: var(--link-hover);
+  }
+
+  .refbox__list {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .refbox__row {
+    display: grid;
+    grid-template-columns: 5.5em 1fr;
+    gap: var(--space-3);
+    font-size: var(--text-ui);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .refbox__row dt {
+    color: var(--text-secondary);
+  }
+
+  .refbox__row dd {
+    color: var(--text-body);
+    line-height: var(--leading-compact);
+  }
+
+  /* ---------- 하위 페이지로 ---------- */
+  .deeper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: var(--border-emphasis);
+    transition: background var(--transition-fast);
+  }
+
+  .deeper:hover {
+    background: var(--surface);
+  }
+
+  .deeper__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .deeper__label {
+    font-size: var(--text-list-name);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+  }
+
+  .deeper__note {
+    font-size: var(--text-ui);
+    line-height: var(--leading-compact);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-ui);
+  }
+
+  .deeper__mark {
+    flex: none;
+    color: var(--text-tertiary);
+  }
+
+  .deeper:hover .deeper__mark {
+    color: var(--ink);
+  }
+
+  /* ---------- 사진 ---------- */
+  .shot :global(.shot__img) {
+    width: 100%;
+    height: auto;
+    border: var(--border-hairline);
+  }
+
+  .shot__ph {
+    aspect-ratio: 16 / 4;
+    border: var(--border-hairline);
+  }
+
+  .shot--inline {
+    margin-top: var(--space-3);
+    max-width: 520px;
+  }
+
+  .shot__cap {
+    margin-top: var(--space-3);
+    font-size: var(--text-meta);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  /* ---------- 돌아가기 ---------- */
+  .doc__foot {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: var(--border-hairline);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: var(--text-ui);
+    letter-spacing: var(--tracking-ui);
+    color: var(--text-secondary);
+  }
+
+  .back:hover {
+    color: var(--ink);
+  }
+</style>

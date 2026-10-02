@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import DarkCta from '../../components/DarkCta.astro';
+import { guidePages, page } from '../../data/guide';
+import { closingCta } from '../../data/home';
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <PageHero eyebrow={page.eyebrow} title={page.heading} lead={page.lead} />
+
+  <nav class="container toc" aria-label={page.tocLabel}>
+    <ol class="toc__list">
+      {
+        guidePages.map((section, i) => (
+          <li class="toc__item">
+            <a class="toc__link" href={`/guide/${section.slug}`}>
+              <span class="mono-num toc__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="toc__text">
+                <span class="toc__title">{section.title}</span>
+                <span class="toc__summary">{section.summary}</span>
+              </span>
+              <span class="toc__mark" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <section class="container section">
+    <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
+  </section>
+</BaseLayout>
+
+<style>
+  .toc {
+    margin-top: var(--space-header-gap);
+  }
+
+  /* 한 줄에 하나씩. 목차 항목 전체가 탭 영역이 되어야 모바일에서 누르기 쉽다. */
+  .toc__list {
+    border-top: var(--border-hairline);
+  }
+
+  .toc__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-bottom: var(--border-hairline);
+    transition: background var(--transition-fast);
+  }
+
+  .toc__link:hover {
+    background: var(--surface);
+  }
+
+  .toc__num {
+    flex: none;
+    width: 26px;
+  }
+
+  .toc__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .toc__title {
+    font-size: var(--text-list-name);
+    font-weight: 600;
+    letter-spacing: var(--tracking-title);
+    color: var(--ink);
+  }
+
+  .toc__summary {
+    font-size: var(--text-sm);
+    line-height: var(--leading-compact);
+    color: var(--text-secondary);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .toc__mark {
+    flex: none;
+    color: var(--text-tertiary);
+    font-size: var(--text-ui);
+  }
+
+  .toc__link:hover .toc__mark {
+    color: var(--ink);
+  }
+</style>

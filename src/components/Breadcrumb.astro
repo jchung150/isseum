@@ -1,0 +1,75 @@
+---
+/**
+ * 빵부스러기. 깊이가 있는 문서(/guide/parking/manual)에서 지금 어디인지와
+ * 어디로 돌아갈 수 있는지를 보여준다. 모바일에서 뒤로 가기 버튼 대신 쓰는 길이라
+ * 조상은 전부 링크이고, 현재 위치만 링크가 아니다.
+ */
+interface Props {
+  /** 링크가 걸리는 조상들. 뿌리부터 순서대로. */
+  trail: { path: string; title: string }[];
+  /** 현재 페이지 제목. 링크가 아니다. */
+  current: string;
+  label: string;
+}
+
+const { trail, current, label }: Props = Astro.props;
+---
+
+<nav class="crumbs container" aria-label={label}>
+  <ol class="crumbs__list">
+    {
+      trail.map((step) => (
+        <li class="crumbs__item">
+          <a class="crumbs__link" href={step.path}>
+            {step.title}
+          </a>
+          <span class="crumbs__sep" aria-hidden="true">/</span>
+        </li>
+      ))
+    }
+    <li class="crumbs__item">
+      <span class="crumbs__current" aria-current="page">{current}</span>
+    </li>
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    padding-top: var(--space-6);
+  }
+
+  /* 경로가 길어지면 줄바꿈 대신 가로로 흐르게 둔다. 모바일에서 두 줄짜리
+     빵부스러기는 제목보다 자리를 많이 먹는다. */
+  .crumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+  }
+
+  .crumbs__item {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .crumbs__link {
+    color: var(--text-secondary);
+    padding: var(--space-1) 0;
+  }
+
+  .crumbs__link:hover {
+    color: var(--ink);
+  }
+
+  .crumbs__sep {
+    color: var(--text-tertiary);
+    margin-inline: var(--space-2);
+  }
+
+  .crumbs__current {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>
