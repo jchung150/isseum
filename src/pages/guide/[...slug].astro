@@ -171,6 +171,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   .doc__summary {
+    text-wrap: balance;
     margin-top: var(--space-3);
     font-size: var(--text-sm);
     line-height: var(--leading-compact);
@@ -353,6 +354,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
   }
 
   .deeper__note {
+    text-wrap: balance;
     font-size: var(--text-ui);
     line-height: var(--leading-compact);
     color: var(--text-secondary);
@@ -380,16 +382,27 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
     border: var(--border-hairline);
   }
 
+  /* 단계 안의 사진은 `.line`의 왼쪽 들여쓰기(번호 자리)만큼 밀려서, 본문 첫
+     사진과 달리 좌우 여백이 어긋났다. 모바일에서는 들여쓰기를 되물려 본문 폭에
+     맞추고, 가로가 넉넉한 화면에서만 단계에 붙여 들여쓴다. */
   .shot--inline {
     margin-top: var(--space-3);
+    margin-left: calc(var(--space-6) * -1);
     max-width: 520px;
   }
 
   .shot__cap {
+    text-wrap: balance;
     margin-top: var(--space-3);
     font-size: var(--text-meta);
     color: var(--text-secondary);
     letter-spacing: var(--tracking-meta);
+  }
+
+  @media (min-width: 640px) {
+    .shot--inline {
+      margin-left: 0;
+    }
   }
 
   /* ---------- 돌아가기 ---------- */

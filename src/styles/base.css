@@ -178,6 +178,18 @@ button {
   color: var(--text-tertiary);
 }
 
+/* `text-wrap: pretty`(body)는 한 단어짜리 고아만 막는다. 한국어 짧은 문단은
+   그보다 끝줄이 20~30%만 차는 형태로 어색해지므로, 여섯 줄 이하에서 줄 길이를
+   고르게 맞추는 balance를 쓴다. 브라우저가 긴 문단에는 알아서 적용하지 않는다. */
+h1,
+h2,
+h3,
+h4,
+.lead,
+.prose {
+  text-wrap: balance;
+}
+
 .lead {
   font-size: var(--text-lead);
   line-height: var(--leading-compact);
