@@ -104,11 +104,13 @@ export const steps = [
 ];
 
 /**
- * Closing DarkCta. NOTE: the headline promises date-availability checking while
- * /booking is a static form — CLAUDE.md §Before launch item 12. Either soften
- * this copy or build a real calendar; don't leave it as is at announcement.
+ * 마무리 DarkCta.
+ *
+ * 이전 문구는 "원하시는 날짜가 비어 있는지 먼저 확인해 보세요"였는데, /booking은
+ * 정적 신청서라 확인할 방법이 없었다. 사이트가 못 하는 일을 약속하면 안 되므로,
+ * 확인하는 주체를 우리로 되돌렸다. 실제 예약 달력이 생기면 그때 다시 쓸 것.
  */
 export const closingCta = {
-  headline: '원하시는 날짜가 비어 있는지 먼저 확인해 보세요.',
-  sub: '신청서 접수 후 영업일 기준 1일 내 회신드립니다.',
+  headline: '원하시는 날짜의 가능 여부를 확인해 드립니다.',
+  sub: '희망 일정과 행사 내용을 남겨 주시면 영업일 기준 1일 내 회신드립니다.',
 };
