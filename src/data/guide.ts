@@ -800,26 +800,6 @@ const devicePages: GuidePage[] = [
     ],
   },
 
-  {
-    slug: 'cctv',
-    title: 'CCTV 보안',
-    summary: '공간 내 CCTV 운영 방침과 주의 사항입니다.',
-    blocks: [
-      {
-        kind: 'bullets',
-        items: [
-          {
-            label: 'CCTV 녹화 — ',
-            text: '공간 내 안전, 화재 예방, 방범 및 시설물 훼손 방지를 위해 24시간 CCTV가 녹화되고 있습니다.',
-          },
-          {
-            label: '임의 조작 금지 — ',
-            text: '안전을 위한 필수 장치이므로, CCTV 방향을 임의로 돌리거나 가리는 행위는 엄격히 금지합니다.',
-          },
-        ],
-      },
-    ],
-  },
 ];
 
 
@@ -1044,6 +1024,26 @@ const extraPages: GuidePage[] = [
         label: '세븐일레븐 동교스텔라',
         href: 'https://map.naver.com/p/entry/place/2002886482',
         lines: [{ label: '위치 — ', text: '스타벅스 옆, 도보 1분 거리' }],
+      },
+    ],
+  },
+  {
+    slug: 'cctv',
+    title: 'CCTV 보안',
+    summary: '공간 내 CCTV 운영 방침과 주의 사항입니다.',
+    blocks: [
+      {
+        kind: 'bullets',
+        items: [
+          {
+            label: 'CCTV 녹화 — ',
+            text: '공간 내 안전, 화재 예방, 방범 및 시설물 훼손 방지를 위해 24시간 CCTV가 녹화되고 있습니다.',
+          },
+          {
+            label: '임의 조작 금지 — ',
+            text: '안전을 위한 필수 장치이므로, CCTV 방향을 임의로 돌리거나 가리는 행위는 엄격히 금지합니다.',
+          },
+        ],
       },
     ],
   },
