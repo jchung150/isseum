@@ -97,12 +97,6 @@ export type GuidePage = {
   /** 목차 카드에 붙는 한 줄 설명. */
   summary: string;
   blocks: GuideBlock[];
-  /**
-   * 목차와 페이지 머리에 '필독' 표시를 붙인다. 안 읽으면 당일에 문제가 되는
-   * 것만 — 못 들어오거나, 공간이 상하거나, 퇴실이 끝나지 않는 경우. 표시가
-   * 늘어나면 표시가 아니게 되므로 늘릴 때는 한 번 더 생각할 것.
-   */
-  required?: boolean;
   /** 한 단계 더 들어가는 하위 페이지. */
   children?: GuidePage[];
 };
@@ -140,8 +134,6 @@ export const page = {
   tocLabel: '목차',
   /** 아직 사진이 들어오지 않은 자리에 붙는 캡션 접두어. */
   pendingPrefix: '사진 준비 중 — ',
-  /** 꼭 읽어야 하는 섹션에 붙는 표시. */
-  requiredLabel: '필독',
 };
 
 const spacePages: GuidePage[] = [
@@ -206,12 +198,7 @@ const spacePages: GuidePage[] = [
     slug: 'entry',
     title: '출입 방법',
     summary: '도어락으로 문을 여는 순서와 퇴실 시 잠그는 방법입니다.',
-    required: true,
     blocks: [
-      {
-        kind: 'note',
-        body: ['다음 예약자를 위해 예약된 시간 정각 입·퇴실을 엄수해 주시기 바랍니다.'],
-      },
       { kind: 'heading', text: '입실 방법' },
       {
         kind: 'figure',
@@ -249,7 +236,6 @@ const spacePages: GuidePage[] = [
     slug: 'conduct',
     title: '공간 이용 기본 수칙',
     summary: '공간을 이용하시는 동안 지켜 주셔야 할 기본 사항입니다.',
-    required: true,
     blocks: [
       { kind: 'heading', text: '공용 공간(복도 · 계단) 비우기' },
       {
@@ -924,16 +910,45 @@ const exitPages: GuidePage[] = [
     slug: 'checklist',
     title: '퇴실 전 마무리 체크리스트',
     summary: '퇴실 전 확인해 주셔야 할 항목입니다.',
-    required: true,
     blocks: [
+      {
+        kind: 'text',
+        body: '다음 예약자를 위해 퇴실 전 아래 항목을 확인해 주세요. 각 항목의 자세한 방법은 해당 섹션에 있습니다.',
+      },
+      { kind: 'heading', text: '정리' },
       {
         kind: 'checklist',
         items: [
-          '가구 및 소품이 원래 자리에 잘 정리되었나요?',
-          '쓰레기 분리배출 및 음식물 정리가 완료되었나요?',
-          '에어컨, 제습기, PC 전원을 끄셨나요?',
-          '메인 홀 · 프로젝트 룸 · 바(Bar)의 조명 스위치를 모두 끄셨나요?',
-          '나가실 때 출입문이 완전히 닫혔는지 밖에서 한 번 더 당겨 확인하셨나요?',
+          '책상과 의자, 소품을 입실 전 기본 배치로 돌려놓으셨나요?',
+          '벽면에 사용한 갤러리 와이어와 점착제를 모두 떼어내셨나요?',
+          '일반 쓰레기와 재활용품을 엘리베이터 옆 쓰레기통에 분리배출하셨나요?',
+          '음식물 쓰레기를 전용 봉투에 담아 1층 스타벅스 매장 옆에 배출하셨나요?',
+          '사용하신 일회용품의 내용물을 비우고 정리하셨나요?',
+        ],
+      },
+      { kind: 'heading', text: '전원' },
+      {
+        kind: 'checklist',
+        items: [
+          '음향 장비를 파워 앰프 → 마이크 수신기 · 믹서 → PC 순서로 끄셨나요?',
+          '에어컨 전원을 끄셨나요?',
+          '메인 홀과 프로젝트 룸, 바(Bar)의 조명 스위치를 모두 끄셨나요?',
+        ],
+      },
+      { kind: 'heading', text: '퇴실' },
+      {
+        kind: 'checklist',
+        items: [
+          '개인 물품과 반입하신 장비를 모두 챙기셨나요?',
+          '복도와 계단에 남겨 둔 짐이 없는지 확인하셨나요?',
+          '왼쪽 문을 오른쪽 문 프레임 안쪽까지 닫고 양쪽 문을 밀착시키셨나요?',
+          '도어락 커버를 올려 잠근 뒤, 밖에서 문고리를 당겨 확인하셨나요?',
+        ],
+      },
+      {
+        kind: 'note',
+        body: [
+          '제습기는 운영진이 상시 가동하고 물통을 관리하므로 끄지 않으셔도 됩니다.',
         ],
       },
     ],

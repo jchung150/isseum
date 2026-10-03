@@ -22,10 +22,7 @@ let n = 0;
                 <li class="toc__item">
                   <a class="toc__link" href={`/guide/${section.slug}`}>
                     <span class="mono-num toc__num">{String(n).padStart(2, '0')}</span>
-                    <span class="toc__title">
-                      {section.title}
-                      {section.required && <span class="must">{page.requiredLabel}</span>}
-                    </span>
+                    <span class="toc__title">{section.title}</span>
                     <span class="toc__mark" aria-hidden="true">→</span>
                   </a>
                 </li>
@@ -84,25 +81,10 @@ let n = 0;
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
     font-size: var(--text-list-name);
     font-weight: 600;
     letter-spacing: var(--tracking-title);
     color: var(--ink);
-  }
-
-  /* 액센트 색이 없으므로 강조는 잉크 면으로. 16개 중 3개에만 붙는다. */
-  .must {
-    flex: none;
-    padding: 3px 8px;
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: var(--radius);
-    font-size: var(--text-fine);
-    font-weight: 500;
-    letter-spacing: var(--tracking-meta);
   }
 
   .toc__mark {
