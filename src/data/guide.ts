@@ -149,7 +149,7 @@ const spacePages: GuidePage[] = [
   {
     slug: 'route',
     title: '동선 및 공간 안내',
-    summary: '주 출입문에 들어서면 어디에 무엇이 있는지, 화장실은 어느 쪽인지.',
+    summary: '주 출입문에 들어섰을 때의 공간 배치와 화장실 위치입니다.',
     blocks: [
       { kind: 'heading', text: '공간 안내 (주 출입문 진입 시)' },
       {
@@ -205,7 +205,7 @@ const spacePages: GuidePage[] = [
   {
     slug: 'entry',
     title: '출입 방법',
-    summary: '도어락으로 문을 여는 순서와, 퇴실할 때 문을 잠그는 방법.',
+    summary: '도어락으로 문을 여는 순서와 퇴실 시 잠그는 방법입니다.',
     required: true,
     blocks: [
       {
@@ -248,7 +248,7 @@ const spacePages: GuidePage[] = [
   {
     slug: 'conduct',
     title: '공간 이용 기본 수칙',
-    summary: '벽면 · 음식물 · 금연 · 반려동물 · 원상복구 · 쓰레기 배출.',
+    summary: '공간을 이용하시는 동안 지켜 주셔야 할 기본 사항입니다.',
     required: true,
     blocks: [
       { kind: 'heading', text: '공용 공간(복도 · 계단) 비우기' },
@@ -301,7 +301,7 @@ const spacePages: GuidePage[] = [
   {
     slug: 'parking',
     title: '주차 및 화물 반입 안내',
-    summary: '기계식 주차장 규격과 이용 방법, 인근 주차장, 화물 하차 공간.',
+    summary: '기계식 주차장 규격과 이용 방법, 인근 주차장과 화물 하차 공간을 안내합니다.',
     blocks: [
       { kind: 'heading', text: '주차 안내' },
       {
@@ -393,7 +393,7 @@ const spacePages: GuidePage[] = [
       {
         slug: 'manual',
         title: '수동 출차 조작 방법',
-        summary: '이미 입고된 차량을 직접 꺼낼 때의 제어반 조작 순서.',
+        summary: '이미 입고된 차량을 직접 출차할 때의 제어반 조작 순서입니다.',
         blocks: [
           {
             kind: 'figure',
@@ -458,7 +458,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'wifi',
     title: '와이파이 연결',
-    summary: '공간 전체에서 쓰는 무료 와이파이.',
+    summary: '공간 전체에서 사용하실 수 있는 무료 와이파이 연결 방법입니다.',
     blocks: [
       {
         kind: 'text',
@@ -470,7 +470,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'tv',
     title: '스마트 TV 사용법',
-    summary: '메인 홀 100인치 TV와 프로젝트룸 TV에 화면을 띄우는 방법.',
+    summary: '메인 홀 100인치 TV와 프로젝트룸 TV에 화면을 연결하는 방법입니다.',
     blocks: [
       { kind: 'heading', text: '메인 홀 TV' },
       {
@@ -546,7 +546,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'lighting',
     title: '조명 및 스위치 사용법',
-    summary: '메인 홀 · 바 · 프로젝트 룸의 조명 스위치 위치와 기능.',
+    summary: '메인 홀과 바, 프로젝트 룸의 조명 스위치 위치와 기능을 안내합니다.',
     blocks: [
       {
         kind: 'text',
@@ -615,7 +615,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'sound',
     title: '음향기기 사용법',
-    summary: '마이크 · 스피커 · PC. 켜는 순서와 끄는 순서가 반대입니다.',
+    summary: '마이크와 스피커, PC의 전원을 순서에 맞게 켜고 끄는 방법입니다.',
     blocks: [
       {
         kind: 'bullets',
@@ -702,7 +702,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'bar',
     title: '바 공간 비품 및 식기류',
-    summary: '가전과 일회용품 위치, 사용 후 분리배출 방법.',
+    summary: '가전과 일회용품의 위치, 사용 후 정리 방법입니다.',
     blocks: [
       { kind: 'heading', text: '가전 및 일회용품 비치 장소' },
       {
@@ -766,7 +766,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'hvac',
     title: '에어컨 및 제습기 사용법',
-    summary: '리모컨 위치와 권장 온도. 제습기는 상시 가동 중입니다.',
+    summary: '에어컨 리모컨 위치와 권장 온도, 제습기 운영 방식을 안내합니다.',
     blocks: [
       { kind: 'heading', text: '위치' },
       {
@@ -817,7 +817,7 @@ const devicePages: GuidePage[] = [
   {
     slug: 'cctv',
     title: 'CCTV 보안',
-    summary: '24시간 녹화되며, 임의 조작은 금지됩니다.',
+    summary: '공간 내 CCTV 운영 방침과 주의 사항입니다.',
     blocks: [
       {
         kind: 'bullets',
@@ -843,7 +843,7 @@ const exitPages: GuidePage[] = [
   {
     slug: 'layout',
     title: '자리 배치 및 가구 원상 복구',
-    summary: '퇴실 시 돌려놓아야 할 기본 배치.',
+    summary: '퇴실 시 가구와 소품을 돌려놓아야 할 기본 배치입니다.',
     blocks: [
       {
         kind: 'bullets',
@@ -872,7 +872,7 @@ const exitPages: GuidePage[] = [
   {
     slug: 'recycling',
     title: '분리수거',
-    summary: '쓰레기와 음식물을 어디에 어떻게 버리는지.',
+    summary: '쓰레기와 음식물의 배출 장소와 분리 방법을 안내합니다.',
     blocks: [
       { kind: 'heading', text: '엘리베이터 옆 쓰레기통' },
       {
@@ -923,7 +923,7 @@ const exitPages: GuidePage[] = [
   {
     slug: 'checklist',
     title: '퇴실 전 마무리 체크리스트',
-    summary: '나가기 전에 하나씩 짚어 보세요.',
+    summary: '퇴실 전 확인해 주셔야 할 항목입니다.',
     required: true,
     blocks: [
       {
@@ -946,7 +946,7 @@ const extraPages: GuidePage[] = [
   {
     slug: 'safety',
     title: '긴급 연락처 및 안전 용품',
-    summary: '호스트 연락처, 소화기와 구급상자 위치.',
+    summary: '긴급 상황 시 연락처와 소화기 · 구급상자의 위치입니다.',
     blocks: [
       { kind: 'heading', text: '호스트 긴급 연락처' },
       {
@@ -986,7 +986,7 @@ const extraPages: GuidePage[] = [
   {
     slug: 'food',
     title: '주변 배달 맛집 및 편의점',
-    summary: '호스트가 추천하는 가까운 곳.',
+    summary: '공간에서 함께 드시기 좋은 주변 배달 맛집과 가장 가까운 편의점입니다.',
     blocks: [
       { kind: 'heading', text: '배달 맛집' },
       {
