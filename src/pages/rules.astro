@@ -82,10 +82,16 @@ const numbered = policyGroups.map((group) => ({
     border-bottom: var(--border-hairline);
   }
 
+  /* 번호 칸은 두 자리 모노 숫자가 들어갈 만큼만. 26px은 숫자보다 10px 넓어서
+     번호와 제목 사이가 비어 보였다. 본문 들여쓰기도 같은 값에서 계산한다. */
+  .item {
+    --n-width: 17px;
+  }
+
   .item__title {
     display: flex;
     align-items: baseline;
-    gap: var(--space-4);
+    gap: var(--space-3);
     font-size: var(--text-list-name);
     font-weight: 600;
     letter-spacing: var(--tracking-title);
@@ -94,13 +100,13 @@ const numbered = policyGroups.map((group) => ({
 
   .item__n {
     flex: none;
-    width: 26px;
+    width: var(--n-width);
   }
 
   /* 본문을 번호 너비만큼 들여 제목 글자와 왼쪽을 맞춘다. */
   .item__body {
     margin-top: var(--space-3);
-    padding-left: calc(26px + var(--space-4));
+    padding-left: calc(var(--n-width) + var(--space-3));
     max-width: var(--measure-body);
   }
 
