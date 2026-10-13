@@ -39,20 +39,25 @@ type RateInput = {
   price: number;
 };
 
+/*
+ * 금요일은 주말 요금이다. 대관 수요는 금요일 저녁부터 주말과 같아서, 흔히 쓰는
+ * '평일 = 월–금'과 다르다. 그래서 라벨도 '평일' 대신 '주중'이라 쓰고, 요일이
+ * 따라붙지 않는 /booking 한 줄(short)에는 요일 범위를 직접 넣는다.
+ */
 const rateInputs: RateInput[] = [
   {
     id: 'weekday',
-    label: '평일',
-    short: '평일',
-    when: '월요일 – 금요일',
+    label: '주중',
+    short: '주중(월–목)',
+    when: '월요일 – 목요일',
     list: 280_000,
     price: 140_000,
   },
   {
     id: 'weekend',
     label: '주말 · 공휴일',
-    short: '주말·공휴일',
-    when: '토요일 · 일요일 · 공휴일',
+    short: '주말(금–일)·공휴일',
+    when: '금요일 · 토요일 · 일요일 · 공휴일',
     list: 340_000,
     price: 170_000,
   },
@@ -77,7 +82,7 @@ export const pricing = {
     now: '오픈 특가',
   },
   /** 표 설명 — 화면에는 보이지 않고 스크린 리더에만 읽힌다. */
-  caption: '평일과 주말·공휴일의 시간당 대관 요금',
+  caption: '주중(월–목)과 주말(금–일)·공휴일의 시간당 대관 요금',
   /** BulletList가 그대로 받는 `label — text` 줄. 라벨 끝의 `— `는 이 저장소 관례. */
   notes: [
     {
