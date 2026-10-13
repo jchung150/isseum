@@ -17,7 +17,8 @@
  * 않으려고 정상가와 특가 두 숫자만 나란히 보여준다. 소유자 결정.
  */
 
-import { MIN_HOURS } from './booking';
+import { business } from '../config/site';
+import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
 
 /** 1234567 → '1,234,567원' */
 const won = (n: number) => `${n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원`;
@@ -94,6 +95,10 @@ export const pricing = {
     {
       label: '이용 시간 — ',
       text: '대관 시간에는 준비와 철수(정리) 시간이 모두 포함되며, 이용 시간을 초과할 경우 30분 단위로 추가 요금이 부과됩니다.',
+    },
+    {
+      label: '장기 대관 — ',
+      text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
     },
     {
       label: '특가 적용 — ',

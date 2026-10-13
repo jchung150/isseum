@@ -9,7 +9,8 @@
  * air-handling point, which had no other home on the page.
  */
 
-import { MIN_HOURS } from './booking';
+import { business } from '../config/site';
+import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
 import { pricing } from './pricing';
 
 export type FaqItem = {
@@ -30,6 +31,12 @@ export const faq: FaqItem[] = [
       `아래 금액은 ${pricing.promo} 기준이며, 별도 공지 시까지 적용됩니다.`,
     ],
     priceTable: true,
+  },
+  {
+    q: '장기간 대관도 가능한가요?',
+    a: [
+      `연속 ${LONG_TERM_DAYS}일 이상의 장기 대관은 일정과 이용 목적에 맞춰 별도로 안내해 드립니다. 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 문의해 주세요.`,
+    ],
   },
   {
     q: '예약을 취소하면 환불되나요?',

@@ -27,6 +27,12 @@ export const MAX_GUESTS = 90;
 export const OPEN_HOUR = 8;
 export const CLOSE_HOUR = 22;
 
+/**
+ * Consecutive days at which a rental counts as 장기 대관 and is quoted by hand.
+ * The form only takes a single date, so these requests go by phone or email.
+ */
+export const LONG_TERM_DAYS = 14;
+
 /* ══════════════════════════  페이지  ══════════════════════════ */
 
 export const page = {
