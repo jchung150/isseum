@@ -1,3 +1,5 @@
+import { bookingCta } from '../data/cta';
+
 /** Site-wide constants ported from the `data-props` and `renderVals()` of design/*.dc.html. */
 
 export const site = {
@@ -10,11 +12,14 @@ export const site = {
 } as const;
 
 /**
- * 대관 예약 신청서. Single source for every booking CTA on the site.
- * Self-hosted since the Google Form required visitors to sign in to Google,
- * which lost most of them at the door.
+ * 네이버 예약. Single source for every booking CTA on the site.
+ *
+ * Bookings moved here from the self-hosted /booking form so there is one
+ * calendar. Point at m.place, not the map.naver.com link Naver hands out: on a
+ * phone that link bounces through an app-link page and lands on the place's
+ * 홈 tab, while m.place opens the 예약 tab directly on phones and desktops.
  */
-export const bookingUrl = '/booking';
+export const bookingUrl = 'https://m.place.naver.com/place/2059888630/ticket';
 
 /**
  * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
@@ -95,7 +100,7 @@ const allNotFoundLinks = [
   { label: '보유 장비 안내', href: '/#equipment', external: false },
   { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
-  { label: '대관 예약하기', href: bookingUrl, external: false },
+  { label: bookingCta.label, href: bookingUrl, external: true },
 ];
 
 export const notFoundLinks = allNotFoundLinks.filter(

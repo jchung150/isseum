@@ -2,17 +2,19 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/isseum-logo.png';
 import { nav, bookingUrl, site } from '../config/site';
+import { bookingCta } from '../data/cta';
+import { header } from '../data/header';
 import Button from './Button.astro';
 
 ---
 
 <header>
   <div class="bar container">
-    <a href="/" class="logo" aria-label={`${site.name} ${site.nameLatin} 홈`}>
+    <a href="/" class="logo" aria-label={header.homeLabel(site.name, site.nameLatin)}>
       <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={144} densities={[1, 2]} loading="eager" />
     </a>
 
-    <nav class="gnb" aria-label="주요 메뉴">
+    <nav class="gnb" aria-label={header.nav}>
       {
         nav.map((item) => (
           <a
@@ -25,10 +27,12 @@ import Button from './Button.astro';
       }
     </nav>
 
-    <Button href={bookingUrl} variant="primary" size="md">대관 예약하기</Button>
+    <Button href={bookingUrl} external variant="primary" size="md">
+      {bookingCta.label}<span class="visually-hidden">{bookingCta.newWindow}</span>
+    </Button>
   </div>
 
-  <nav class="tabs" aria-label="주요 메뉴 (모바일)">
+  <nav class="tabs" aria-label={header.navMobile}>
     {
       nav.map((item) => (
         <a

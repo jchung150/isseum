@@ -9,6 +9,8 @@
  * 항목 번호도 저장하지 않고 배열 순서에서 계산한다.
  */
 
+import { bookingCta } from './cta';
+
 export const page = {
   title: '대관 규정',
   description:
@@ -19,5 +21,5 @@ export const page = {
   /** 최종 개정일 앞에 붙는 말. 날짜 자체는 booking.ts의 lastRevised가 가진다. */
   revisedLabel: '최종 개정',
   /** 규정을 읽고 바로 신청으로 넘어갈 수 있게. */
-  ctaLabel: '대관 예약하기',
+  ctaLabel: bookingCta.label,
 };

@@ -1,5 +1,6 @@
 ---
 import { bookingUrl } from '../config/site';
+import { bookingCta } from '../data/cta';
 import Button from './Button.astro';
 
 /** Closing call-to-action panel. design/COMPONENTS.md §22. */
@@ -9,7 +10,7 @@ interface Props {
   cta?: string;
 }
 
-const { headline, sub, cta = '대관 예약하기' } = Astro.props;
+const { headline, sub, cta = bookingCta.label } = Astro.props;
 ---
 
 <div class="cta on-ink">
@@ -17,7 +18,9 @@ const { headline, sub, cta = '대관 예약하기' } = Astro.props;
     <p class="cta__headline">{headline}</p>
     <p class="cta__sub">{sub}</p>
   </div>
-  <Button href={bookingUrl} variant="inverted" size="lg">{cta}</Button>
+  <Button href={bookingUrl} external variant="inverted" size="lg">
+    {cta}<span class="visually-hidden">{bookingCta.newWindow}</span>
+  </Button>
 </div>
 
 <style>
