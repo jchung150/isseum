@@ -55,11 +55,6 @@ export const business = {
 /** 네이버 지도 공유 링크. The footer map is a static image that opens this. */
 export const naverMapUrl = 'https://naver.me/xRgs5iMX';
 
-export const socialLinks = [
-  { label: '인스타그램', href: 'https://www.instagram.com/isseum.space/', glyph: 'square' },
-  { label: '네이버 블로그', href: 'https://blog.naver.com/isseumspace', glyph: 'circle' },
-] as const;
-
 
 /**
  * 지난 행사 page — off until there is real event photography. The page still

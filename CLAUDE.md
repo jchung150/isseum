@@ -82,8 +82,7 @@ scripts/booking-sheet/  Apps Script (제출 → Google Sheets)
   읽는다. 리터럴을 두 번 적었다가 조용한 버그가 난 전력이 있다(`events.ts`의 `openSuffix`,
   `ALL`).
 - **예외는 아이콘 글리프**(`✕ ← → ＋`, 항상 `aria-hidden`)뿐이다.
-- 아직 `Footer.astro` · `Header.astro` · `DarkCta.astro` · `HeroSlideshow.astro` ·
-  `BaseLayout.astro`에는 카피가 하드코딩돼 있다. 그 파일을 건드릴 때 옮길 것.
+- 아직 `HeroSlideshow.astro`에는 카피가 하드코딩돼 있다. 그 파일을 건드릴 때 옮길 것.
 
 ### 2. 스타일은 전부 `tokens.css`를 거친다
 

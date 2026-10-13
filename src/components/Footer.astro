@@ -2,22 +2,24 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/isseum-logo.png';
 import mapImage from '../assets/naver_map.png';
-import { business, naverMapUrl, socialLinks, site } from '../config/site';
+import { business, naverMapUrl, site } from '../config/site';
+import { footer } from '../data/footer';
+import { header } from '../data/header';
 
 const info = [
-  { term: '상호명', value: business.companyName },
-  { term: '대표자명', value: business.representative },
-  { term: '주소', value: business.address },
-  { term: '연락처', value: business.phone, href: `tel:${business.phone}` },
-  { term: '이메일', value: business.email, href: `mailto:${business.email}` },
-  { term: '사업자등록번호', value: business.registrationNumber },
+  { term: footer.info.companyName, value: business.companyName },
+  { term: footer.info.representative, value: business.representative },
+  { term: footer.info.address, value: business.address },
+  { term: footer.info.phone, value: business.phone, href: `tel:${business.phone}` },
+  { term: footer.info.email, value: business.email, href: `mailto:${business.email}` },
+  { term: footer.info.registrationNumber, value: business.registrationNumber },
 ];
 ---
 
 <footer>
   <div class="grid container">
     <div>
-      <a href="/" class="logo" aria-label={`${site.name} ${site.nameLatin} 홈`}>
+      <a href="/" class="logo" aria-label={header.homeLabel(site.name, site.nameLatin)}>
         <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={112} densities={[1, 2]} />
       </a>
       <dl class="info">
@@ -33,7 +35,7 @@ const info = [
     </div>
 
     <div>
-      <p class="eyebrow eyebrow--label label">LOCATION</p>
+      <p class="eyebrow eyebrow--label label">{footer.locationEyebrow}</p>
       {/* A static image rather than an embed: the footer is on every page, and
           a third-party map script would put external JS on all of them — plus
           make the map provider a data processor. Tapping opens the real map. */}
@@ -41,35 +43,19 @@ const info = [
         <Image
           class="map__img"
           src={mapImage}
-          alt={`이씀 위치 지도 — ${business.address} (네이버 지도에서 열기)`}
+          alt={footer.mapAlt(business.address)}
           widths={[400, 640, 900]}
           sizes="(min-width: 900px) 32vw, 92vw"
           loading="lazy"
         />
       </a>
     </div>
-
-    <div class="col-links">
-      <div>
-        <p class="eyebrow eyebrow--label label">공식 채널</p>
-        <div class="social">
-          {
-            socialLinks.map((link) => (
-              <a href={link.href} class="social__chip" target="_blank" rel="noopener">
-                <span class:list={['social__glyph', `social__glyph--${link.glyph}`]} aria-hidden="true" />
-                {link.label}
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="bottom">
     <div class="bottom__inner container">
-      <span>© 2026 {site.nameLatin}. All rights reserved.</span>
-      <span class="bottom__place">SEOUL · KOREA</span>
+      <span>{footer.copyright(2026, site.nameLatin)}</span>
+      <span class="bottom__place">{footer.place}</span>
     </div>
   </div>
 </footer>
@@ -134,73 +120,6 @@ const info = [
     color: var(--text-strong);
   }
 
-
-  .col-links {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-  }
-
-  .links {
-    display: flex;
-    flex-direction: column;
-    border-top: var(--border-hairline);
-  }
-
-  .links__row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 0;
-    border-bottom: var(--border-hairline);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    letter-spacing: var(--tracking-body);
-  }
-
-  .links__arrow {
-    color: var(--text-tertiary);
-    font-size: var(--text-xs);
-  }
-
-  .social {
-    display: flex;
-    gap: var(--space-2);
-    flex-wrap: wrap;
-  }
-
-  .social__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    border: var(--border-hairline);
-    background: var(--bg);
-    padding: 11px var(--space-4);
-    border-radius: var(--radius);
-    font-size: var(--text-ui-sm);
-    font-weight: 600;
-    letter-spacing: var(--tracking-ui);
-    transition: border-color var(--transition-fast);
-  }
-
-  .social__chip:hover {
-    border-color: var(--ink);
-  }
-
-  /* Icons are pure CSS shapes — no icon font, no SVG. design/COMPONENTS.md §10. */
-  .social__glyph {
-    width: 15px;
-    height: 15px;
-    border: var(--border-active);
-  }
-
-  .social__glyph--square {
-    border-radius: var(--radius-sm);
-  }
-
-  .social__glyph--circle {
-    border-radius: var(--radius-full);
-  }
 
   .bottom {
     border-top: var(--border-hairline);

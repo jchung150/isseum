@@ -1,8 +1,9 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { business, naverMapUrl, naverSiteVerification, site, socialLinks } from '../config/site';
+import { business, naverMapUrl, naverSiteVerification, site } from '../config/site';
 import { CLOSE_HOUR, OPEN_HOUR } from '../data/booking';
+import { layout } from '../data/layout';
 import { rates } from '../data/pricing';
 import '../styles/tokens.css';
 import '../styles/base.css';
@@ -19,7 +20,7 @@ interface Props {
 const { title, description = site.description, isHome = false, noindex = false } = Astro.props;
 
 const fullTitle = isHome
-  ? `${site.name} ISSEUM — 홍대 복합문화공간 대관`
+  ? `${site.name} ISSEUM — ${layout.tagline}`
   : `${title} | ${site.name} ISSEUM`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -49,8 +50,6 @@ const jsonLd = {
     addressRegion: '서울특별시',
     addressCountry: 'KR',
   },
-  // 같은 주체임을 검색엔진에 연결해 주는 계정들. config/site.ts가 단일 원천이다.
-  sameAs: socialLinks.map((link) => link.href),
   hasMap: naverMapUrl,
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',
@@ -86,7 +85,7 @@ const jsonLd = {
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="이씀 ISSEUM — 홍대 복합문화공간 대관" />
+    <meta property="og:image:alt" content={`${site.name} ISSEUM — ${layout.tagline}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
 
@@ -114,7 +113,7 @@ const jsonLd = {
   </head>
 
   <body>
-    <a href="#main" class="skip-link">본문으로 건너뛰기</a>
+    <a href="#main" class="skip-link">{layout.skipLink}</a>
     <Header />
     <main id="main">
       <slot />
