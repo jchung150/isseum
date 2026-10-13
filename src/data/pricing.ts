@@ -111,7 +111,7 @@ export const pricing = {
     },
     {
       label: '결제 — ',
-      text: '최종 금액과 결제 방법은 신청 내용을 확인한 뒤 호스트가 안내드립니다.',
+      text: '네이버 예약에서 예약과 동시에 결제되며, 일정이 겹쳐 이용이 어려운 경우 전액 환불해 드립니다.',
     },
   ] as { label: string; text: string }[],
 };
