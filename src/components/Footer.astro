@@ -34,7 +34,7 @@ const info = [
       </dl>
     </div>
 
-    <div>
+    <div class="location">
       <p class="eyebrow eyebrow--label label">{footer.locationEyebrow}</p>
       {/* A static image rather than an embed: the footer is on every page, and
           a third-party map script would put external JS on all of them — plus
@@ -45,7 +45,7 @@ const info = [
           src={mapImage}
           alt={footer.mapAlt(business.address)}
           widths={[400, 640, 900]}
-          sizes="(min-width: 900px) 32vw, 92vw"
+          sizes="360px"
           loading="lazy"
         />
       </a>
@@ -69,10 +69,20 @@ const info = [
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
     gap: var(--gap-lg);
     padding-top: var(--space-section-sm);
     padding-bottom: clamp(28px, 3vw, 44px);
+  }
+
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr var(--footer-map-width);
+    }
+  }
+
+  .location {
+    max-width: var(--footer-map-width);
   }
 
   .logo :global(img) {
