@@ -16,10 +16,18 @@ const { page: doc, path, trail } = Astro.props as GuideEntry;
 
 // 빵부스러기의 뿌리는 언제나 목차다.
 const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
+// 뒤로가기는 브라우저 기록이 아니라 부모 페이지로 간다. 검색이나 공유 링크로 바로
+// 들어온 사람에게도 같은 곳을 가리키고, JS 없이 동작한다.
+const parent = crumbs[crumbs.length - 1];
 ---
 
 <BaseLayout title={`${doc.title} | ${page.title}`} description={doc.summary}>
-  <Breadcrumb trail={crumbs} current={doc.title} label={page.breadcrumbLabel} />
+  <Breadcrumb
+    trail={crumbs}
+    current={doc.title}
+    label={page.breadcrumbLabel}
+    back={{ href: parent.path, label: page.upLabel }}
+  />
 
   <article class="container doc">
     <header class="doc__head">

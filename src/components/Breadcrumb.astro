@@ -10,9 +10,11 @@ interface Props {
   /** 현재 페이지 제목. 링크가 아니다. */
   current: string;
   label: string;
+  /** 줄 오른쪽 끝의 뒤로가기 링크. 보통 부모 페이지. */
+  back?: { href: string; label: string };
 }
 
-const { trail, current, label }: Props = Astro.props;
+const { trail, current, label, back }: Props = Astro.props;
 ---
 
 <nav class="crumbs container" aria-label={label}>
@@ -31,11 +33,23 @@ const { trail, current, label }: Props = Astro.props;
       <span class="crumbs__current" aria-current="page">{current}</span>
     </li>
   </ol>
+  {
+    back && (
+      <a class="crumbs__back" href={back.href}>
+        <span aria-hidden="true">←</span>
+        {back.label}
+      </a>
+    )
+  }
 </nav>
 
 <style>
   .crumbs {
     padding-top: var(--space-6);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
   }
 
   /* 경로가 길어지면 줄바꿈 대신 가로로 흐르게 둔다. 모바일에서 두 줄짜리
@@ -66,6 +80,20 @@ const { trail, current, label }: Props = Astro.props;
   .crumbs__sep {
     color: var(--text-tertiary);
     margin-inline: var(--space-2);
+  }
+
+  .crumbs__back {
+    flex: none;
+    display: inline-flex;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+    color: var(--text-secondary);
+  }
+
+  .crumbs__back:hover {
+    color: var(--ink);
   }
 
   .crumbs__current {
