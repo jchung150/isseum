@@ -216,8 +216,3 @@ export const lightbox = {
   close: '닫기',
   count: (i: number, total: number) => `${i} / ${total}`,
 };
-
-export const closingCta = {
-  headline: '비슷한 행사를 기획하고 계신가요?',
-  sub: '이전 사례의 세팅 그대로 준비해 드릴 수 있습니다. 예약하실 때 요청사항에 참고 행사명을 적어 주세요.',
-};

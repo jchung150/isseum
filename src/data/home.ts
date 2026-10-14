@@ -2,7 +2,7 @@
  * Main page content. Ported from design/ISSEUM Main.dc.html renderVals().
  *
  * Ordered the way the page renders it:
- *   page → hero → stats → sections (the five headers) → steps → closingCta
+ *   page → hero → stats → sections (the five headers) → steps
  *
  * The records each section iterates live in their own modules — spaces.ts,
  * equipment.ts, faq.ts — but every string index.astro renders itself is here.
@@ -104,15 +104,3 @@ export const steps = [
     body: '공간을 이용하신 후 원상복구를 마치고 퇴실하시면 됩니다.',
   },
 ];
-
-/**
- * 마무리 DarkCta.
- *
- * 정적 신청서(/booking) 시절에는 빈 날짜를 보여줄 수 없어서 "가능 여부를 확인해
- * 드립니다"라고 썼다. 예약이 네이버로 옮겨 가면서 방문자가 달력을 직접 볼 수 있게
- * 되어, 확인하는 주체를 다시 방문자로 돌렸다.
- */
-export const closingCta = {
-  headline: '원하시는 날짜가 비어 있는지 바로 확인해 보세요.',
-  sub: '네이버 예약에서 가능한 일정을 확인하고 바로 신청하실 수 있습니다.',
-};

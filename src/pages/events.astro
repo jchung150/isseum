@@ -3,10 +3,8 @@ import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import FilterChips from '../components/FilterChips.astro';
-import DarkCta from '../components/DarkCta.astro';
 import {
   EVENT_CATEGORIES,
-  closingCta,
   gallery as galleryCopy,
   lightbox,
   page,
@@ -88,10 +86,6 @@ const gallery = await Promise.all(
     <p class="empty" data-empty hidden>{galleryCopy.empty}</p>
 
     <p class="gallery__note">{galleryCopy.note}</p>
-  </section>
-
-  <section class="container closing">
-    <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
   </section>
 
   {/* Native <dialog> gives focus trapping, Escape-to-close and an inert
@@ -408,10 +402,6 @@ const gallery = await Promise.all(
     font-size: var(--text-meta);
     color: var(--text-secondary);
     letter-spacing: var(--tracking-ui);
-  }
-
-  .closing {
-    margin-top: clamp(52px, 6.5vw, 92px);
   }
 
   /* ---------- Lightbox ---------- */

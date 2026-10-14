@@ -2,9 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import { Image } from 'astro:assets';
-import DarkCta from '../components/DarkCta.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
-import { closingCta, hero, heroSlides, page, sections, stats, steps } from '../data/home';
+import { hero, heroSlides, page, sections, stats, steps } from '../data/home';
 import { faq } from '../data/faq';
 import { pricing, rates } from '../data/pricing';
 import BulletList from '../components/BulletList.astro';
@@ -228,10 +227,6 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
           </details>
         ))
       }
-    </div>
-
-    <div class="closing">
-      <DarkCta headline={closingCta.headline} sub={closingCta.sub} />
     </div>
   </section>
 
@@ -927,10 +922,6 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     line-height: var(--leading-compact);
     color: var(--text-body);
     letter-spacing: var(--tracking-body);
-  }
-
-  .closing {
-    margin-top: clamp(32px, 4vw, 56px);
   }
 
   /* ---------- Breakpoints (640 / 900 / 1100 — see design/TOKENS.md §4) ---------- */

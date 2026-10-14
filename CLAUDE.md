@@ -55,7 +55,7 @@ src/
     guide.ts  rules.ts  notFound.ts
   styles/tokens.css  ★ 모든 디자인 값
   styles/base.css    전역 스타일, 포커스 링, reduced-motion
-  components/      10개, 전부 scoped CSS .astro
+  components/      9개, 전부 scoped CSS .astro
   layouts/BaseLayout.astro
   pages/           index(공간·장비·요금·절차·FAQ 한 페이지) · booking · rules ·
                    guide/(목차 + 15개 섹션, 트리에서 생성) · events(숨김) · 404
@@ -76,7 +76,7 @@ scripts/booking-sheet/  Apps Script (제출 → Google Sheets)
 - **어느 모듈이 소유하는가**: 렌더하는 페이지가 아니라 그 대상을 소유한 모듈. 장비 라벨은
   `equipment.ts`, 대관 규정은 `booking.ts`. 규정은 `/rules`와 `/booking` 2단계 두 곳이
   **같은 `policyGroups`를 렌더한다** — 옮겨 적으면 동의한 내용과 공개된 내용이 갈라진다.
-  항목 번호(12개)도 저장하지 않고 배열 순서에서 계산한다. 페이지 뼈대(타이틀·섹션 헤더·마무리 CTA)는 그
+  항목 번호(12개)도 저장하지 않고 배열 순서에서 계산한다. 페이지 뼈대(타이틀·섹션 헤더)는 그
   페이지의 모듈.
 - **상수 하나, 리터럴 둘 금지.** 한쪽이 만들고 다른 쪽이 소비하는 문자열은 같은 export를
   읽는다. 리터럴을 두 번 적었다가 조용한 버그가 난 전력이 있다(`events.ts`의 `openSuffix`,
