@@ -178,4 +178,9 @@
      clips 44% of height off the portraits, cutting chair legs and podium base. */
   --ratio-equipment: 1 / 1;
   --ratio-map: 16 / 10;
+  /* Guide photos (PC). One square frame for portrait and landscape shots alike,
+     so a step's photo doesn't jump between 390px and 700px tall. The photo is
+     contained, never cropped: these show buttons and menus that must stay whole. */
+  --ratio-guide-shot: 1 / 1;
+  --guide-shot-width: 520px;
 }
