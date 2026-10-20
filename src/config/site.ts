@@ -15,12 +15,11 @@ export const site = {
  * 네이버 예약. Single source for every booking CTA on the site.
  *
  * Bookings moved here from the self-hosted /booking form so there is one
- * calendar. This is Naver's short link to the place itself (the same one the
- * footer map uses), so it opens on the place's 홈 tab and visitors tap 예약 from
- * there. m.place.naver.com/place/2059888630/ticket would open the 예약 tab
- * directly; the owner chose the short link.
+ * calendar. It is the booking page itself, not the place listing, so visitors
+ * land on the calendar instead of having to find the 예약 tab. The footer map
+ * keeps the place short link (naverMapUrl).
  */
-export const bookingUrl = 'https://naver.me/xRgs5iMX';
+export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
 
 /**
  * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
