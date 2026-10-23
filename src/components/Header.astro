@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/isseum-logo.png';
-import { nav, bookingUrl, site } from '../config/site';
-import { bookingCta } from '../data/cta';
+import { nav, naverTalkUrl, site } from '../config/site';
+import { inquiryCta } from '../data/cta';
 import { header } from '../data/header';
 import Button from './Button.astro';
 
@@ -27,8 +27,8 @@ import Button from './Button.astro';
       }
     </nav>
 
-    <Button href={bookingUrl} external variant="primary" size="md">
-      {bookingCta.label}<span class="visually-hidden">{bookingCta.newWindow}</span>
+    <Button href={naverTalkUrl} external variant="primary" size="md">
+      {inquiryCta.label}<span class="visually-hidden">{inquiryCta.newWindow}</span>
     </Button>
   </div>
 

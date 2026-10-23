@@ -103,7 +103,7 @@ export const pricing = {
     },
     {
       label: '장기 대관 — ',
-      text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
+      text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 네이버 톡톡, 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
     },
     {
       label: '특가 적용 — ',
@@ -111,7 +111,7 @@ export const pricing = {
     },
     {
       label: '결제 — ',
-      text: '네이버 예약에서 예약과 동시에 결제되며, 일정이 겹쳐 이용이 어려운 경우 전액 환불해 드립니다.',
+      text: '일정 문의 후 네이버 예약에서 결제해 주세요. 문의 없이 예약하신 일정이 다른 대관과 겹치면 전액 환불해 드립니다.',
     },
   ] as { label: string; text: string }[],
 };

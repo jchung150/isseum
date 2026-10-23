@@ -3,7 +3,7 @@
  * Button — renders <a> when href is given, <button> otherwise.
  * Variants map to design/COMPONENTS.md §5–§8.
  */
-type Variant = 'primary' | 'inverted';
+type Variant = 'primary' | 'inverted' | 'outline';
 type Size = 'md' | 'lg';
 
 interface Props {
@@ -82,5 +82,17 @@ const linkAttrs = href
   .btn--inverted:hover {
     background: var(--border);
     color: var(--ink);
+  }
+
+  /* Second action beside a primary, or an action inside a card where a solid
+     block would outweigh the card's own title. */
+  .btn--outline {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .btn--outline:hover {
+    background: var(--ink);
+    color: var(--bg);
   }
 </style>

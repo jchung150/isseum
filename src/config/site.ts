@@ -1,4 +1,4 @@
-import { bookingCta } from '../data/cta';
+import { bookingCta, inquiryCta } from '../data/cta';
 
 /** Site-wide constants ported from the `data-props` and `renderVals()` of design/*.dc.html. */
 
@@ -20,6 +20,21 @@ export const site = {
  * keeps the place short link (naverMapUrl).
  */
 export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
+
+/** 네이버 톡톡. 예약 전 일정 문의를 받는 곳이고, 네이버 플레이스의 톡톡 버튼과 같은 채널이다. */
+export const naverTalkUrl = 'https://talk.naver.com/ct/wxgdt7v';
+
+/**
+ * 카카오톡 채널 채팅 링크(`https://pf.kakao.com/_xxxx/chat`). 채널이 아직 개설 중이라
+ * 비워 둔다. 값을 넣으면 대관 절차 1단계와 푸터에 카카오톡 문의가 나타나고, 1단계
+ * 문구도 두 채널을 함께 부른다.
+ */
+export const kakaoChannelUrl: string | null = null;
+
+export const inquiryChannels = [
+  { name: inquiryCta.channels.naverTalk, href: naverTalkUrl },
+  ...(kakaoChannelUrl ? [{ name: inquiryCta.channels.kakao, href: kakaoChannelUrl }] : []),
+];
 
 /**
  * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
@@ -95,6 +110,7 @@ const allNotFoundLinks = [
   { label: '보유 장비 안내', href: '/#equipment', external: false },
   { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
+  { label: inquiryCta.label, href: naverTalkUrl, external: true },
   { label: bookingCta.label, href: bookingUrl, external: true },
 ];
 

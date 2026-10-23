@@ -35,7 +35,7 @@ export const faq: FaqItem[] = [
   {
     q: '장기간 대관도 가능한가요?',
     a: [
-      `연속 ${LONG_TERM_DAYS}일 이상의 장기 대관은 일정과 이용 목적에 맞춰 별도로 안내해 드립니다. 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 문의해 주세요.`,
+      `연속 ${LONG_TERM_DAYS}일 이상의 장기 대관은 일정과 이용 목적에 맞춰 별도로 안내해 드립니다. 네이버 톡톡, 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 문의해 주세요.`,
     ],
   },
   {

@@ -4,6 +4,9 @@ import SectionHeader from '../components/SectionHeader.astro';
 import { Image } from 'astro:assets';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
 import { hero, heroSlides, page, sections, stats, steps } from '../data/home';
+import Button from '../components/Button.astro';
+import { bookingUrl, inquiryChannels } from '../config/site';
+import { bookingCta, inquiryCta } from '../data/cta';
 import { faq } from '../data/faq';
 import { pricing, rates } from '../data/pricing';
 import BulletList from '../components/BulletList.astro';
@@ -175,6 +178,23 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
             </div>
             <h3 class="step__title">{step.title}</h3>
             <p class="step__body">{step.body}</p>
+            {step.cta === 'inquiry' && (
+              <div class="step__actions">
+                {inquiryChannels.map((channel) => (
+                  <Button href={channel.href} external variant="outline" size="md">
+                    {inquiryCta.channelLabel(channel.name)}
+                    <span class="visually-hidden">{inquiryCta.channelNewWindow}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+            {step.cta === 'booking' && (
+              <div class="step__actions">
+                <Button href={bookingUrl} external variant="outline" size="md">
+                  {bookingCta.label}<span class="visually-hidden">{bookingCta.newWindow}</span>
+                </Button>
+              </div>
+            )}
           </li>
         ))
       }
@@ -922,6 +942,13 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     line-height: var(--leading-compact);
     color: var(--text-body);
     letter-spacing: var(--tracking-body);
+  }
+
+  .step__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
   }
 
   /* ---------- Breakpoints (640 / 900 / 1100 — see design/TOKENS.md §4) ---------- */

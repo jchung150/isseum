@@ -12,6 +12,7 @@ export const footer = {
     address: '주소',
     phone: '연락처',
     email: '이메일',
+    chat: '채팅 문의',
     registrationNumber: '사업자등록번호',
   },
   locationEyebrow: 'LOCATION',

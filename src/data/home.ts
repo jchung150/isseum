@@ -10,6 +10,8 @@
 
 import type { ImageMetadata } from 'astro';
 
+import { kakaoChannelUrl } from '../config/site';
+
 import mainhall01 from '../assets/isseum_main-hall_01.jpg';
 import mainhall02 from '../assets/isseum_main-hall_02.jpg';
 import mainhall03 from '../assets/isseum_main-hall_03.jpg';
@@ -76,20 +78,30 @@ export const sections = {
   faq: { eyebrow: 'FAQ', title: '자주 묻는 질문' },
 };
 
-export const steps = [
+export type Step = {
+  num: string;
+  en: string;
+  title: string;
+  body: string;
+  /** 카드 아래에 붙는 버튼. inquiry는 문의 채널 전부, booking은 네이버 예약. */
+  cta?: 'inquiry' | 'booking';
+};
+
+export const steps: Step[] = [
   {
     num: '1',
     en: 'STEP 01',
-    title: '예약 및 결제',
-    body: '네이버 예약에서 날짜와 시간을 고르고 결제해 주세요. 요청사항에 행사 성격을 남겨 주시면 준비에 참고합니다.',
+    title: '일정 문의',
+    // 카카오톡 채널이 열리기 전에는 닿지 않는 채널을 부르지 않는다.
+    body: `${kakaoChannelUrl ? '네이버 톡톡이나 카카오톡으로' : '네이버 톡톡으로'} 희망 날짜와 시간, 인원, 행사 성격을 남겨 주세요. 담당자가 예약 가능 여부를 안내해 드립니다.`,
+    cta: 'inquiry',
   },
   {
     num: '2',
     en: 'STEP 02',
-    // 네이버는 결제와 동시에 예약을 잡지만, 다른 경로의 대관과 겹칠 수 있어 사람이
-    // 한 번 더 본다. '승인'이라 쓰면 결제한 사람에게 아직 예약이 안 된 것처럼 읽힌다.
-    title: '일정 확인',
-    body: '담당자가 다른 대관 일정과 겹치지 않는지 확인합니다. 일정이 겹치는 경우 먼저 전화로 안내드리고 결제 금액을 전액 환불해 드립니다.',
+    title: '네이버 예약 및 결제',
+    body: '가능하다는 안내를 받으시면 네이버 예약에서 같은 날짜와 시간으로 예약하고 결제해 주세요.',
+    cta: 'booking',
   },
   {
     num: '3',
