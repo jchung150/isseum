@@ -23,10 +23,10 @@ export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
 
 /**
  * 네이버 톡톡. 예약 전 일정 문의를 받는 곳이고, 네이버 플레이스의 톡톡 버튼과 같은
- * 채널이다. 소유자가 고른 프로필 주소라 채널 소개가 먼저 열리고, 대화창으로 바로 가는
- * 주소는 `https://talk.naver.com/ct/wxgdt7v`다.
+ * 채널이다. 대화창으로 바로 연다 — 프로필 주소(`/profile/wxgdt7v`)는 채널 소개가
+ * 먼저 열려 한 번 더 눌러야 한다.
  */
-export const naverTalkUrl = 'https://talk.naver.com/profile/wxgdt7v';
+export const naverTalkUrl = 'https://talk.naver.com/ct/wxgdt7v';
 
 /**
  * 카카오톡 채널 채팅 링크(`https://pf.kakao.com/_xxxx/chat`). 채널이 아직 없어
