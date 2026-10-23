@@ -25,7 +25,7 @@ export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
 export const naverTalkUrl = 'https://talk.naver.com/ct/wxgdt7v';
 
 /**
- * 카카오톡 채널 채팅 링크(`https://pf.kakao.com/_xxxx/chat`). 채널이 아직 개설 중이라
+ * 카카오톡 채널 채팅 링크(`https://pf.kakao.com/_xxxx/chat`). 채널이 아직 없어
  * 비워 둔다. 값을 넣으면 대관 절차 1단계와 푸터에 카카오톡 문의가 나타나고, 1단계
  * 문구도 두 채널을 함께 부른다.
  */

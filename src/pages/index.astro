@@ -900,6 +900,8 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
      be tuned independently — a single gap forced number→title and title→body
      to the same value, which left the cards airier than they read. */
   .step {
+    display: flex;
+    flex-direction: column;
     background: var(--bg);
     padding: clamp(20px, 2vw, 28px) clamp(18px, 1.6vw, 24px) clamp(22px, 2.2vw, 30px);
     transition: background var(--transition);
@@ -944,11 +946,15 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     letter-spacing: var(--tracking-body);
   }
 
+  /* Pinned to the card's foot, not the end of its text: the cards in a row
+     share a height, so the buttons line up however long each body runs. The
+     padding keeps the gap when a card's text is the tallest in its row. */
   .step__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin-top: var(--space-5);
+    margin-top: auto;
+    padding-top: var(--space-5);
   }
 
   /* ---------- Breakpoints (640 / 900 / 1100 — see design/TOKENS.md §4) ---------- */
