@@ -10,7 +10,7 @@ export const footer = {
     companyName: '상호명',
     representative: '대표자명',
     address: '주소',
-    phone: '연락처',
+    phone: '상담 문의',
     email: '이메일',
     chat: '채팅 문의',
     registrationNumber: '사업자등록번호',
