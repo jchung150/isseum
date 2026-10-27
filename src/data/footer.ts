@@ -13,7 +13,6 @@ export const footer = {
     phone: '상담 문의',
     email: '이메일',
     chat: '채팅 문의',
-    registrationNumber: '사업자등록번호',
   },
   locationEyebrow: 'LOCATION',
   mapAlt: (address: string) => `이씀 위치 지도 — ${address} (네이버 지도에서 열기)`,
