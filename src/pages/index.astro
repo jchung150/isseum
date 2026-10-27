@@ -5,8 +5,9 @@ import { Image } from 'astro:assets';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
 import { hero, heroSlides, page, sections, stats, steps } from '../data/home';
 import Button from '../components/Button.astro';
-import { bookingUrl, inquiryChannels } from '../config/site';
-import { bookingCta, inquiryCta } from '../data/cta';
+import InquiryButtons from '../components/InquiryButtons.astro';
+import { bookingUrl } from '../config/site';
+import { bookingCta } from '../data/cta';
 import { faq } from '../data/faq';
 import { pricing, rates } from '../data/pricing';
 import BulletList from '../components/BulletList.astro';
@@ -180,12 +181,7 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
             <p class="step__body">{step.body}</p>
             {step.cta === 'inquiry' && (
               <div class="step__actions">
-                {inquiryChannels.map((channel) => (
-                  <Button href={channel.href} external variant="outline" size="md">
-                    {inquiryCta.channelLabel(channel.name)}
-                    <span class="visually-hidden">{inquiryCta.channelNewWindow}</span>
-                  </Button>
-                ))}
+                <InquiryButtons />
               </div>
             )}
             {step.cta === 'booking' && (

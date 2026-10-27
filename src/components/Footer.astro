@@ -43,7 +43,7 @@ const info: Row[] = [
                         {i > 0 && <span class="sep" aria-hidden="true">·</span>}
                         {link.external ? (
                           <a href={link.href} target="_blank" rel="noopener">
-                            {link.label}<span class="visually-hidden">{inquiryCta.channelNewWindow}</span>
+                            {link.label}<span class="visually-hidden">{inquiryCta.newWindow}</span>
                           </a>
                         ) : (
                           <a href={link.href}>{link.label}</a>

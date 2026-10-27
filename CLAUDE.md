@@ -55,7 +55,7 @@ src/
     guide.ts  rules.ts  notFound.ts
   styles/tokens.css  ★ 모든 디자인 값
   styles/base.css    전역 스타일, 포커스 링, reduced-motion
-  components/      9개, 전부 scoped CSS .astro
+  components/      10개, 전부 scoped CSS .astro
   layouts/BaseLayout.astro
   pages/           index(공간·장비·요금·절차·FAQ 한 페이지) · booking · rules ·
                    guide/(목차 + 15개 섹션, 트리에서 생성) · events(숨김) · 404

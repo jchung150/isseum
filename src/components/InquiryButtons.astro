@@ -1,0 +1,24 @@
+---
+/**
+ * 문의 채널 버튼 묶음(네이버 톡톡 · 카카오톡). 헤더 · 대관 절차 1단계 · /rules가
+ * 같은 버튼을 쓴다. 채널 목록은 config/site.ts의 inquiryChannels.
+ */
+import Button from './Button.astro';
+import { inquiryChannels } from '../config/site';
+import { inquiryCta } from '../data/cta';
+
+interface Props {
+  variant?: 'primary' | 'outline';
+  size?: 'md' | 'lg';
+}
+
+const { variant = 'outline', size = 'md' } = Astro.props;
+---
+
+{
+  inquiryChannels.map((channel) => (
+    <Button href={channel.href} external variant={variant} size={size}>
+      {channel.name}<span class="visually-hidden">{inquiryCta.srSuffix}</span>
+    </Button>
+  ))
+}

@@ -5,8 +5,9 @@ import BulletList from '../components/BulletList.astro';
 import Button from '../components/Button.astro';
 import { lastRevised, policyGroups, refundSection } from '../data/booking';
 import { page } from '../data/rules';
-import { bookingUrl, naverTalkUrl } from '../config/site';
-import { bookingCta, inquiryCta } from '../data/cta';
+import { bookingUrl } from '../config/site';
+import { bookingCta } from '../data/cta';
+import InquiryButtons from '../components/InquiryButtons.astro';
 
 // 번호는 저장하지 않고 배열 순서에서 만든다. 항목을 더하거나 빼도 어긋나지 않는다.
 let n = 0;
@@ -54,9 +55,7 @@ const numbered = policyGroups.map((group) => ({
     }
 
     <div class="cta">
-      <Button href={naverTalkUrl} external variant="primary" size="lg">
-        {inquiryCta.label}<span class="visually-hidden">{inquiryCta.newWindow}</span>
-      </Button>
+      <InquiryButtons variant="primary" size="lg" />
       <Button href={bookingUrl} external variant="outline" size="lg">
         {page.ctaLabel}<span class="visually-hidden">{bookingCta.newWindow}</span>
       </Button>

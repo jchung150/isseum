@@ -10,16 +10,14 @@ export const bookingCta = {
 };
 
 /**
- * 예약 문의. 대관 절차의 첫 단계라 헤더의 유일한 버튼이 이것이다 — 예약은 문의로
- * 가능 여부를 들은 뒤에 한다.
+ * 문의 채널. 대관 절차의 첫 단계라 헤더의 버튼이 이것들이다 — 예약은 문의로 가능
+ * 여부를 들은 뒤에 한다.
  *
- * 헤더 · /rules · 404의 버튼은 네이버 톡톡 하나로 간다. 채널을 고르는 자리는 대관
- * 절차 1단계 카드와 푸터뿐이다.
+ * 버튼에는 채널 이름만 보인다. '문의'는 스크린 리더에만 덧붙인다(srSuffix). 두
+ * 이름이 모두 받침 ㄱ으로 끝나서 조사가 '으로' 하나로 맞는다 — 채널을 더하면 확인할 것.
  */
 export const inquiryCta = {
-  label: '예약 문의',
-  newWindow: '(네이버 톡톡, 새 창)',
   channels: { naverTalk: '네이버 톡톡', kakao: '카카오톡' },
-  channelLabel: (name: string) => `${name} 문의`,
-  channelNewWindow: '(새 창)',
+  srSuffix: '으로 문의 (새 창)',
+  newWindow: '(새 창)',
 };

@@ -1,10 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/isseum-logo.png';
-import { nav, naverTalkUrl, site } from '../config/site';
-import { inquiryCta } from '../data/cta';
+import { nav, site } from '../config/site';
 import { header } from '../data/header';
-import Button from './Button.astro';
+import InquiryButtons from './InquiryButtons.astro';
 
 ---
 
@@ -27,9 +26,9 @@ import Button from './Button.astro';
       }
     </nav>
 
-    <Button href={naverTalkUrl} external variant="primary" size="md">
-      {inquiryCta.label}<span class="visually-hidden">{inquiryCta.newWindow}</span>
-    </Button>
+    <div class="actions">
+      <InquiryButtons variant="primary" />
+    </div>
   </div>
 
   <nav class="tabs" aria-label={header.navMobile}>
@@ -62,6 +61,11 @@ import Button from './Button.astro';
     align-items: center;
     justify-content: space-between;
     gap: var(--space-6);
+  }
+
+  .actions {
+    display: flex;
+    gap: var(--space-2);
   }
 
   .logo {

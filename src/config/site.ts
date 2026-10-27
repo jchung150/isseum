@@ -114,7 +114,7 @@ const allNotFoundLinks = [
   { label: '보유 장비 안내', href: '/#equipment', external: false },
   { label: '자주 묻는 질문', href: '/#faq', external: false },
   { label: '지난 행사 아카이브', href: '/events', external: false },
-  { label: inquiryCta.label, href: naverTalkUrl, external: true },
+  ...inquiryChannels.map((channel) => ({ label: channel.name, href: channel.href, external: true })),
   { label: bookingCta.label, href: bookingUrl, external: true },
 ];
 
