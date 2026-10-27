@@ -16,8 +16,7 @@ export const site = {
  *
  * Bookings moved here from the self-hosted /booking form so there is one
  * calendar. It is the booking page itself, not the place listing, so visitors
- * land on the calendar instead of having to find the 예약 tab. The footer map
- * keeps the place short link (naverMapUrl).
+ * land on the calendar instead of having to find the 예약 tab.
  */
 export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
 
@@ -71,7 +70,7 @@ export const business = {
   registrationNumber: '105-04-11192',
 } as const;
 
-/** 네이버 지도 공유 링크. The footer map is a static image that opens this. */
+/** 네이버 지도 공유 링크. 구조화 데이터(BaseLayout의 hasMap)만 쓴다. */
 export const naverMapUrl = 'https://naver.me/xRgs5iMX';
 
 

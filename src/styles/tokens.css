@@ -124,9 +124,6 @@
      Keep under --header-height minus breathing room. */
   --logo-height: 60px;
   --logo-height-footer: 56px;
-  /* Footer map. It is a link to Naver Map, not something to read, so it stays
-     a thumbnail instead of stretching to fill its column. */
-  --footer-map-width: 360px;
   /* Header nav sits a step above body UI text so the menu reads clearly
      against the logo. */
   --text-nav: 16px;

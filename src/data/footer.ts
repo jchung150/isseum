@@ -10,12 +10,10 @@ export const footer = {
     companyName: '상호명',
     representative: '대표자명',
     address: '주소',
-    phone: '상담 문의',
+    phone: '전화 문의',
     email: '이메일',
     chat: '채팅 문의',
   },
-  locationEyebrow: 'LOCATION',
-  mapAlt: (address: string) => `이씀 위치 지도 — ${address} (네이버 지도에서 열기)`,
   copyright: (year: number, nameLatin: string) => `© ${year} ${nameLatin}. All rights reserved.`,
   place: 'SEOUL · KOREA',
 };

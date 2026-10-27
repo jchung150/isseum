@@ -49,7 +49,7 @@ astro.config.mjs   사이트 URL, 정적 출력, 사이트맵
 wrangler.jsonc     배포 설정 (정적 에셋 + 커스텀 도메인)
 design/            읽기 전용 원본 디자인 export. 수정·배포 금지
 src/
-  config/site.ts   사업자 정보, nav, bookingUrl, 소셜/지도 링크, showEventsPage 플래그
+  config/site.ts   사업자 정보, nav, bookingUrl, 톡톡·카카오톡 링크, showEventsPage 플래그
   data/            ★ 사용자에게 보이는 모든 문자열
     home.ts  spaces.ts  equipment.ts  pricing.ts  faq.ts  booking.ts  events.ts
     guide.ts  rules.ts  notFound.ts
