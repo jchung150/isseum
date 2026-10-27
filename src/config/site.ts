@@ -29,11 +29,11 @@ export const bookingUrl = 'https://booking.naver.com/booking/10/bizes/1734060';
 export const naverTalkUrl = 'https://talk.naver.com/ct/wxgdt7v';
 
 /**
- * 카카오톡 채널 채팅 링크(`https://pf.kakao.com/_xxxx/chat`). 채널이 아직 없어
- * 비워 둔다. 값을 넣으면 대관 절차 1단계와 푸터에 카카오톡 문의가 나타나고, 1단계
- * 문구도 두 채널을 함께 부른다.
+ * 카카오톡 채널 "이씀 복합문화공간". 톡톡처럼 대화창으로 바로 연다 — `/chat`을 떼면
+ * 채널 소개(https://pf.kakao.com/_ZGxomX)가 먼저 열린다. null로 두면 대관 절차
+ * 1단계와 푸터에서 카카오톡이 빠지고, 1단계 문구도 톡톡만 부른다.
  */
-export const kakaoChannelUrl: string | null = null;
+export const kakaoChannelUrl: string | null = 'https://pf.kakao.com/_ZGxomX/chat';
 
 export const inquiryChannels = [
   { name: inquiryCta.channels.naverTalk, href: naverTalkUrl },
