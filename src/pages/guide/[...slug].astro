@@ -19,6 +19,7 @@ const crumbs = [{ path: '/guide', title: page.rootLabel }, ...trail];
 // 뒤로가기는 브라우저 기록이 아니라 부모 페이지로 간다. 검색이나 공유 링크로 바로
 // 들어온 사람에게도 같은 곳을 가리키고, JS 없이 동작한다.
 const parent = crumbs[crumbs.length - 1];
+import { inquiryCta } from '../../data/cta';
 ---
 
 <BaseLayout title={`${doc.title} | ${page.title}`} description={doc.summary}>
@@ -50,7 +51,13 @@ const parent = crumbs[crumbs.length - 1];
                   <li class="line">
                     <p class="prose">
                       {line.label && <strong>{line.label}</strong>}
-                      {line.text}
+                      {line.href ? (
+                        <a class="line__link" href={line.href} target="_blank" rel="noopener">
+                          {line.text}<span class="visually-hidden">{inquiryCta.newWindow}</span>
+                        </a>
+                      ) : (
+                        line.text
+                      )}
                     </p>
                     {line.details && (
                       <ul class="line__details">
@@ -177,6 +184,12 @@ const parent = crumbs[crumbs.length - 1];
 </BaseLayout>
 
 <style>
+  /* Links are un-underlined site-wide; inside running text that hides them. */
+  .line__link {
+    text-decoration: underline;
+    text-underline-offset: var(--underline-offset);
+  }
+
   .doc {
     padding-top: var(--space-5);
     padding-bottom: var(--space-section-sm);

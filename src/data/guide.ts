@@ -15,6 +15,7 @@
 import type { ImageMetadata } from "astro";
 
 import { wallMounting } from "./booking";
+import { kakaoChannelUrl } from "../config/site";
 
 import route01 from "../assets/guide/route/01.jpg";
 import route02 from "../assets/guide/route/02.jpg";
@@ -71,6 +72,8 @@ export type GuideLine = {
   /** 굵게 표시되는 앞머리. 저장소 관례대로 `— `로 끝낸다. */
   label?: string;
   text: string;
+  /** 있으면 `text`가 새 창으로 여는 링크가 된다. */
+  href?: string;
   /** 한 단계 들여쓴 보조 설명. */
   details?: string[];
   /** 그 줄에 딸린 사진. 조작 단계처럼 글과 사진이 1:1로 붙는 곳에 쓴다. */
@@ -1059,9 +1062,11 @@ const safetyPages: GuidePage[] = [
       {
         kind: "bullets",
         items: [
-          // 카카오톡 채널(@이씀)은 개설 중이라 뺐다. 열리면 링크로 되살릴 것 —
-          // 긴급 상황에 쓰라고 적어 둔 연락처라 닿지 않는 채널을 안내할 수 없다.
           { label: "비상 연락처 — ", text: "운영 매니저 010-6899-4417" },
+          // 긴급 상황에 쓰라고 적어 둔 연락처라, 채널이 닫히면(null) 줄째로 뺀다.
+          ...(kakaoChannelUrl
+            ? [{ label: "카카오톡 — ", text: "이씀 복합문화공간 채널", href: kakaoChannelUrl }]
+            : []),
         ],
       },
       { kind: "heading", text: "소화기" },

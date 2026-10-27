@@ -155,6 +155,7 @@
   --measure-hero-lead: 42em;
 
   /* ---------- Line & radius ---------- */
+  --underline-offset: 0.2em;
   --border-hairline: 1px solid var(--border);
   --border-emphasis: 1px solid var(--ink);
   --border-active: 1.5px solid var(--ink);
