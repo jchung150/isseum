@@ -7,18 +7,20 @@ import { inquiryCta } from '../data/cta';
 import { footer } from '../data/footer';
 import { header } from '../data/header';
 
-const info = [
+type Link = { label: string; href: string; external?: boolean };
+type Row = { term: string; value?: string; links?: Link[] };
+
+const info: Row[] = [
   { term: footer.info.companyName, value: business.companyName },
   { term: footer.info.representative, value: business.representative },
   { term: footer.info.address, value: business.address },
-  { term: footer.info.phone, value: business.phone, href: `tel:${business.phone}` },
-  { term: footer.info.email, value: business.email, href: `mailto:${business.email}` },
-  ...inquiryChannels.map((channel) => ({
+  { term: footer.info.phone, links: [{ label: business.phone, href: `tel:${business.phone}` }] },
+  { term: footer.info.email, links: [{ label: business.email, href: `mailto:${business.email}` }] },
+  // One row for every chat channel, so a second channel doesn't repeat the label.
+  {
     term: footer.info.chat,
-    value: channel.name,
-    href: channel.href,
-    external: true,
-  })),
+    links: inquiryChannels.map((channel) => ({ label: channel.name, href: channel.href, external: true })),
+  },
   { term: footer.info.registrationNumber, value: business.registrationNumber },
 ];
 ---
@@ -35,17 +37,20 @@ const info = [
             <>
               <dt>{row.term}</dt>
               <dd>
-                {row.href ? (
-                  'external' in row ? (
-                    <a href={row.href} target="_blank" rel="noopener">
-                      {row.value}<span class="visually-hidden">{inquiryCta.channelNewWindow}</span>
-                    </a>
-                  ) : (
-                    <a href={row.href}>{row.value}</a>
-                  )
-                ) : (
-                  row.value
-                )}
+                {row.links
+                  ? row.links.map((link, i) => (
+                      <>
+                        {i > 0 && <span class="sep" aria-hidden="true">·</span>}
+                        {link.external ? (
+                          <a href={link.href} target="_blank" rel="noopener">
+                            {link.label}<span class="visually-hidden">{inquiryCta.channelNewWindow}</span>
+                          </a>
+                        ) : (
+                          <a href={link.href}>{link.label}</a>
+                        )}
+                      </>
+                    ))
+                  : row.value}
               </dd>
             </>
           ))
@@ -147,6 +152,11 @@ const info = [
 
   .info dd {
     color: var(--text-strong);
+  }
+
+  .sep {
+    margin-inline: var(--space-2);
+    color: var(--text-tertiary);
   }
 
 
