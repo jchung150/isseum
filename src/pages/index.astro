@@ -126,15 +126,12 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
   <section id="price" class="container section anchor">
     <SectionHeader eyebrow={sections.price.eyebrow} title={sections.price.title} />
 
-    <p class="price__promo">{pricing.promo}</p>
-
     <table class="ratetable">
       <caption class="visually-hidden">{pricing.caption}</caption>
       <thead>
         <tr>
           <th scope="col" class="rt__kind">{pricing.columns.kind}</th>
-          <th scope="col" class="rt__col-list">{pricing.columns.list}</th>
-          <th scope="col" class="rt__col-now">{pricing.columns.now}</th>
+          <th scope="col">{pricing.columns.price}</th>
         </tr>
       </thead>
       <tbody>
@@ -145,14 +142,10 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
                 <span class="rt__label">{rate.label}</span>
                 <span class="rt__when">{rate.when}</span>
               </th>
-              <td class="rt__list">
+              <td class="rt__price">
                 {/* The column header carries this on desktop, where it is
                     hidden; aria-hidden stops it being read out twice. */}
-                <span class="rt__head" aria-hidden="true">{pricing.columns.list}</span>
-                <s class="rt__struck">{rate.listLabel}</s>
-              </td>
-              <td class="rt__now">
-                <span class="rt__head" aria-hidden="true">{pricing.columns.now}</span>
+                <span class="rt__head" aria-hidden="true">{pricing.columns.price}</span>
                 <span class="display rt__amount">{rate.priceLabel}</span>
               </td>
             </tr>
@@ -523,21 +516,9 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
      real table layout returns at 640px. The row labels inside the cells are the
      mobile stand-in for the column headers, so exactly one of the two is
      visible at any width. */
-  .price__promo {
-    display: inline-block;
-    margin-top: var(--space-header-gap);
-    padding: 7px 14px;
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: var(--radius);
-    font-size: var(--eyebrow-size);
-    font-weight: 500;
-    letter-spacing: var(--tracking-label);
-  }
-
   .ratetable {
     width: 100%;
-    margin-top: var(--space-5);
+    margin-top: var(--space-header-gap);
     border-collapse: collapse;
     border-top: var(--border-hairline);
   }
@@ -586,18 +567,6 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     font-size: var(--text-meta);
     color: var(--text-secondary);
     letter-spacing: var(--tracking-meta);
-  }
-
-  /* 정상가. The strikethrough is visual only — the column header (desktop) and
-     the inline label (mobile) are what a screen reader gets. */
-  .rt__list {
-    color: var(--text-tertiary);
-    font-size: var(--text-ui);
-    letter-spacing: var(--tracking-ui);
-  }
-
-  .rt__struck {
-    text-decoration-thickness: 1px;
   }
 
   .rt__amount {
@@ -959,7 +928,7 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
       grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Real table from here up: the three figures line up down their columns,
+    /* Real table from here up: the two rates line up down their column,
        which is the whole point of showing 주중 and 주말 together. */
     .ratetable thead {
       display: table-header-group;
@@ -981,18 +950,10 @@ import { equipment, equipmentIntro, equipmentModal } from '../data/equipment';
     }
 
     /* The 구분 column reads as a label, not a figure — it stays left while the
-       three money columns align right so the digits stack. */
+       money column aligns right so the digits stack. */
     .ratetable .rt__kind {
       text-align: left;
-      width: 40%;
-    }
-
-    .rt__col-list {
-      width: 28%;
-    }
-
-    .rt__col-now {
-      width: 32%;
+      width: 60%;
     }
 
     .ratetable thead th {

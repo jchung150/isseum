@@ -12,9 +12,9 @@
  *
  * 부가세: every figure here is VAT-inclusive, which is how the owner quotes.
  *
- * 할인율은 쓰지 않는다. 게시가가 정상가의 정확히 50%이긴 하지만(280,000 →
- * 140,000 · 340,000 → 170,000), 정상가로 돌아갈 때 '인상'으로 읽힐 여지를 남기지
- * 않으려고 정상가와 특가 두 숫자만 나란히 보여준다. 소유자 결정.
+ * 2026-11부터 오픈 기념 특가였던 금액이 그대로 정가가 됐다. 그래서 정상가에 취소선을
+ * 긋고 특가를 나란히 두던 표가 요금 하나짜리 표가 됐다. 다시 할인을 걸게 되면
+ * 할인율(%)은 쓰지 말 것 — 할인이 끝날 때 정상가 복귀가 '인상'으로 읽힌다.
  */
 
 import { business } from '../config/site';
@@ -33,9 +33,7 @@ type RateInput = {
   short: string;
   /** 적용 요일. */
   when: string;
-  /** 정상가 (시간당) */
-  list: number;
-  /** 오픈 기념 특가 (시간당) */
+  /** 시간당 요금 */
   price: number;
 };
 
@@ -50,7 +48,6 @@ const rateInputs: RateInput[] = [
     label: '주중',
     short: '주중(월–목)',
     when: '월요일 – 목요일',
-    list: 280_000,
     price: 140_000,
   },
   {
@@ -58,28 +55,23 @@ const rateInputs: RateInput[] = [
     label: '주말 · 공휴일',
     short: '주말(금–일)·공휴일',
     when: '금요일 · 토요일 · 일요일 · 공휴일',
-    list: 340_000,
     price: 170_000,
   },
 ];
 
 export const rates = rateInputs.map((rate) => ({
   ...rate,
-  listLabel: won(rate.list),
   priceLabel: won(rate.price),
   /** FAQ 한 줄 요약. 같은 숫자를 다시 쓰지 않으려고 여기서 만든다. */
   summary: `${unit} ${won(rate.price)}`,
 }));
 
 export const pricing = {
-  /** 표 위 배너. */
-  promo: '오픈 기념 특가',
   unit,
   /** 표의 열 제목. 모바일에서는 같은 문자열이 각 셀 앞 라벨로 붙는다. */
   columns: {
     kind: '구분',
-    list: '정상가',
-    now: '오픈 특가',
+    price: '시간당 요금',
   },
   /** 표 설명 — 화면에는 보이지 않고 스크린 리더에만 읽힌다. */
   caption: '주중(월–목)과 주말(금–일)·공휴일의 시간당 대관 요금',
@@ -104,10 +96,6 @@ export const pricing = {
     {
       label: '장기 대관 — ',
       text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 네이버 톡톡, 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
-    },
-    {
-      label: '특가 적용 — ',
-      text: '오픈 기념 특가는 별도 공지 시까지 적용됩니다.',
     },
     {
       label: '결제 — ',

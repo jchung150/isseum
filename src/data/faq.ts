@@ -11,7 +11,6 @@
 
 import { business } from '../config/site';
 import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
-import { pricing } from './pricing';
 
 export type FaqItem = {
   q: string;
@@ -28,7 +27,6 @@ export const faq: FaqItem[] = [
     q: '대관료가 얼마인가요?',
     a: [
       `전체 대관 기준 시간당 요금이며, 표기 금액에는 부가세가 포함되어 있습니다. 최소 ${MIN_HOURS}시간부터 이용하실 수 있습니다.`,
-      `아래 금액은 ${pricing.promo} 기준이며, 별도 공지 시까지 적용됩니다.`,
     ],
     priceTable: true,
   },
