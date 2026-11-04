@@ -39,6 +39,9 @@ export const inquiryChannels = [
   ...(kakaoChannelUrl ? [{ name: inquiryCta.channels.kakao, href: kakaoChannelUrl }] : []),
 ];
 
+/** 문장 안에서 채널을 부를 때 쓴다. 카카오톡을 끄면 문구에서도 함께 빠진다. */
+export const inquiryChannelNames = inquiryChannels.map((channel) => channel.name).join(', ');
+
 /**
  * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
  * The matching secret is a Worker secret (TURNSTILE_SECRET) and must never be

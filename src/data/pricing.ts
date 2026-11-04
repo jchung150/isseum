@@ -17,7 +17,7 @@
  * 할인율(%)은 쓰지 말 것 — 할인이 끝날 때 정상가 복귀가 '인상'으로 읽힌다.
  */
 
-import { business } from '../config/site';
+import { business, inquiryChannelNames } from '../config/site';
 import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
 
 /** 1234567 → '1,234,567원' */
@@ -95,7 +95,7 @@ export const pricing = {
     },
     {
       label: '장기 대관 — ',
-      text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 네이버 톡톡, 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
+      text: `연속 ${LONG_TERM_DAYS}일 이상 이용은 별도로 안내해 드리니 ${inquiryChannelNames}, 전화(${business.phone}) 또는 이메일(${business.email})로 문의해 주세요.`,
     },
     {
       label: '결제 — ',

@@ -9,7 +9,7 @@
  * air-handling point, which had no other home on the page.
  */
 
-import { business } from '../config/site';
+import { business, inquiryChannelNames } from '../config/site';
 import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
 
 export type FaqItem = {
@@ -33,7 +33,13 @@ export const faq: FaqItem[] = [
   {
     q: '장기간 대관도 가능한가요?',
     a: [
-      `연속 ${LONG_TERM_DAYS}일 이상의 장기 대관은 일정과 이용 목적에 맞춰 별도로 안내해 드립니다. 네이버 톡톡, 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 문의해 주세요.`,
+      `연속 ${LONG_TERM_DAYS}일 이상의 장기 대관은 일정과 이용 목적에 맞춰 별도로 안내해 드립니다. ${inquiryChannelNames}, 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 문의해 주세요.`,
+    ],
+  },
+  {
+    q: '촬영도 할 수 있나요?',
+    a: [
+      `네, 가능합니다. 다만 촬영은 참여 인원과 장비, 세트 규모에 따라 특수 청소가 필요할 수 있어 일반 대관과 요금이 달라질 수 있습니다. 촬영 일정과 내용, 인원을 ${inquiryChannelNames}, 전화(${business.phone}) 또는 이메일(${business.email})로 먼저 알려 주시면 요금을 안내해 드리겠습니다.`,
     ],
   },
   {
