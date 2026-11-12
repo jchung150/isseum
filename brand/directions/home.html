@@ -142,20 +142,6 @@
   .equip li span { font: 700 12px var(--latin); color: var(--muted); font-variant-numeric: tabular-nums; flex: none; width: 22px; }
   .equip { padding: 0; margin: 0; }
 
-  /* Pricing */
-  .price-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
-  @media (min-width: 900px) { .price-grid { grid-template-columns: 1fr 1fr; } }
-  .rates { display: grid; gap: 12px; align-content: start; }
-  .rate { background: var(--paper); border-radius: var(--r-card); padding: 28px; display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
-  .rate:first-child { background: var(--cobalt); color: var(--paper); }
-  .rate .k { font-size: 20px; font-weight: 900; letter-spacing: -0.04em; }
-  .rate .w { font-size: 13.5px; opacity: .8; }
-  .rate .p { font-size: clamp(30px, 4vw, 44px); font-weight: 900; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
-  .rate .p small { font-size: 15px; font-weight: 500; margin-left: 4px; letter-spacing: 0; }
-  .notes { display: grid; gap: 14px; margin: 0; padding: 0; }
-  .notes li { list-style: none; display: grid; grid-template-columns: 96px 1fr; gap: 12px; font-size: 15px; color: var(--body); border-top: 1px solid var(--ink); padding-top: 12px; }
-  .notes b { color: var(--ink); }
-
   /* Process */
   .steps { display: grid; gap: 48px 32px; grid-template-columns: 1fr; }
   @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); } }
@@ -295,26 +281,6 @@
     </div>
   </section>
 
-  <section class="sec" id="price" aria-labelledby="price-title">
-    <div class="wrap">
-      <div class="sec-head">
-        <div><p class="eb">Price</p><h2 id="price-title">대관 요금</h2><p class="h-en">Per hour, VAT included</p></div>
-        <p class="d">전체 대관 기준 시간당 요금입니다. 부가세가 포함되어 있고, 최소 3시간부터 신청하실 수 있습니다.</p>
-      </div>
-      <div class="price-grid">
-        <div class="rates">
-          <div class="rate"><div><p class="k">주중</p><p class="w">월요일 – 목요일</p></div><p class="p">140,000원<small>/ 시간</small></p></div>
-          <div class="rate"><div><p class="k">주말 · 공휴일</p><p class="w">금요일 · 토요일 · 일요일 · 공휴일</p></div><p class="p">170,000원<small>/ 시간</small></p></div>
-        </div>
-        <ul class="notes">
-          <li><b>최소 이용</b><span>대관은 최소 3시간부터 신청하실 수 있습니다.</span></li>
-          <li><b>전체 대관</b><span>메인 홀 · 프로젝트 룸 · 파우더 룸 · 바 전 영역과 보유 장비 전체를 함께 이용하시며, 일부 공간만 단독으로 대관하지는 않습니다.</span></li>
-          <li><b>이용 시간</b><span>대관 시간에는 준비와 철수(정리) 시간이 모두 포함되며, 이용 시간을 초과할 경우 30분 단위로 추가 요금이 부과됩니다.</span></li>
-          <li><b>결제</b><span>일정 문의 후 네이버 예약에서 결제해 주세요.</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
 
   <section class="sec" id="process" aria-labelledby="process-title" style="padding-top:0">
     <div class="wrap">
