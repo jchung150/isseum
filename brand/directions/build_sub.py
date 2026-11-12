@@ -169,7 +169,7 @@ page('rules.html', '대관 규정 · 이씀', rules_css, f'''
 <div class="wrap">
   <section class="page-head" aria-labelledby="rules-title">
     <p class="hl">RENTAL POLICY</p>
-    <h1 id="rules-title"><span class="hand">함께 지키는</span>대관 규정</h1>
+    <h1 id="rules-title"><span class="hand inline">함께 지키는,</span> 대관 규정</h1>
     <p class="lead">예약 전 반드시 확인해 주시기 바랍니다. 예약 결제가 완료됨과 동시에 본 이용 규정에 모두 동의하신 것으로 간주됩니다.</p>
     <p class="chip">최종 개정 2026. 10. 24.</p>
   </section>
@@ -183,24 +183,159 @@ page('rules.html', '대관 규정 · 이씀', rules_css, f'''
 </div>
 ''')
 
-# ======================= 이용 안내 (목차) =======================
-guide_groups = [
-    ('도착 및 출입', ['주차 및 화물 반입 안내', '출입 방법', '동선 및 공간 안내']),
-    ('공간 이용', ['공간 이용 기본 수칙', '와이파이 연결', '스마트 TV 사용법', '조명 및 스위치 사용법', '음향기기 사용법', '에어컨 및 제습기 사용법', '바 공간 비품 및 식기류']),
-    ('퇴실', ['자리 배치 및 가구 원상 복구', '분리수거', '퇴실 전 마무리 체크리스트']),
-    ('안전', ['긴급 연락처 및 안전 용품', 'CCTV 보안']),
-]
-cols, k = [], 0
-for gi, (g, rows) in enumerate(guide_groups):
-    items = []
-    for r in rows:
-        k += 1
-        num = f'{k:02d}'
-        if k == 1:
-            items.append(f'<li><a class="gl" href="guide-parking.html"><span class="gn">{num}</span><span class="gt">{r}</span><span class="ga" aria-hidden="true">→</span></a></li>')
+
+# ======================= 이용 안내 (전체, guide.ts에서 생성) =======================
+import json, html as H
+
+GJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gx', 'guide.json')
+groups_g = json.load(open(GJ, encoding='utf-8'))
+
+
+def esc(t):
+    return H.escape(t, quote=False)
+
+
+def lab(l):
+    return (l or '').rstrip().rstrip('—').rstrip()
+
+
+def img_url(src):
+    return 'img/guide/' + src.replace('/', '-')
+
+
+def shot(sh, cls='fig'):
+    cap = sh.get('caption') or sh['alt']
+    if sh.get('src'):
+        return f'<figure class="{cls}"><img src="{img_url(sh["src"])}" alt="{H.escape(sh["alt"])}" loading="lazy"><figcaption>{esc(cap)}</figcaption></figure>'
+    return f'<figure class="{cls}"><div class="hatch" role="img" aria-label="{H.escape(sh["alt"])}">사진 준비 중</div><figcaption>사진 준비 중 — {esc(cap)}</figcaption></figure>'
+
+
+def line(it):
+    t = esc(it['text'])
+    if it.get('href'):
+        t = f'<a class="ilink" href="{H.escape(it["href"])}" target="_blank" rel="noopener">{t} ↗</a>'
+    out = (f'<b>{esc(lab(it["label"]))}</b> — ' if it.get('label') else '') + t
+    if it.get('details'):
+        out += '<ul class="sub">' + ''.join(f'<li>{esc(d)}</li>' for d in it['details']) + '</ul>'
+    if it.get('shots'):
+        out += '<div class="shots">' + ''.join(shot(x, 'fig sm') for x in it['shots']) + '</div>'
+    return out
+
+
+def blocks_html(blocks, page_file):
+    out, h = [], 0
+    for b in blocks:
+        k = b['kind']
+        if k == 'heading':
+            h += 1
+            out.append(f'<h2><span class="sqn">{chr(64 + h)}</span>{esc(b["text"])}</h2>')
+        elif k == 'text':
+            out.append(f'<p class="txt">{esc(b["body"])}</p>')
+        elif k == 'bullets':
+            out.append('<ul class="items">' + ''.join(f'<li>{line(i)}</li>' for i in b['items']) + '</ul>')
+        elif k == 'steps':
+            out.append('<ol class="gsteps">' + ''.join(
+                f'<li><span class="sqn sm">{n:02d}</span><div>{line(i)}</div></li>' for n, i in enumerate(b['items'], 1)) + '</ol>')
+        elif k == 'note':
+            t = f'<b>{esc(b["title"])}</b>' if b.get('title') else ''
+            out.append('<div class="note">' + t + ''.join(f'<p>{esc(x)}</p>' for x in b['body']) + '</div>')
+        elif k == 'figure':
+            out.append(shot(b))
+        elif k == 'link':
+            dl = ''.join(f'<dt>{esc(lab(l.get("label")))}</dt><dd>{esc(l["text"])}</dd>' for l in b['lines'])
+            out.append(f'<div class="place"><h3><a href="{H.escape(b["href"])}" target="_blank" rel="noopener">{esc(b["label"])} ↗</a></h3><dl>{dl}</dl></div>')
+        elif k == 'pagelink':
+            target = page_file.replace('.html', f'-{b["to"]}.html')
+            out.append(f'<a class="sublink" href="{target}"><div><b>{esc(b["label"])}</b><span>{esc(b["note"])}</span></div><span class="ga" aria-hidden="true">→</span></a>')
+        elif k == 'checklist':
+            out.append('<ul class="check">' + ''.join(
+                f'<li><label><input type="checkbox"><span class="box" aria-hidden="true"></span>{esc(x)}</label></li>' for x in b['items']) + '</ul>')
         else:
-            items.append(f'<li><span class="gl todo"><span class="gn">{num}</span><span class="gt">{r}</span><span class="ga" aria-hidden="true">→</span></span></li>')
-    cols.append(f'<section class="gcol"><p class="gstep">{gi + 1}</p><h2>{g}</h2><ul>{"".join(items)}</ul></section>')
+            raise SystemExit('unknown block ' + k)
+    return ''.join(out)
+
+
+doc_css = park_css_common = '''
+.doc { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 820px; padding-bottom: var(--space); }
+.doc > * + * { margin-top: 18px; }
+.doc h2 { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; letter-spacing: -0.05em; margin-top: clamp(40px, 5vw, 64px); padding-bottom: 14px; border-bottom: 2px solid var(--ink); display: flex; gap: 14px; align-items: center; }
+.doc h2:first-child { margin-top: 0; }
+.doc h2 .sqn { width: 40px; height: 40px; border-width: 7px; font-size: 12px; }
+.sqn.sm { width: 36px; height: 36px; border-width: 6px; font-size: 11px; }
+.txt { color: var(--body); }
+.items .sub { list-style: none; padding: 8px 0 0; display: grid; gap: 4px; }
+.items .sub li { padding-left: 14px; position: relative; font-size: 15px; }
+.items .sub li::before { content: ""; position: absolute; left: 0; top: .75em; width: 6px; height: 2px; background: var(--muted); }
+.ilink { color: var(--cobalt); font-weight: 700; }
+.gsteps { list-style: none; padding: 0; display: grid; gap: 22px; }
+.gsteps > li { display: flex; gap: 16px; align-items: flex-start; color: var(--body); }
+.gsteps > li > div { min-width: 0; flex: 1; padding-top: 4px; }
+.gsteps b { color: var(--ink); }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+.fig { margin: 8px 0 0; }
+.fig img { width: auto; max-width: 100%; max-height: 640px; border-radius: var(--r-photo); }
+.fig.sm img { max-height: 360px; border-radius: 16px; }
+.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.hatch { aspect-ratio: 4 / 3; max-width: 520px; border-radius: var(--r-card); display: grid; place-items: center; font-size: 14px; color: var(--muted); background: repeating-linear-gradient(-31deg, var(--mist) 0 10px, var(--paper) 10px 20px); }
+.sublink { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--lime); border-radius: var(--r-card); padding: 22px 24px; }
+.sublink b { display: block; font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.sublink span { font-size: 14.5px; color: var(--body); }
+.sublink .ga { font-size: 22px; color: var(--cobalt); }
+.sublink:hover { background: var(--cobalt); color: var(--paper); }
+.sublink:hover span, .sublink:hover .ga { color: var(--paper); }
+.place { background: var(--paper); border-radius: var(--r-card); padding: 24px; display: grid; gap: 14px; }
+.place h3 { font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.place h3 a { color: var(--cobalt); }
+.place dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 15px; }
+.place dt { color: var(--muted); }
+.place dd { margin: 0; }
+.note { border-left: 6px solid var(--cobalt); background: var(--paper); border-radius: 0 16px 16px 0; padding: 16px 20px; font-size: 15px; display: grid; gap: 6px; }
+.check { list-style: none; padding: 0; display: grid; gap: 10px; }
+.check label { display: flex; gap: 14px; align-items: flex-start; background: var(--paper); border-radius: 16px; padding: 16px 18px; cursor: pointer; }
+.check input { position: absolute; opacity: 0; }
+.check .box { flex: none; width: 24px; height: 24px; border: 5px solid var(--cobalt); margin-top: 2px; }
+.check input:checked + .box { background: var(--cobalt); box-shadow: inset 0 0 0 3px var(--paper); }
+.check input:focus-visible + .box { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--mist); margin-top: clamp(40px, 5vw, 64px) !important; }
+'''
+
+flat = []  # (file, page, group_title, number)
+num = 0
+for g in groups_g:
+    for p in g['pages']:
+        num += 1
+        flat.append((f'guide-{p["slug"]}.html', p, g['title'], num))
+
+for i, (fname, p, gtitle, n) in enumerate(flat):
+    prev_ = flat[i - 1] if i > 0 else None
+    next_ = flat[i + 1] if i + 1 < len(flat) else None
+    pager = '<div class="pager">' + (f'<a class="btn sm" href="{prev_[0]}">← {prev_[3]:02d} {esc(prev_[1]["title"])}</a>' if prev_ else '<a class="btn sm" href="guide.html">← 목차로 돌아가기</a>') \
+        + (f'<a class="btn sm" href="{next_[0]}">{next_[3]:02d} {esc(next_[1]["title"])} →</a>' if next_ else '<a class="btn sm" href="guide.html">목차로 돌아가기 →</a>') + '</div>'
+    page(fname, f'{p["title"]} · 이씀', doc_css, f'''
+<div class="wrap">
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><span aria-current="page">{esc(p["title"])}</span></nav>
+  <section class="page-head"><p class="hl">{n:02d} · {esc(gtitle)}</p><h1>{esc(p["title"])}</h1><p class="lead">{esc(p["summary"])}</p></section>
+  <article class="doc">{blocks_html(p["blocks"], fname)}{pager}</article>
+</div>
+''')
+    for c in p.get('children') or []:
+        cname = fname.replace('.html', f'-{c["slug"]}.html')
+        page(cname, f'{c["title"]} · 이씀', doc_css, f'''
+<div class="wrap">
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><a href="{fname}">{esc(p["title"])}</a><span aria-hidden="true">/</span><span aria-current="page">{esc(c["title"])}</span></nav>
+  <section class="page-head"><p class="hl">{n:02d} · {esc(p["title"])}</p><h1>{esc(c["title"])}</h1><p class="lead">{esc(c["summary"])}</p></section>
+  <article class="doc">{blocks_html(c["blocks"], cname)}<div class="pager"><a class="btn sm" href="{fname}">← {esc(p["title"])}</a><a class="btn sm" href="guide.html">목차로 돌아가기 →</a></div></article>
+</div>
+''')
+
+# 목차
+cols, k = [], 0
+for gi, g in enumerate(groups_g):
+    items = []
+    for p in g['pages']:
+        k += 1
+        items.append(f'<li><a class="gl" href="guide-{p["slug"]}.html"><span class="gn">{k:02d}</span><span class="gt">{esc(p["title"])}</span><span class="ga" aria-hidden="true">→</span></a></li>')
+    cols.append(f'<section class="gcol"><p class="gstep">{gi + 1}</p><h2>{esc(g["title"])}</h2><ul>{"".join(items)}</ul></section>')
 
 guide_css = '''
 .gflow { display: grid; grid-template-columns: 1fr; gap: 40px; padding-bottom: var(--space); position: relative; }
@@ -219,11 +354,7 @@ guide_css = '''
 .gl .ga { color: var(--cobalt); transition: transform .2s; }
 a.gl:hover { color: var(--cobalt); }
 a.gl:hover .ga { transform: translateX(4px); }
-.gl.todo { color: var(--muted); }
-.gl.todo .ga { color: var(--mist); }
-.gnote { font-size: 13.5px; color: var(--muted); padding-bottom: var(--space); }
 '''
-
 page('guide.html', '이용 안내 · 이씀', guide_css, f'''
 <div class="wrap">
   <section class="page-head" aria-labelledby="guide-title">
@@ -232,91 +363,6 @@ page('guide.html', '이용 안내 · 이씀', guide_css, f'''
     <p class="lead">출입과 동선부터 기기 사용법과 퇴실 정리까지, 공간을 이용하시는 데 필요한 안내를 사진과 함께 담았습니다.</p>
   </section>
   <div class="gflow">{"".join(cols)}</div>
-  <p class="gnote">시안에서는 01 주차 및 화물 반입 안내만 상세 페이지를 만들었습니다. 나머지 14개는 같은 틀로 이어집니다.</p>
 </div>
 ''')
-
-# ======================= 이용 안내 · 01 주차 =======================
-park_css = '''
-.doc { display: grid; grid-template-columns: 1fr; gap: 0; max-width: 820px; padding-bottom: var(--space); }
-.doc h2 { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; letter-spacing: -0.05em; margin-top: clamp(40px, 5vw, 64px); padding-bottom: 14px; border-bottom: 2px solid var(--ink); margin-bottom: 22px; display: flex; gap: 14px; align-items: center; }
-.doc h2:first-child { margin-top: 0; }
-.doc h2 .sqn { width: 40px; height: 40px; border-width: 7px; font-size: 12px; }
-.spec { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0 6px; }
-@media (min-width: 640px) { .spec { grid-template-columns: repeat(4, 1fr); } }
-.spec div { background: var(--paper); border-radius: 16px; padding: 16px; display: grid; gap: 2px; }
-.spec span { font-size: 13px; color: var(--muted); }
-.spec b { font-size: clamp(19px, 2vw, 24px); font-weight: 900; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
-.spec small { font-size: 12.5px; color: var(--muted); }
-.fig { margin: 26px 0; }
-.fig img { width: 100%; border-radius: var(--r-photo); }
-.fig.tall img { max-width: 520px; }
-.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
-.sublink { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--lime); border-radius: var(--r-card); padding: 22px 24px; margin-top: 22px; }
-.sublink b { display: block; font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
-.sublink span { font-size: 14.5px; color: var(--body); }
-.sublink .ga { font-size: 22px; color: var(--cobalt); }
-.sublink:hover { background: var(--cobalt); color: var(--paper); }
-.sublink:hover span, .sublink:hover .ga { color: var(--paper); }
-.place { background: var(--paper); border-radius: var(--r-card); padding: 24px; display: grid; gap: 14px; margin-top: 16px; }
-.place h3 { font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
-.place h3 a { color: var(--cobalt); }
-.place dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 15px; }
-.place dt { color: var(--muted); }
-.place dd { margin: 0; }
-.note { border-left: 6px solid var(--cobalt); background: var(--paper); border-radius: 0 16px 16px 0; padding: 16px 20px; margin-top: 18px; font-size: 15px; }
-.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--mist); margin-top: clamp(40px, 5vw, 64px); }
-'''
-
-page('guide-parking.html', '주차 및 화물 반입 안내 · 이씀', park_css, '''
-<div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><span aria-current="page">주차 및 화물 반입 안내</span></nav>
-  <section class="page-head" aria-labelledby="park-title">
-    <p class="hl">01 · 도착 및 출입</p>
-    <h1 id="park-title">주차 및 화물 반입 안내</h1>
-    <p class="lead">기계식 주차장 규격과 이용 방법, 인근 주차장과 화물 하차 공간을 안내합니다.</p>
-  </section>
-  <article class="doc">
-    <h2><span class="sqn">A</span>주차 안내</h2>
-    <ul class="items">
-      <li>대관 시 건물 뒷편 기계식 주차장에 기본 5대까지 주차 가능합니다.</li>
-      <li>단, 규격 제한으로 인해 SUV 등 일부 대형 · RV 차량은 입고가 불가한 점 양해 부탁드립니다.</li>
-    </ul>
-    <div class="spec" role="list" aria-label="기계식 주차장 입고 가능 규격">
-      <div role="listitem"><span>전장(길이)</span><b>5,100mm</b><small>이하</small></div>
-      <div role="listitem"><span>전폭(타이어폭 기준)</span><b>2,100mm</b><small>이하</small></div>
-      <div role="listitem"><span>전고(높이)</span><b>1,550mm</b><small>이하</small></div>
-      <div role="listitem"><span>중량</span><b>1,850kg</b><small>이하</small></div>
-    </div>
-    <figure class="fig"><img src="img/parking-01.jpg" alt="제어반과 규격 제한 안내판이 붙어 있는 건물 뒷편 기계식 주차장 입구" loading="lazy"><figcaption>제어반과 규격 제한 안내판이 붙어 있는 건물 뒷편 기계식 주차장 입구</figcaption></figure>
-    <ul class="items">
-      <li>야간(19:30 이후) 및 주말 · 공휴일에는 기계식 주차장 입고 대신 주차장의 빈 공간을 이용할 수 있습니다.</li>
-      <li><b>기존 차량 출차</b> — 기계식 주차장에 이미 입고된 차량의 출차는 이용자가 직접 수동으로 조작하셔야 합니다.</li>
-    </ul>
-    <a class="sublink" href="https://www.isseum.com/guide/parking/manual" target="_blank" rel="noopener"><div><b>수동 출차 조작 방법</b><span>제어반 조작을 사진과 함께 단계별로 안내합니다. (현재 사이트, 새 창)</span></div><span class="ga" aria-hidden="true">↗</span></a>
-
-    <h2><span class="sqn">B</span>인근 유료 주차장</h2>
-    <p style="color:var(--body)">방문객 차량이 많거나 만차일 경우 인근 주차장을 이용해 주시기 바랍니다.</p>
-    <div class="place">
-      <h3><a href="https://map.naver.com/p/entry/place/37060270" target="_blank" rel="noopener">경남1 노상 공영 주차장 ↗</a></h3>
-      <dl>
-        <dt>주소</dt><dd>서울 마포구 서교동 418</dd>
-        <dt>요금</dt><dd>5분당 250원 (1시간 3,000원)</dd>
-        <dt>운영 시간</dt><dd>월–토 11:00–21:00 (일요일 정기휴무 · 카드 전용 결제)</dd>
-        <dt>참고</dt><dd>노상 주차장 특성상 혼잡도가 높아 빈 자리가 없는 경우가 많으니, 이용 시 미리 현장 상황을 확인하시거나 인근 다른 유료 주차장도 함께 고려해 주시기 바랍니다.</dd>
-      </dl>
-    </div>
-
-    <h2><span class="sqn">C</span>화물 및 장비 반입</h2>
-    <ul class="items">
-      <li>무거운 짐이나 대형 장비를 반입하실 경우, 건물 1층 정문 옆 임시 주차 공간에서 짐을 내리면 좀 더 원활하게 이동할 수 있습니다. 짐을 모두 내린 후 차량은 다른 곳으로 이동 부탁드립니다.</li>
-      <li>바닥 스크래치 방지를 위해 무거운 짐은 끌지 말고 들어서 운반해 주시기를 부탁드립니다.</li>
-    </ul>
-    <p class="note">해당 공간은 짐을 내리기 위한 장소로 임시 정차는 가능하나 계속 주차는 어렵습니다.</p>
-    <figure class="fig"><img src="img/parking-10.jpg" alt="건물 1층 정문 옆, 붉은 타원으로 표시된 화물 하차용 임시 정차 공간" loading="lazy"><figcaption>건물 1층 정문 옆, 붉은 타원으로 표시된 화물 하차용 임시 정차 공간</figcaption></figure>
-
-    <div class="pager"><a class="btn sm" href="guide.html">← 목차로 돌아가기</a><span class="btn sm" style="opacity:.45" aria-disabled="true">02 출입 방법 →</span></div>
-  </article>
-</div>
-''')
-print('built')
+print('guide pages:', len(flat), '+ children')

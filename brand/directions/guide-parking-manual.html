@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>수동 출차 조작 방법 · 이씀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sub.css">
+<style>
+.doc { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 820px; padding-bottom: var(--space); }
+.doc > * + * { margin-top: 18px; }
+.doc h2 { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; letter-spacing: -0.05em; margin-top: clamp(40px, 5vw, 64px); padding-bottom: 14px; border-bottom: 2px solid var(--ink); display: flex; gap: 14px; align-items: center; }
+.doc h2:first-child { margin-top: 0; }
+.doc h2 .sqn { width: 40px; height: 40px; border-width: 7px; font-size: 12px; }
+.sqn.sm { width: 36px; height: 36px; border-width: 6px; font-size: 11px; }
+.txt { color: var(--body); }
+.items .sub { list-style: none; padding: 8px 0 0; display: grid; gap: 4px; }
+.items .sub li { padding-left: 14px; position: relative; font-size: 15px; }
+.items .sub li::before { content: ""; position: absolute; left: 0; top: .75em; width: 6px; height: 2px; background: var(--muted); }
+.ilink { color: var(--cobalt); font-weight: 700; }
+.gsteps { list-style: none; padding: 0; display: grid; gap: 22px; }
+.gsteps > li { display: flex; gap: 16px; align-items: flex-start; color: var(--body); }
+.gsteps > li > div { min-width: 0; flex: 1; padding-top: 4px; }
+.gsteps b { color: var(--ink); }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+.fig { margin: 8px 0 0; }
+.fig img { width: auto; max-width: 100%; max-height: 640px; border-radius: var(--r-photo); }
+.fig.sm img { max-height: 360px; border-radius: 16px; }
+.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.hatch { aspect-ratio: 4 / 3; max-width: 520px; border-radius: var(--r-card); display: grid; place-items: center; font-size: 14px; color: var(--muted); background: repeating-linear-gradient(-31deg, var(--mist) 0 10px, var(--paper) 10px 20px); }
+.sublink { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--lime); border-radius: var(--r-card); padding: 22px 24px; }
+.sublink b { display: block; font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.sublink span { font-size: 14.5px; color: var(--body); }
+.sublink .ga { font-size: 22px; color: var(--cobalt); }
+.sublink:hover { background: var(--cobalt); color: var(--paper); }
+.sublink:hover span, .sublink:hover .ga { color: var(--paper); }
+.place { background: var(--paper); border-radius: var(--r-card); padding: 24px; display: grid; gap: 14px; }
+.place h3 { font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.place h3 a { color: var(--cobalt); }
+.place dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 15px; }
+.place dt { color: var(--muted); }
+.place dd { margin: 0; }
+.note { border-left: 6px solid var(--cobalt); background: var(--paper); border-radius: 0 16px 16px 0; padding: 16px 20px; font-size: 15px; display: grid; gap: 6px; }
+.check { list-style: none; padding: 0; display: grid; gap: 10px; }
+.check label { display: flex; gap: 14px; align-items: flex-start; background: var(--paper); border-radius: 16px; padding: 16px 18px; cursor: pointer; }
+.check input { position: absolute; opacity: 0; }
+.check .box { flex: none; width: 24px; height: 24px; border: 5px solid var(--cobalt); margin-top: 2px; }
+.check input:checked + .box { background: var(--cobalt); box-shadow: inset 0 0 0 3px var(--paper); }
+.check input:focus-visible + .box { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--mist); margin-top: clamp(40px, 5vw, 64px) !important; }
+</style>
+</head>
+<body>
+<div class="promo" role="region" aria-label="공지" data-promo><div class="promo-track" data-ticker>주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="./#contact">대관 문의 →</a></div><button type="button" class="promo-close" data-promo-close aria-label="공지 닫기"><span aria-hidden="true">✕</span></button></div>
+<header class="hdr">
+  <div class="wrap">
+    <a href="./" class="logo-hand" aria-label="이씀 처음으로">이씀</a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="./#space">공간 안내</a><a href="./#process">대관 절차</a><span class="soon" aria-label="프로그램, 준비 중">프로그램<small>준비 중</small></span><a href="./#faq">FAQ</a>
+    </nav>
+    <div class="hdr-cta"><button type="button" class="lang" data-lang aria-label="언어 전환 (영어 페이지 준비 중)">EN</button><a class="btn pri sm" href="#contact">대관 문의</a></div>
+  </div>
+</header>
+<main>
+
+<div class="wrap">
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><a href="guide-parking.html">주차 및 화물 반입 안내</a><span aria-hidden="true">/</span><span aria-current="page">수동 출차 조작 방법</span></nav>
+  <section class="page-head"><p class="hl">01 · 주차 및 화물 반입 안내</p><h1>수동 출차 조작 방법</h1><p class="lead">이미 입고된 차량을 직접 출차할 때의 제어반 조작 순서입니다.</p></section>
+  <article class="doc"><figure class="fig"><img src="img/guide/parking-02.jpg" alt="스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반" loading="lazy"><figcaption>스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반</figcaption></figure><ol class="gsteps"><li><span class="sqn sm">01</span><div>제어반 키패드에서 [조작설명] 버튼을 누릅니다.<div class="shots"><figure class="fig sm"><img src="img/guide/parking-03.jpg" alt="제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼" loading="lazy"><figcaption>제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼</figcaption></figure></div></div></li><li><span class="sqn sm">02</span><div><b>수동 모드 전환</b> — 화면 우측의 [게이트 닫힘대기 ON](파란색 버튼)을 5초 이상 길게 눌러 수동 조작 모드로 전환합니다.<div class="shots"><figure class="fig sm"><img src="img/guide/parking-04.jpg" alt="조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다" loading="lazy"><figcaption>조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다</figcaption></figure><figure class="fig sm"><img src="img/guide/parking-05.jpg" alt="붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대" loading="lazy"><figcaption>붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대</figcaption></figure></div></div></li><li><span class="sqn sm">03</span><div><b>출입문 열기</b> — 메인 화면으로 돌아와 하단의 [출입문 열림(상)] 버튼을 눌러 문을 엽니다.<div class="shots"><figure class="fig sm"><img src="img/guide/parking-06.jpg" alt="붉은 원으로 표시된 출입문 열림(상) 버튼 확대" loading="lazy"><figcaption>붉은 원으로 표시된 출입문 열림(상) 버튼 확대</figcaption></figure></div></div></li><li><span class="sqn sm">04</span><div><b>출고 진행</b> — [출고] 버튼을 누르고, 키패드(우측 숫자 버튼)로 출고할 차량의 번호 4자리를 입력한 뒤 [운전시작] 버튼을 누릅니다. 기계가 작동하며 차량이 출차구로 이동하니 안전하게 대기해 주세요.<div class="shots"><figure class="fig sm"><img src="img/guide/parking-07.jpg" alt="입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면" loading="lazy"><figcaption>입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면</figcaption></figure></div></div></li><li><span class="sqn sm">05</span><div><b>출입문 닫기</b> — 하단의 [출입문 닫힘(하)] 버튼을 눌러 문을 닫습니다.<div class="shots"><figure class="fig sm"><img src="img/guide/parking-08.jpg" alt="붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대" loading="lazy"><figcaption>붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대</figcaption></figure></div></div></li></ol><div class="note"><b>출고 시 주의사항</b><p>번호를 잘못 입력했을 경우 [취소] 또는 [CE] 버튼을 눌러 초기화하고 다시 입력하세요.</p><p>출고 진행 중에는 안전을 위해 주차기 내부나 반입구 근처에 접근하지 않도록 주의해 주세요.</p></div><div class="pager"><a class="btn sm" href="guide-parking.html">← 주차 및 화물 반입 안내</a><a class="btn sm" href="guide.html">목차로 돌아가기 →</a></div></article>
+</div>
+</main>
+<footer class="contact" id="contact" aria-labelledby="contact-title">
+  <span class="emb inv" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
+  <div class="wrap">
+    <h2 id="contact-title" class="contact-h"><span class="hand">모든 형태의 이야기를,</span>이곳에서 자유롭게 펼쳐보세요</h2>
+    <div class="channels">
+      <a class="ch" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener"><span class="l">NAVER TALK</span><span class="v">네이버 톡톡 →</span></a>
+      <a class="ch" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener"><span class="l">KAKAOTALK</span><span class="v">카카오톡 채널 →</span></a>
+      <div class="ch"><span class="l">PHONE</span><span class="v">010-6899-4417</span></div>
+      <div class="ch"><span class="l">EMAIL</span><span class="v">hello@isseum.com</span></div>
+    </div>
+    <div class="biz">
+      <dl>
+        <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
+        <dt>대표</dt><dd>정용철</dd>
+        <dt>주소</dt><dd>서울특별시 마포구 월드컵북로 22, 지하 1층</dd>
+        <dt>사업자등록번호</dt><dd>105-04-11192</dd>
+      </dl>
+      <p class="links"><a href="rules.html">대관 규정</a><a href="guide.html">이용 안내 (시안 검토용)</a></p>
+      <p class="draft">리브랜딩 시안입니다. 실제 사이트(isseum.com)와 다를 수 있습니다.</p>
+    </div>
+  </div>
+</footer>
+<script src="sub.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>동선 및 공간 안내 · 이씀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sub.css">
+<style>
+.doc { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 820px; padding-bottom: var(--space); }
+.doc > * + * { margin-top: 18px; }
+.doc h2 { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; letter-spacing: -0.05em; margin-top: clamp(40px, 5vw, 64px); padding-bottom: 14px; border-bottom: 2px solid var(--ink); display: flex; gap: 14px; align-items: center; }
+.doc h2:first-child { margin-top: 0; }
+.doc h2 .sqn { width: 40px; height: 40px; border-width: 7px; font-size: 12px; }
+.sqn.sm { width: 36px; height: 36px; border-width: 6px; font-size: 11px; }
+.txt { color: var(--body); }
+.items .sub { list-style: none; padding: 8px 0 0; display: grid; gap: 4px; }
+.items .sub li { padding-left: 14px; position: relative; font-size: 15px; }
+.items .sub li::before { content: ""; position: absolute; left: 0; top: .75em; width: 6px; height: 2px; background: var(--muted); }
+.ilink { color: var(--cobalt); font-weight: 700; }
+.gsteps { list-style: none; padding: 0; display: grid; gap: 22px; }
+.gsteps > li { display: flex; gap: 16px; align-items: flex-start; color: var(--body); }
+.gsteps > li > div { min-width: 0; flex: 1; padding-top: 4px; }
+.gsteps b { color: var(--ink); }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+.fig { margin: 8px 0 0; }
+.fig img { width: auto; max-width: 100%; max-height: 640px; border-radius: var(--r-photo); }
+.fig.sm img { max-height: 360px; border-radius: 16px; }
+.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.hatch { aspect-ratio: 4 / 3; max-width: 520px; border-radius: var(--r-card); display: grid; place-items: center; font-size: 14px; color: var(--muted); background: repeating-linear-gradient(-31deg, var(--mist) 0 10px, var(--paper) 10px 20px); }
+.sublink { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--lime); border-radius: var(--r-card); padding: 22px 24px; }
+.sublink b { display: block; font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.sublink span { font-size: 14.5px; color: var(--body); }
+.sublink .ga { font-size: 22px; color: var(--cobalt); }
+.sublink:hover { background: var(--cobalt); color: var(--paper); }
+.sublink:hover span, .sublink:hover .ga { color: var(--paper); }
+.place { background: var(--paper); border-radius: var(--r-card); padding: 24px; display: grid; gap: 14px; }
+.place h3 { font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+.place h3 a { color: var(--cobalt); }
+.place dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 15px; }
+.place dt { color: var(--muted); }
+.place dd { margin: 0; }
+.note { border-left: 6px solid var(--cobalt); background: var(--paper); border-radius: 0 16px 16px 0; padding: 16px 20px; font-size: 15px; display: grid; gap: 6px; }
+.check { list-style: none; padding: 0; display: grid; gap: 10px; }
+.check label { display: flex; gap: 14px; align-items: flex-start; background: var(--paper); border-radius: 16px; padding: 16px 18px; cursor: pointer; }
+.check input { position: absolute; opacity: 0; }
+.check .box { flex: none; width: 24px; height: 24px; border: 5px solid var(--cobalt); margin-top: 2px; }
+.check input:checked + .box { background: var(--cobalt); box-shadow: inset 0 0 0 3px var(--paper); }
+.check input:focus-visible + .box { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--mist); margin-top: clamp(40px, 5vw, 64px) !important; }
+</style>
+</head>
+<body>
+<div class="promo" role="region" aria-label="공지" data-promo><div class="promo-track" data-ticker>주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="./#contact">대관 문의 →</a></div><button type="button" class="promo-close" data-promo-close aria-label="공지 닫기"><span aria-hidden="true">✕</span></button></div>
+<header class="hdr">
+  <div class="wrap">
+    <a href="./" class="logo-hand" aria-label="이씀 처음으로">이씀</a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="./#space">공간 안내</a><a href="./#process">대관 절차</a><span class="soon" aria-label="프로그램, 준비 중">프로그램<small>준비 중</small></span><a href="./#faq">FAQ</a>
+    </nav>
+    <div class="hdr-cta"><button type="button" class="lang" data-lang aria-label="언어 전환 (영어 페이지 준비 중)">EN</button><a class="btn pri sm" href="#contact">대관 문의</a></div>
+  </div>
+</header>
+<main>
+
+<div class="wrap">
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><span aria-current="page">동선 및 공간 안내</span></nav>
+  <section class="page-head"><p class="hl">03 · 도착 및 출입</p><h1>동선 및 공간 안내</h1><p class="lead">주 출입문에 들어섰을 때의 공간 배치와 화장실 위치입니다.</p></section>
+  <article class="doc"><h2><span class="sqn">A</span>공간 안내 (주 출입문 진입 시)</h2><ul class="items"><li><b>왼쪽</b> — 프로젝트룸 · 대기실 (독립된 회의 공간 또는 강연 대기 공간)</li></ul><figure class="fig"><img src="img/guide/route-01.jpg" alt="소파와 회의 테이블, 벽걸이 TV가 놓인 프로젝트룸 겸 대기실" loading="lazy"><figcaption>소파와 회의 테이블, 벽걸이 TV가 놓인 프로젝트룸 겸 대기실</figcaption></figure><ul class="items"><li><b>정면</b> — 메인 홀 (넓은 메인 공간)</li></ul><figure class="fig"><img src="img/guide/route-02.jpg" alt="책상과 의자를 강의식으로 배치하고 정면에 대형 TV를 둔 메인 홀" loading="lazy"><figcaption>책상과 의자를 강의식으로 배치하고 정면에 대형 TV를 둔 메인 홀</figcaption></figure><ul class="items"><li><b>오른쪽</b> — 바(Bar) 공간, 안쪽으로 음향 · PC 컨트롤 존</li></ul><figure class="fig"><img src="img/guide/route-03.jpg" alt="원목 카운터와 냉장고, 싱크대를 갖춘 바 공간" loading="lazy"><figcaption>원목 카운터와 냉장고, 싱크대를 갖춘 바 공간</figcaption></figure><ul class="items"><li><b>화장실</b> — 주 출입문 밖으로 나와 왼쪽 복도로 들어가면 있습니다. 복도를 따라 들어가면 여자 화장실이 먼저 나오고, 더 안쪽에 남자 화장실이 있습니다.</li></ul><figure class="fig"><img src="img/guide/route-04.jpg" alt="화장실로 이어지는 지하 복도와 벽에 걸린 층별 안내판" loading="lazy"><figcaption>화장실로 이어지는 지하 복도와 벽에 걸린 층별 안내판</figcaption></figure><h2><span class="sqn">B</span>동선 안내 (주 출입문 진입 시)</h2><figure class="fig"><img src="img/guide/route-05.jpg" alt="주 출입문에서 메인 홀과 프로젝트룸으로 이어지는 동선을 화살표로 표시한 지하 1층 평면도" loading="lazy"><figcaption>주 출입문에서 메인 홀과 프로젝트룸으로 이어지는 동선을 화살표로 표시한 지하 1층 평면도</figcaption></figure><div class="pager"><a class="btn sm" href="guide-entry.html">← 02 출입 방법</a><a class="btn sm" href="guide-conduct.html">04 공간 이용 기본 수칙 →</a></div></article>
+</div>
+</main>
+<footer class="contact" id="contact" aria-labelledby="contact-title">
+  <span class="emb inv" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
+  <div class="wrap">
+    <h2 id="contact-title" class="contact-h"><span class="hand">모든 형태의 이야기를,</span>이곳에서 자유롭게 펼쳐보세요</h2>
+    <div class="channels">
+      <a class="ch" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener"><span class="l">NAVER TALK</span><span class="v">네이버 톡톡 →</span></a>
+      <a class="ch" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener"><span class="l">KAKAOTALK</span><span class="v">카카오톡 채널 →</span></a>
+      <div class="ch"><span class="l">PHONE</span><span class="v">010-6899-4417</span></div>
+      <div class="ch"><span class="l">EMAIL</span><span class="v">hello@isseum.com</span></div>
+    </div>
+    <div class="biz">
+      <dl>
+        <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
+        <dt>대표</dt><dd>정용철</dd>
+        <dt>주소</dt><dd>서울특별시 마포구 월드컵북로 22, 지하 1층</dd>
+        <dt>사업자등록번호</dt><dd>105-04-11192</dd>
+      </dl>
+      <p class="links"><a href="rules.html">대관 규정</a><a href="guide.html">이용 안내 (시안 검토용)</a></p>
+      <p class="draft">리브랜딩 시안입니다. 실제 사이트(isseum.com)와 다를 수 있습니다.</p>
+    </div>
+  </div>
+</footer>
+<script src="sub.js"></script>
+</body>
+</html>

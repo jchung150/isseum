@@ -107,3 +107,4 @@ a.ch:hover { background: var(--paper); color: var(--cobalt); }
   .promo { transition: none; }
   * { transition: none !important; }
 }
+.page-head .hand.inline { display: inline; font-size: 1.12em; margin: 0; }
