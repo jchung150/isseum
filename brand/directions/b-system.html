@@ -19,6 +19,16 @@
     --hall: url(../../src/assets/isseum_main-hall_01.jpg);
     --lounge: url(../../src/assets/isseum_main-hall_05.jpg);
     --room: url(../../src/assets/isseum_project-room_01.jpg);
+    /* Event photos: rotated, 1600px copies of /photos (owner's real events). */
+    --ev-qa: url(img/ev_20260831_195840.jpg);
+    --ev-groups: url(img/ev_20260912_135605.jpg);
+    --ev-bar: url(img/ev_20260914_130913.jpg);
+    --ev-laptops: url(img/ev_20260917_090653.jpg);
+    --ev-talk: url(img/ev_20260917_111453.jpg);
+    --ev-podium: url(img/ev_20260918_102056.jpg);
+    --ev-full: url(img/ev_20260919_141251.jpg);
+    --ev-room: url(img/ev_20260811_142251.jpg);
+    --ev-room2: url(img/ev_20260811_142444.jpg);
     --latin: 'Space Grotesk', sans-serif;
     /* One stroke weight for every kit piece, relative to the piece's container. */
     --k: 6cqw;
@@ -91,7 +101,7 @@
 
   /* P1 rental — cobalt */
   .p1 { background: var(--cobalt); color: var(--paper); }
-  .p1 .photo { inset: 0 0 55% 0; background-image: var(--hall); mix-blend-mode: luminosity; opacity: .9; }
+  .p1 .photo { inset: 0 0 55% 0; background-image: var(--ev-full); mix-blend-mode: luminosity; opacity: .9; }
   .p1 .o { left: 7cqw; top: 64cqw; width: 30cqw; aspect-ratio: 1; border-radius: 50%; border: 6cqw solid var(--lime); }
   .p1 .i { left: 41cqw; top: 64cqw; width: 6cqw; height: 30cqw; background: var(--lime); }
   .p1 .t { left: 54cqw; right: 6cqw; top: 64cqw; font-size: 6.6cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.1; }
@@ -111,17 +121,17 @@
   .p3 .sub { left: 7cqw; top: 82cqw; font-size: 3.8cqw; line-height: 1.55; color: #44443e; }
   .p3 .bar { left: 0; right: 0; bottom: 0; height: 3cqw; background: var(--lime); }
 
-  /* Square + story for Instagram */
-  .sq1 { background: var(--paper); }
-  .sq1 .photo { inset: 0; background-image: var(--lounge); }
-  .sq1 .tag { left: 6cqw; bottom: 6cqw; background: var(--cobalt); color: var(--paper); padding: 3cqw 4cqw; font-size: 6cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.15; }
-  .sq1 .k-o { position: absolute; right: 6cqw; top: 6cqw; width: 16cqw; border-width: 4cqw; border-color: var(--lime); }
-  .st1 { background: var(--cobalt); color: var(--paper); }
-  .st1 .photo { left: 7cqw; right: 7cqw; top: 30cqw; height: 70cqw; background-image: var(--room); }
-  .st1 .m { left: 7cqw; top: 7cqw; width: 8cqw; --m: var(--paper); }
-  .st1 .h { left: 7cqw; right: 7cqw; top: 112cqw; font-size: 11cqw; font-weight: 800; letter-spacing: -0.06em; line-height: 1.05; }
-  .st1 .s { left: 7cqw; top: 158cqw; width: 30cqw; height: 4cqw; background: var(--lime); transform: rotate(-31deg); transform-origin: left; }
-  .st1 .meta { bottom: 6cqw; }
+  /* Instagram feed posters (4:5 = 1080x1350). Kit pieces become frames for event photos. */
+  .ig { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+  .ig-p { aspect-ratio: 4 / 5; position: relative; overflow: hidden; container-type: inline-size; border: 1px solid var(--ink); }
+  .ig-p .bg { position: absolute; background-size: cover; background-position: center; }
+  .en { font: 700 1em/0.98 var(--latin); letter-spacing: -0.04em; }
+  .ko { font-weight: 800; letter-spacing: -0.06em; line-height: 1.08; }
+  .carousel { display: grid; grid-template-columns: repeat(3, minmax(230px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .num { flex: none; width: 15cqw; height: 12cqw; border: 3.4cqw solid var(--ink); display: grid; place-items: center; font: 700 4.4cqw var(--latin); }
+  .step { display: flex; gap: 4cqw; align-items: center; }
+  .step .ko { font-size: 6cqw; }
+  .step p + p { font-size: 3.4cqw; line-height: 1.5; color: #44443e; }
 
   /* Web */
   .web { border: 1px solid var(--ink); background: var(--paper); overflow: hidden; }
@@ -225,15 +235,108 @@
 </section>
 
 <section class="part" id="sns">
-  <div class="ph"><span class="n">05</span><h2>인스타그램</h2><p>피드는 정사각형 사진에 코발트 라벨 하나를 얹습니다. 스토리는 세로 화면 전체를 코발트로 채웁니다. 사람이 있는 행사 사진이 들어오면 이 틀이 가장 빛납니다.</p></div>
-  <div class="posters" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+  <div class="ph"><span class="n">05</span><h2>인스타그램 포스터 · 피드 4:5</h2><p>이씀에서 실제로 열린 행사 사진을 썼습니다. 핵심은 <b>조각이 사진의 액자가 되는 것</b>입니다. 'ㅇ'이나 'ㅁ' 안에 사진을 담습니다. 외국인 관광객을 위해 한 장에 <b>영어를 위에, 한국어를 아래에</b> 함께 둡니다.</p></div>
+  <div class="ig">
+
     <div class="pc">
-      <div class="poster sq sq1"><div class="ab photo" role="img" aria-label="라운지로 꾸민 메인 홀"></div><span class="k-o"></span><p class="ab tag">라운지로<br>바꾼 메인 홀</p></div>
-      <p class="cap">피드 1:1 · 사진 + 코발트 라벨</p>
+      <div class="ig-p" style="background:var(--cobalt);color:var(--paper)">
+        <div class="bg" role="img" aria-label="세미나 중 질문하는 참석자" style="left:17cqw;top:20cqw;width:66cqw;aspect-ratio:1;border-radius:50%;background-image:var(--ev-qa);outline:6cqw solid var(--lime)"></div>
+        <p class="ab en" style="left:6cqw;top:6cqw;font-size:5cqw">Where questions<br>get asked</p>
+        <p class="ab ko" style="left:6cqw;top:97cqw;font-size:8.4cqw">질문이 오가는 곳</p>
+        <div class="meta"><span>ISSEUM / HONGDAE</span><span>SEMINAR</span></div>
+      </div>
+      <p class="cap">1. 'ㅇ' 액자</p>
     </div>
-    <div class="pc" style="max-width:300px">
-      <div class="poster st st1"><span class="ab mark m"></span><div class="ab photo" role="img" aria-label="긴 테이블이 있는 프로젝트 룸"></div><p class="ab h">작은 모임은<br>프로젝트 룸에서</p><span class="ab s"></span><div class="meta"><span>ISSEUM</span><span>HONGDAE</span></div></div>
-      <p class="cap">스토리 9:16</p>
+
+    <div class="pc">
+      <div class="ig-p" style="background:var(--lime);color:var(--ink)">
+        <p class="ab ko" style="left:6cqw;top:6cqw;font-size:9cqw;color:var(--cobalt)">메인 홀이 가득 찬 날</p>
+        <div class="bg" role="img" aria-label="참석자로 가득 찬 메인 홀" style="left:6cqw;right:6cqw;top:21cqw;height:64cqw;background-image:var(--ev-full);border:5.5cqw solid var(--ink)"></div>
+        <p class="ab en" style="left:6cqw;top:92cqw;font-size:5cqw">Talks, classes<br>&amp; workshops</p>
+        <span class="ab" style="right:6cqw;top:95cqw;width:20cqw;height:4.5cqw;background:var(--cobalt);transform:rotate(-31deg)"></span>
+        <div class="meta"><span>ISSEUM</span><span>MAIN HALL</span></div>
+      </div>
+      <p class="cap">2. 'ㅁ' 액자</p>
+    </div>
+
+    <div class="pc">
+      <div class="ig-p" style="color:var(--paper)">
+        <div class="bg" role="img" aria-label="강연대 앞에서 발표하는 연사와 청중" style="inset:0;background-image:var(--ev-podium)"></div>
+        <span class="ab" style="right:-6cqw;top:10cqw;width:44cqw;height:7cqw;background:var(--lime);transform:rotate(-31deg)"></span>
+        <div class="ab" style="left:0;bottom:0;right:22cqw;background:var(--cobalt);padding:6cqw 6cqw 14cqw">
+          <p class="ko" style="font-size:8cqw">한 사람이 말하고<br>모두가 듣는 자리</p>
+          <p class="en" style="font-size:4.4cqw;margin-top:2.4cqw;color:var(--lime)">One stage, one room</p>
+        </div>
+        <div class="meta" style="right:28cqw"><span>ISSEUM</span><span>TALK</span></div>
+      </div>
+      <p class="cap">3. 사진 꽉 채우기 + 코발트 라벨</p>
+    </div>
+
+    <div class="pc">
+      <div class="ig-p" style="background:var(--paper);color:var(--ink)">
+        <div class="bg" role="img" aria-label="프로젝트 룸에서 노트북을 펴고 회의하는 사람들" style="left:30cqw;right:0;top:0;height:86cqw;background-image:var(--ev-room)"></div>
+        <span class="ab" style="left:6cqw;top:8cqw;width:18cqw;aspect-ratio:1;border-radius:50%;border:5cqw solid var(--cobalt)"></span>
+        <span class="ab" style="left:12.5cqw;top:32cqw;width:5cqw;height:24cqw;background:var(--ink)"></span>
+        <p class="ab en" style="left:6cqw;top:91cqw;font-size:4.8cqw;color:var(--cobalt)">For smaller circles</p>
+        <p class="ab ko" style="left:6cqw;top:98cqw;font-size:8.2cqw">작은 모임은 프로젝트 룸</p>
+        <div class="meta"><span>ISSEUM</span><span>PROJECT ROOM</span></div>
+      </div>
+      <p class="cap">4. 세로 사진 + 'ㅇ' 'ㅣ'</p>
+    </div>
+
+    <div class="pc">
+      <div class="ig-p" style="background:var(--lime);color:var(--ink)">
+        <div class="bg" role="img" aria-label="바 카운터에 차려진 커피와 다과" style="left:6cqw;top:6cqw;width:62cqw;aspect-ratio:1;background-image:var(--ev-bar);border:5cqw solid var(--cobalt)"></div>
+        <span class="ab" style="right:-14cqw;top:12cqw;width:40cqw;aspect-ratio:1;border-radius:50%;border:5cqw solid var(--ink)"></span>
+        <p class="ab en" style="left:6cqw;top:80cqw;font-size:5cqw;color:var(--cobalt)">Coffee breaks at the bar</p>
+        <p class="ab ko" style="left:6cqw;top:88cqw;font-size:8.4cqw">쉬는 시간은 바에서</p>
+        <div class="meta"><span>ISSEUM</span><span>BAR</span></div>
+      </div>
+      <p class="cap">5. 'ㅁ' 액자 + 잘린 'ㅇ'</p>
+    </div>
+
+    <div class="pc">
+      <div class="ig-p" style="background:var(--paper);color:var(--ink)">
+        <span class="note">시안용 예시</span>
+        <span class="ab" style="right:-20cqw;top:-20cqw;width:58cqw;aspect-ratio:1;border-radius:50%;border:11cqw solid var(--cobalt)"></span>
+        <p class="ab f-lat" style="left:6cqw;top:7cqw;font-weight:700;font-size:3.4cqw;letter-spacing:.18em;color:var(--cobalt)">COMING 2027</p>
+        <p class="ab ko" style="left:6cqw;top:30cqw;font-size:10cqw">새로운 일이<br>일어나는 곳</p>
+        <p class="ab en" style="left:6cqw;top:55cqw;font-size:4.6cqw">Where new things happen.</p>
+        <div class="ab" style="left:6cqw;right:6cqw;top:68cqw;height:44cqw;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.4cqw">
+          <div class="bg" role="img" aria-label="테이블별로 모여 앉은 워크숍" style="position:static;background-image:var(--ev-groups)"></div>
+          <div class="bg" role="img" aria-label="프로젝트 룸 회의" style="position:static;background-image:var(--ev-room2)"></div>
+          <div class="bg" role="img" aria-label="화면 앞에서 발표하는 연사" style="position:static;background-image:var(--ev-talk)"></div>
+        </div>
+        <div class="ab" style="left:0;right:0;bottom:0;height:2.6cqw;background:var(--lime)"></div>
+      </div>
+      <p class="cap">6. 사진 띠 · 공지</p>
+    </div>
+
+  </div>
+
+  <div class="ph" style="margin-top:40px"><h2 style="font-size:20px">캐러셀 · 대관 절차 3장</h2><p>넘겨 보는 게시물입니다. 번호는 'ㅁ' 안에 넣습니다. 내용은 지금 사이트의 대관 절차를 그대로 옮겼습니다.</p></div>
+  <div class="carousel">
+    <div class="ig-p" style="color:var(--paper)">
+      <div class="bg" role="img" aria-label="노트북을 펴고 워크숍에 참여한 사람들" style="inset:0 0 48% 0;background-image:var(--ev-laptops)"></div>
+      <div class="ab" style="inset:auto 0 0 0;height:48%;background:var(--cobalt)"></div>
+      <p class="ab ko" style="left:6cqw;top:70cqw;font-size:10cqw">이씀을<br>빌리는 법</p>
+      <p class="ab en" style="left:6cqw;top:96cqw;font-size:4.6cqw;color:var(--lime)">How to book Isseum →</p>
+      <div class="meta"><span>ISSEUM</span><span>1 / 3</span></div>
+    </div>
+    <div class="ig-p" style="background:var(--paper)">
+      <div class="ab" style="left:6cqw;right:6cqw;top:8cqw;display:grid;gap:7cqw">
+        <div class="step"><span class="num" style="border-color:var(--cobalt)">1</span><div><p class="ko">일정 문의</p><p>날짜, 시간, 인원, 행사 성격을 남겨 주세요.</p></div></div>
+        <div class="step"><span class="num">2</span><div><p class="ko">네이버 예약 · 결제</p><p>가능 안내를 받으면 같은 시간으로 예약해 주세요.</p></div></div>
+        <div class="step"><span class="num">3</span><div><p class="ko">이용 매뉴얼 전송</p><p>이용 1시간 전, 출입 방법을 문자로 보내드립니다.</p></div></div>
+        <div class="step"><span class="num">4</span><div><p class="ko">입실 및 이용</p><p>이용 후 원상복구하고 퇴실하시면 됩니다.</p></div></div>
+      </div>
+      <div class="meta"><span>ISSEUM</span><span>2 / 3</span></div>
+    </div>
+    <div class="ig-p" style="background:var(--lime);color:var(--ink)">
+      <span class="ab" style="left:8cqw;top:30cqw;width:62cqw;height:9cqw;background:var(--cobalt);transform:rotate(-31deg)"></span>
+      <p class="ab ko" style="left:6cqw;top:70cqw;font-size:9cqw;color:var(--cobalt)">문의는 톡톡이나<br>카카오톡으로</p>
+      <p class="ab en" style="left:6cqw;top:96cqw;font-size:4.4cqw">isseum.com</p>
+      <div class="meta"><span>ISSEUM</span><span>3 / 3</span></div>
     </div>
   </div>
 </section>
@@ -252,7 +355,8 @@
 
 <div class="foot">
   <p><b>레퍼런스와 구별되는 지점.</b> 색은 같지만 형태는 이씀 마크에서 나왔습니다. 한국어 제목이 먼저 오고 굵게 섭니다. 조각이 화면 밖으로 잘려 나가는 구성도 이씀만의 것입니다. 리오프라인의 로고, 글꼴, 화면 구성은 쓰지 않았습니다.</p>
-  <p style="margin-top:10px"><b>남은 것.</b> 사람이 있는 행사 사진, 슬로건 확정, 프로그램 이름과 일정.</p>
+  <p style="margin-top:10px"><b>얼굴이 보이는 사진.</b> 행사 사진에는 참석자 얼굴이 알아볼 수 있게 찍혀 있습니다. 시안에서는 괜찮지만, 인스타그램에 올리기 전에는 주최 측이나 참석자의 동의가 필요합니다. 동의가 어렵다면 뒷모습, 손, 위에서 찍은 사진이 안전합니다.</p>
+  <p style="margin-top:10px"><b>남은 것.</b> 슬로건 확정, 프로그램 이름과 일정, 클레이 워크숍 사진.</p>
 </div>
 </main>
 </body>
