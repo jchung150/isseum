@@ -1,132 +1,146 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/isseum-logo.png';
-import { nav, site } from '../config/site';
-import { header } from '../data/header';
-import InquiryButtons from './InquiryButtons.astro';
+/**
+ * Site header: handwritten wordmark, menu, language switch and the inquiry CTA.
+ * Every page renders it; anchors point at the home page of the current language,
+ * and the inquiry CTA at the footer, which every page has.
+ */
+import { content } from '../data';
+import { localePath, type Lang } from '../data/i18n';
 
+interface Props {
+  lang: Lang;
+  /** The same page in the other language. Defaults to that language's home. */
+  alternate?: string;
+}
+
+const { lang } = Astro.props;
+const other: Lang = lang === 'ko' ? 'en' : 'ko';
+const alternate = Astro.props.alternate ?? localePath(other);
+const { header } = content[lang].common;
+const home = localePath(lang);
 ---
 
-<header>
-  <div class="bar container">
-    <a href="/" class="logo" aria-label={header.homeLabel(site.name, site.nameLatin)}>
-      <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={144} densities={[1, 2]} loading="eager" />
-    </a>
-
-    <nav class="gnb" aria-label={header.nav}>
-      {
-        nav.map((item) => (
-          <a
-            href={item.href}
-            class="gnb__link"
-          >
-            {item.label}
-          </a>
-        ))
-      }
+<header class="hdr">
+  <div class="wrap hdr__bar">
+    <a href={home} class="logo" aria-label={header.homeLabel}>{content[lang].common.site.name}</a>
+    <nav class="nav" aria-label={header.navLabel}>
+      <a href={`${home}#space`}>{header.menu.space}</a>
+      <a href={`${home}#process`}>{header.menu.process}</a>
+      <span class="soon">{header.program.label}<small>{header.program.soon}</small></span>
+      <a href={`${home}#faq`}>{header.menu.faq}</a>
     </nav>
-
     <div class="actions">
-      <InquiryButtons variant="primary" />
+      <a class="lang" href={alternate} hreflang={other} lang={other} aria-label={header.langSwitch.aria}
+        >{header.langSwitch.label}</a
+      >
+      <a class="pill pill--solid pill--sm" href="#contact">{header.inquire}</a>
     </div>
   </div>
-
-  <nav class="tabs" aria-label={header.navMobile}>
-    {
-      nav.map((item) => (
-        <a
-          href={item.href}
-          class="tabs__link"
-        >
-          {item.label}
-        </a>
-      ))
-    }
-  </nav>
 </header>
 
 <style>
-  header {
+  .hdr {
     position: sticky;
-    top: 0;
+    top: env(safe-area-inset-top, 0px);
     z-index: 50;
-    background: var(--bg-sticky);
-    backdrop-filter: var(--backdrop-blur);
-    border-bottom: var(--border-hairline);
+    background: var(--page);
   }
 
-  .bar {
-    height: var(--header-height);
+  .hdr__bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-4) 40px;
+    padding-block: 26px;
+  }
+
+  /* Wordmark set in the handwriting face until the owner's own lettering arrives. */
+  .logo {
+    font-family: var(--font-hand);
+    font-weight: 300;
+    font-size: var(--type-logo);
+    line-height: 1;
+    letter-spacing: var(--track-logo);
+    color: var(--ink);
+  }
+
+  .logo:hover {
+    color: var(--cobalt);
+  }
+
+  .nav {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 32px;
+    font-size: var(--type-nav);
+    font-weight: 500;
+  }
+
+  .nav a:hover {
+    color: var(--cobalt);
+  }
+
+  .soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink);
+  }
+
+  .soon small {
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--lime);
+    color: var(--cobalt);
+    font-size: var(--type-badge);
+    font-weight: 700;
   }
 
   .actions {
     display: flex;
+    align-items: center;
     gap: var(--space-2);
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
+  .lang {
+    padding: var(--space-2) var(--space-3);
+    border: var(--rule-strong) solid var(--cobalt);
+    border-radius: var(--radius-pill);
+    color: var(--cobalt);
+    font: 700 13px var(--font-latin);
   }
 
-  .logo :global(img) {
-    height: var(--logo-height);
-    width: auto;
+  .lang:hover {
+    background: var(--lime);
+    color: var(--cobalt);
   }
 
-  /* Desktop nav — hidden below the 900px breakpoint, where .tabs takes over. */
-  .gnb {
-    display: none;
-    align-items: center;
-    gap: var(--gap-md);
-  }
-
-  .gnb__link {
-    font-size: var(--text-nav);
-    font-weight: 500;
-    letter-spacing: var(--tracking-ui);
-  }
-
-  /* Mobile: a horizontally-scrolling tab strip, not a hamburger.
-     Better for a 4-item nav — see design/COMPONENTS.md §14. */
-  .tabs {
-    display: flex;
-    border-top: var(--border-hairline);
-    overflow-x: auto;
-  }
-
-  .tabs__link {
-    flex: 1;
-    text-align: center;
-    padding: var(--space-3) 6px;
-    font-size: var(--text-meta);
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .tabs__link + .tabs__link {
-    border-left: var(--border-hairline);
-  }
-
-  @media (min-width: 900px) {
-    .gnb {
-      display: flex;
+  /* Phone: wordmark + actions on one row, the menu as its own scrolling row. */
+  @media (max-width: 899px) {
+    .hdr__bar {
+      gap: var(--space-3);
+      padding-block: 14px;
     }
-    .tabs {
-      display: none;
+
+    .nav {
+      order: 3;
+      flex: 1 0 100%;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 22px;
+      padding-bottom: 2px;
+      font-size: var(--type-nav-mobile);
+      white-space: nowrap;
     }
   }
 </style>
 
 <script>
-  // The sticky header is 101px on desktop but taller on mobile, where the tab
-  // strip sits under the bar. Anchor offsets depend on it, so measure rather
-  // than hard-code two numbers that drift apart.
-  const header = document.querySelector('header');
+  // Anchor offsets depend on the sticky header's height, which differs between
+  // desktop and phone (the menu wraps to its own row). Measure, don't hard-code.
+  const header = document.querySelector('.hdr');
   if (header) {
     const sync = () =>
       document.documentElement.style.setProperty(

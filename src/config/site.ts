@@ -1,15 +1,9 @@
 import { bookingCta, inquiryCta } from '../data/cta';
 
-/** Site-wide constants ported from the `data-props` and `renderVals()` of design/*.dc.html. */
-
-export const site = {
-  name: '이씀',
-  nameLatin: 'ISSEUM',
-  description:
-    '홍대입구역 인근 동교동에 위치한 약 60평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
-  locale: 'ko_KR',
-  lang: 'ko',
-} as const;
+/*
+ * 언어와 무관한 설정: 외부 링크, 사업자 정보, 키, 플래그. 화면에 보이는 문장은
+ * src/data/(ko|en)/에 있다. 이름 · 설명 · 메뉴는 2026-11 리브랜딩 때 그리로 옮겼다.
+ */
 
 /**
  * 네이버 예약. Single source for every booking CTA on the site.
@@ -83,26 +77,6 @@ export const naverMapUrl = 'https://naver.me/xRgs5iMX';
  * sitemap. astro.config.mjs imports this same flag for the sitemap filter.
  */
 export const showEventsPage = false;
-
-export type NavItem = {
-  label: string;
-  href: string;
-};
-
-/**
- * Single-page anchors. There is no active-state tracking: that needs a scroll
- * observer, and the home page is otherwise nearly JS-free. Plain anchors work
- * without a line of script.
- */
-const allNav: NavItem[] = [
-  { label: '공간 안내', href: '/#space' },
-  { label: '보유 장비', href: '/#equipment' },
-  { label: '대관 요금', href: '/#price' },
-  { label: '대관 절차', href: '/#process' },
-  { label: '자주 묻는 질문', href: '/#faq' },
-];
-
-export const nav: NavItem[] = allNav;
 
 /*
  * 푸터의 '주요 안내' 링크 목록은 삭제됐다. 이용 안내 매뉴얼은 실제 대관하는

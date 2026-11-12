@@ -1,15 +1,22 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { business, naverMapUrl, naverSiteVerification, site } from '../config/site';
-import { CLOSE_HOUR, OPEN_HOUR } from '../data/booking';
-import { layout } from '../data/layout';
-import { rates } from '../data/pricing';
+import { business, naverMapUrl, naverSiteVerification } from '../config/site';
+import { content } from '../data';
+import { CLOSE_HOUR, MAX_GUESTS, OPEN_HOUR, RATES } from '../data/facts';
+import { LANGS, langMeta, localePath, type Lang } from '../data/i18n';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
 interface Props {
   title: string;
+  /** Page language. Pages not yet translated are Korean only. */
+  lang?: Lang;
+  /**
+   * The page exists in every language at the same path (`/x` and `/en/x`).
+   * Adds hreflang alternates so search engines pair the two.
+   */
+  translated?: boolean;
   description?: string;
   /** Set true on the home page so the title isn't doubled up. */
   isHome?: boolean;
@@ -17,19 +24,27 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description = site.description, isHome = false, noindex = false } = Astro.props;
+const { title, lang = 'ko', translated = false, isHome = false, noindex = false } = Astro.props;
+const { site, skipLink } = content[lang].common;
+const description = Astro.props.description ?? site.description;
+/** 한국어는 '이씀 ISSEUM', 영어는 'ISSEUM' — 같은 이름을 두 번 쓰지 않는다. */
+const brand = lang === 'ko' ? `${site.name} ISSEUM` : site.name;
 
-const fullTitle = isHome
-  ? `${site.name} ISSEUM — ${layout.tagline}`
-  : `${title} | ${site.name} ISSEUM`;
+const fullTitle = isHome ? `${brand} — ${site.tagline}` : `${title} | ${brand}`;
+
+// Path of this page with any /en prefix removed, so alternates can be rebuilt per language.
+const basePath = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const alternates = translated
+  ? LANGS.map((l) => ({ lang: l, href: new URL(localePath(l, basePath), Astro.site).href }))
+  : [];
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 // Absolute URL required — Kakao, Slack and Facebook won't resolve a relative one.
 const ogImage = new URL('/og-image.jpg', Astro.site).href;
 
 const hhmm = (h: number) => `${String(h).padStart(2, '0')}:00`;
-/** 시간당 요금 범위. pricing.ts에서 계산하므로 요금이 바뀌면 따라온다. */
-const prices = rates.map((rate) => rate.price);
+/** 시간당 요금 범위. facts.ts에서 계산하므로 요금이 바뀌면 따라온다. */
+const prices = RATES.map((rate) => rate.price);
 
 // 구조화 데이터. EventVenue는 Place의 하위 타입이라 영업시간·가격대 같은 사업체
 // 속성을 받지 못한다. LocalBusiness를 함께 선언해 두 쪽 모두 유효하게 만든다 —
@@ -37,9 +52,9 @@ const prices = rates.map((rate) => rate.price);
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': ['EventVenue', 'LocalBusiness'],
-  name: `${site.name} ISSEUM`,
+  name: brand,
   description: site.description,
-  url: Astro.site?.href,
+  url: new URL(localePath(lang), Astro.site).href,
   image: ogImage,
   telephone: business.phone,
   email: business.email,
@@ -60,32 +75,34 @@ const jsonLd = {
     closes: hhmm(CLOSE_HOUR),
   },
   priceRange: `₩${Math.min(...prices).toLocaleString('en-US')}–₩${Math.max(...prices).toLocaleString('en-US')}`,
-  maximumAttendeeCapacity: 90,
+  maximumAttendeeCapacity: MAX_GUESTS,
 };
 ---
 
 <!doctype html>
-<html lang={site.lang}>
+<html lang={langMeta[lang].html}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.lang} href={alt.href} />)}
+    {alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
     <meta name="naver-site-verification" content={naverSiteVerification} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={`${site.name} ISSEUM`} />
+    <meta property="og:site_name" content={brand} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={site.locale} />
+    <meta property="og:locale" content={langMeta[lang].ogLocale} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${site.name} ISSEUM — ${layout.tagline}`} />
+    <meta property="og:image:alt" content={`${brand} — ${site.tagline}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
 
@@ -94,15 +111,16 @@ const jsonLd = {
     <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#FBFBF9" />
+    <meta name="theme-color" content="#FAFAF8" />
 
     <!-- TODO: self-host + subset these. Korean webfonts are heavy and the CDN is a
          third-party dependency on every page load. See design/TOKENS.md §9. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Noto Serif KR is only for the pages not yet moved to the new brand. -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&family=Noto+Serif+KR:wght@400;500&display=swap"
     />
     <link
       rel="stylesheet"
@@ -113,11 +131,12 @@ const jsonLd = {
   </head>
 
   <body>
-    <a href="#main" class="skip-link">{layout.skipLink}</a>
-    <Header />
+    <a href="#main" class="skip-link">{skipLink}</a>
+    <slot name="top" />
+    <Header lang={lang} alternate={translated ? localePath(lang === 'ko' ? 'en' : 'ko', basePath) : undefined} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

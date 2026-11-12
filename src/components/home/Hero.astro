@@ -1,0 +1,172 @@
+---
+/**
+ * Hero: two-voice heading (handwritten line over heavy sans), lead, two CTAs,
+ * and a rounded photo that crossfades through the event shots.
+ */
+import { Image } from 'astro:assets';
+import Emblem from '../Emblem.astro';
+import { content } from '../../data';
+import type { Lang } from '../../data/i18n';
+import { heroPhotos, photos } from '../../data/media';
+
+interface Props {
+  lang: Lang;
+}
+
+const { hero } = content[Astro.props.lang].home;
+/** Seconds each photo holds before the next fades in. Matches the keyframes below. */
+const STEP = 5;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title" class="hero__title"><span class="hand">{hero.hand}</span>{hero.rest}</h1>
+      <p class="hero__lead">{hero.lead}</p>
+      <div class="hero__cta">
+        <a class="pill pill--solid" href="#contact">{hero.primary}</a>
+        <a class="pill" href="#space">{hero.secondary}</a>
+      </div>
+    </div>
+
+    <div class="hero__vis">
+      <div class="hero__photo" role="img" aria-label={hero.photosLabel} style={`--cycle: ${heroPhotos.length * STEP}s`}>
+        {
+          heroPhotos.map((id, i) => (
+            <Image
+              src={photos[id]}
+              alt=""
+              widths={[600, 900, 1200]}
+              sizes="(min-width: 1200px) 560px, (min-width: 900px) 46vw, 100vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+              style={i > 0 ? `animation-delay: ${i * STEP}s` : undefined}
+            />
+          ))
+        }
+      </div>
+      <Emblem class="hero__emb" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 48px;
+    padding-block: var(--space-hero-top) var(--space-hero-bottom);
+  }
+
+  @media (min-width: 900px) {
+    .hero__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-hero);
+    }
+  }
+
+  .hero__copy {
+    display: grid;
+    align-content: center;
+    gap: 28px;
+    min-width: 0;
+  }
+
+  .hero__eyebrow {
+    justify-self: start;
+    padding: var(--space-1) 10px;
+    background: var(--lime);
+    color: var(--ink);
+    font: 700 var(--type-meta) var(--font-latin);
+    letter-spacing: 0.02em;
+  }
+
+  .hero__title {
+    font-size: var(--type-hero);
+    font-weight: 900;
+    letter-spacing: var(--track-hero);
+    line-height: var(--lead-hero);
+    text-wrap: balance;
+  }
+
+  :lang(en) .hero__title {
+    font-size: var(--type-hero-en);
+    letter-spacing: var(--track-hero-en);
+  }
+
+  .hero__title .hand {
+    margin-bottom: 0.04em;
+  }
+
+  .hero__lead {
+    max-width: 28em;
+    color: var(--body);
+    font-size: var(--type-lead);
+    line-height: var(--lead-relaxed);
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero__vis {
+    position: relative;
+  }
+
+  .hero__photo {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--radius-photo);
+    background: var(--mist);
+  }
+
+  .hero__photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Each overlay fades in over ~1s, holds, fades out; staggered STEP apart. The
+     percentages assume five photos (20% each) — retune them if heroPhotos changes length.
+     The
+     first photo stays underneath, so it shows between them and when motion is off. */
+  .hero__photo :global(img + img) {
+    opacity: 0;
+    animation: hero-fade var(--cycle) ease-in-out infinite backwards;
+  }
+
+  @keyframes hero-fade {
+    0% { opacity: 0; }
+    4% { opacity: 1; }
+    20% { opacity: 1; }
+    24% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__photo :global(img + img) {
+      animation: none;
+    }
+  }
+
+  .hero__vis :global(.hero__emb) {
+    position: absolute;
+    left: -28px;
+    bottom: 48px;
+    --w: 92px;
+  }
+
+  @media (max-width: 899px) {
+    .hero__vis :global(.hero__emb) {
+      left: -6px;
+      --w: 64px;
+    }
+  }
+</style>

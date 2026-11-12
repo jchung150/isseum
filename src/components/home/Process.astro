@@ -1,0 +1,128 @@
+---
+/** 대관 절차: four steps on a cobalt track, each numbered in a kit square. */
+import { content } from '../../data';
+import { pad2, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { process } = content[Astro.props.lang].home;
+---
+
+<section class="band proc" id="process" aria-labelledby="process-title">
+  <div class="wrap">
+    <div class="band__head">
+      <h2 id="process-title" class="band__title">{process.title}</h2>
+      <p class="band__desc">{process.desc}</p>
+    </div>
+    <ol class="flow">
+      {
+        process.steps.map((step, i) => (
+          <li>
+            <span class="sq" aria-hidden="true">{pad2(i + 1)}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .proc {
+    background: var(--lime);
+  }
+
+  .proc .band__desc {
+    color: var(--on-lime-body);
+  }
+
+  .flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  /* The track: horizontal behind the squares on desktop, vertical on phone. */
+  .flow::before {
+    content: '';
+    position: absolute;
+    left: 41px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--cobalt);
+  }
+
+  @media (min-width: 900px) {
+    .flow {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    .flow::before {
+      left: 0;
+      right: 0;
+      top: 44px;
+      bottom: auto;
+      width: auto;
+      height: 6px;
+    }
+  }
+
+  li {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+  }
+
+  .sq {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    border: 14px solid var(--cobalt);
+    background: var(--lime);
+    color: var(--cobalt);
+    font: 700 24px var(--font-latin);
+  }
+
+  li:first-child .sq {
+    background: var(--cobalt);
+    color: var(--lime);
+  }
+
+  @media (max-width: 899px) {
+    li {
+      padding-left: 116px;
+    }
+
+    .sq {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  h3 {
+    font-size: var(--type-step);
+    font-weight: 900;
+    letter-spacing: var(--track-title);
+    line-height: var(--lead-tight);
+  }
+
+  :lang(en) h3 {
+    letter-spacing: var(--track-title-en);
+  }
+
+  p {
+    color: var(--on-lime-body);
+    font-size: var(--type-small);
+  }
+</style>

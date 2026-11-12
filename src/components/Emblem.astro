@@ -1,0 +1,75 @@
+---
+/**
+ * The logo kit's four pieces (ㅇ ㅣ / ㅁ) stacked on a slab. One stroke weight,
+ * sized by --w. Purely decorative; always aria-hidden.
+ */
+interface Props {
+  /** cobalt slab with white strokes, or the inverse. */
+  tone?: 'cobalt' | 'paper';
+  class?: string;
+}
+const { tone = 'cobalt', class: extra } = Astro.props;
+---
+
+<span class:list={['emb', `emb--${tone}`, extra]} aria-hidden="true"
+  ><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span
+>
+
+<style>
+  .emb {
+    --w: 96px;
+    --s: calc(var(--w) * 0.07);
+    --fg: var(--paper);
+    position: relative;
+    display: block;
+    flex: none;
+    width: var(--w);
+    aspect-ratio: 232 / 520;
+    background: var(--cobalt);
+  }
+
+  .emb--paper {
+    --fg: var(--cobalt);
+    background: var(--paper);
+  }
+
+  i {
+    position: absolute;
+    display: block;
+  }
+
+  .o {
+    left: 27%;
+    top: 7%;
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: var(--s) solid var(--fg);
+  }
+
+  .bar {
+    left: 46.5%;
+    top: 32%;
+    width: var(--s);
+    height: 16%;
+    background: var(--fg);
+  }
+
+  /* The slash runs at the kit's -31° angle. */
+  .sl {
+    left: 22%;
+    top: 52%;
+    width: 56%;
+    height: 15%;
+    background: var(--fg);
+    clip-path: polygon(0 74%, 100% 0, 100% 26%, 0 100%);
+  }
+
+  .sq {
+    left: 25%;
+    top: 74%;
+    width: 50%;
+    height: 17%;
+    border: var(--s) solid var(--fg);
+  }
+</style>

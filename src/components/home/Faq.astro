@@ -1,0 +1,174 @@
+---
+/**
+ * FAQ: native <details>, all closed on load. Answers can carry a two-column
+ * table (rates, refunds) and a numbered list (equipment).
+ */
+import { content } from '../../data';
+import { pad2, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { faq } = content[Astro.props.lang].home;
+---
+
+<section class="band" id="faq" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="band__head">
+      <h2 id="faq-title" class="band__title">{faq.title}</h2>
+      <p class="band__desc">{faq.desc}</p>
+    </div>
+    <div class="faq">
+      {
+        faq.items.map((item) => (
+          <details id={item.id}>
+            <summary>
+              {item.q}
+              <span class="pm" aria-hidden="true" />
+            </summary>
+            <div class="a">
+              {item.a.map((p) => <p>{p}</p>)}
+              {item.table && (
+                <table class="tbl">
+                  <caption class="visually-hidden">{item.table.caption}</caption>
+                  <tbody>
+                    {item.table.rows.map((row) => (
+                      <tr>
+                        <th scope="row">{row.label}</th>
+                        <td>{row.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              {item.list && (
+                <ol class="list">
+                  {item.list.map((name, i) => (
+                    <li>
+                      <span aria-hidden="true">{pad2(i + 1)}</span>
+                      {name}
+                    </li>
+                  ))}
+                </ol>
+              )}
+              {item.after?.map((p) => <p>{p}</p>)}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    border-top: var(--rule) solid var(--ink);
+  }
+
+  details {
+    border-bottom: var(--rule) solid var(--ink);
+    scroll-margin-top: var(--header-h, 80px);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--type-faq-q);
+    font-weight: 700;
+    letter-spacing: var(--track-q);
+  }
+
+  :lang(en) summary {
+    letter-spacing: var(--track-title-en);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* The kit's ㅇ as the open/closed marker: hollow when closed, lime when open. */
+  .pm {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border: 6px solid var(--cobalt);
+    border-radius: 50%;
+    transition: background var(--transition-fast);
+  }
+
+  details[open] .pm {
+    background: var(--lime);
+  }
+
+  .a {
+    display: grid;
+    gap: 10px;
+    max-width: 44em;
+    padding-bottom: var(--space-6);
+    color: var(--body);
+  }
+
+  .tbl {
+    max-width: 420px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: var(--rule) solid var(--mist);
+    border-radius: var(--radius-table);
+    overflow: hidden;
+    font-size: var(--type-table);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tbl th,
+  .tbl td {
+    padding: 9px 14px;
+    background: var(--paper);
+    font-weight: 400;
+    text-align: left;
+  }
+
+  .tbl td {
+    font-weight: 700;
+    text-align: right;
+    color: var(--ink);
+  }
+
+  .tbl tr + tr > * {
+    border-top: var(--rule) solid var(--mist);
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 32px;
+    margin-top: var(--space-1);
+  }
+
+  @media (min-width: 640px) {
+    .list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .list li {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: var(--rule) solid var(--mist);
+    font-size: var(--type-small);
+  }
+
+  .list span {
+    flex: none;
+    width: 20px;
+    padding-top: 3px;
+    color: var(--muted);
+    font: 700 var(--type-label) var(--font-latin);
+  }
+</style>

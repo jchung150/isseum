@@ -17,9 +17,12 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--page);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-ko);
+  font-size: var(--type-body);
+  line-height: var(--lead-body);
+  letter-spacing: var(--track-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
@@ -78,14 +81,17 @@ button {
    affordance a keyboard user gets. This is not optional. */
 
 :focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
-  border-radius: var(--radius);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
 }
 
-/* Dark surfaces need the inverse ring to stay visible. */
+/* Colored surfaces need a ring that stays visible against them. */
 .on-ink :focus-visible {
-  outline-color: var(--bg);
+  outline-color: var(--lime);
+}
+
+.on-cobalt :focus-visible {
+  outline-color: var(--lime);
 }
 
 .skip-link {
@@ -209,3 +215,90 @@ button {
   );
 }
 
+
+/* ---------- Brand primitives (2026 rebrand) ---------- */
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-left: max(var(--side), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--side), env(safe-area-inset-right, 0px));
+}
+
+/* The handwritten line of a two-voice heading. Sits on its own line above the
+   heavy sans. Placeholder face until the owner's handwriting is digitised. */
+.hand {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 300;
+  font-size: var(--hand-scale);
+  letter-spacing: var(--track-body);
+  line-height: 0.92;
+}
+
+/* Rounded button. Outline by default; --solid is the primary action. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--pill-pad);
+  border-radius: var(--radius-pill);
+  border: var(--rule-strong) solid var(--cobalt);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--type-small);
+  font-weight: 700;
+  line-height: var(--lead-tight);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.pill:hover {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.pill--solid {
+  background: var(--cobalt);
+  color: var(--paper);
+}
+
+.pill--solid:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.pill--sm {
+  padding: var(--pill-pad-sm);
+  font-size: var(--type-meta);
+}
+
+/* Section heading shared by every band on the home page. */
+.band {
+  padding-block: var(--space-band);
+  scroll-margin-top: var(--header-h, 80px);
+}
+
+.band__title {
+  font-size: var(--type-section);
+  font-weight: 900;
+  letter-spacing: var(--track-section);
+  line-height: var(--lead-section);
+  text-wrap: balance;
+}
+
+.band__desc {
+  margin-top: var(--gap-desc);
+  max-width: 40em;
+  font-size: var(--type-lead);
+  color: var(--body);
+}
+
+.band__head {
+  margin-bottom: var(--space-head);
+}
+
+:lang(en) .band__title {
+  letter-spacing: var(--track-section-en);
+}

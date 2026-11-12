@@ -1,0 +1,148 @@
+---
+/**
+ * One-line notice that runs left to right across the top of the home page.
+ * The speed is set in script from the distance so it reads the same on every
+ * screen width. Hover or keyboard focus pauses it; ✕ collapses it for good.
+ * With reduced motion it stands still, centred.
+ */
+import { content } from '../../data';
+import type { Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { notice } = content[Astro.props.lang].common;
+---
+
+<div class="promo on-cobalt" role="region" aria-label={notice.region} data-promo>
+  <div class="promo__track" data-ticker>
+    {notice.text}<a href="#contact">{notice.link}</a>
+  </div>
+  <button type="button" class="promo__close" data-promo-close aria-label={notice.close}>
+    <span aria-hidden="true">✕</span>
+  </button>
+</div>
+
+<style>
+  .promo {
+    position: relative;
+    overflow: hidden;
+    background: var(--cobalt);
+    color: var(--paper);
+    font-size: var(--type-notice);
+    font-weight: 500;
+    transition: height 0.35s ease;
+  }
+
+  .promo__track {
+    width: max-content;
+    padding-block: 18px;
+    white-space: nowrap;
+    animation: promo-run 30s linear infinite;
+  }
+
+  .promo:hover .promo__track,
+  .promo:focus-within .promo__track {
+    animation-play-state: paused;
+  }
+
+  .promo a {
+    margin-left: var(--space-3);
+    color: var(--paper);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .promo a:hover {
+    color: var(--lime);
+  }
+
+  @keyframes promo-run {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100vw);
+    }
+  }
+
+  .promo__close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: max(var(--space-2), env(safe-area-inset-right, 0px));
+    z-index: 2;
+    width: 56px;
+    border: 0;
+    background: var(--cobalt);
+    color: var(--paper);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    /* Fades the running line out before it reaches the button. */
+    box-shadow: -16px 0 16px -4px var(--cobalt);
+  }
+
+  .promo__close:hover {
+    color: var(--lime);
+  }
+
+  .promo__close:focus-visible {
+    outline-offset: -6px;
+  }
+
+  @media (max-width: 899px) {
+    .promo {
+      font-size: var(--type-notice-mobile);
+    }
+
+    .promo__track {
+      padding-block: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .promo {
+      transition: none;
+    }
+
+    .promo__track {
+      width: auto;
+      padding-inline: var(--space-4) 64px;
+      text-align: center;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // ~58px per second whatever the screen width.
+  const PX_PER_SECOND = 58;
+  const tick = document.querySelector<HTMLElement>('[data-ticker]');
+  const setPace = () => {
+    if (!tick) return;
+    const seconds = (tick.offsetWidth + innerWidth) / PX_PER_SECOND;
+    tick.style.animationDuration = `${seconds}s`;
+    // Start with the line already on screen rather than an empty bar.
+    tick.style.animationDelay = `${-seconds * 0.4}s`;
+  };
+  setPace();
+  addEventListener('resize', setPace);
+
+  // Close: pin the height, collapse it to 0, then remove it from the page.
+  const promo = document.querySelector<HTMLElement>('[data-promo]');
+  const close = document.querySelector('[data-promo-close]');
+  if (promo && close) {
+    close.addEventListener('click', () => {
+      promo.style.height = `${promo.offsetHeight}px`;
+      void promo.offsetHeight; // commit the pinned height before animating
+      promo.style.height = '0px';
+      const done = () => {
+        promo.hidden = true;
+      };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) done();
+      else promo.addEventListener('transitionend', done, { once: true });
+    });
+  }
+</script>

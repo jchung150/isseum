@@ -1,17 +1,119 @@
 /**
  * ISSEUM design tokens.
- * Source of truth: design/TOKENS.md — do not introduce literal values in components.
  *
- * Normalizations applied here (see design/TOKENS.md §9):
- *  - #FFF dropped; --bg is the single "white".
- *  - rgb(45,45,42) folded into --text-strong.
- *  - Display scale consolidated 13 → 11 steps (1px-at-max-width duplicates merged).
- *  - Breakpoints collapsed 6 → 3 (640 / 900 / 1100).
+ * 두 층으로 되어 있다.
+ *   1. BRAND  — 2026-11 리브랜딩. 코발트 · 라임 · 둥근 모서리 · 손글씨(brand/decisions.md).
+ *   2. LEGACY — 아직 옮기지 않은 페이지(/rules, /guide, /booking, /events, 404)가 쓰는 값.
+ *               그 페이지들을 새 브랜드로 옮기고 나면 통째로 지운다.
+ *
+ * 리터럴 hex나 매직 픽셀은 컴포넌트에 쓰지 않고 여기 이름을 붙인다.
  */
 
 :root {
+  /* ===================== 1. BRAND ===================== */
+
+  /* ---------- Color ----------
+     코발트가 목소리, 라임은 강조와 '준비 중' 같은 표시. 페이지는 따뜻한 흰색. */
+  --cobalt: #0526c5;
+  --lime: #eafda1;
+  --paper: #ffffff;
+  --page: #fafaf8;
+  --mist: #eeeeea;
+  --body: #44443e;
+  --muted: #6b6b63;
+  --rule-soft: #cfcfc8;
+  /* 어두운 바탕(공간 안내) 위의 보조 글자. */
+  --on-dark-muted: #c9c9c2;
+  /* 라임 바탕(대관 절차) 위의 본문. */
+  --on-lime-body: #33332e;
+  /* 코발트 바탕(푸터) 위의 구분선. */
+  --rule-on-cobalt: rgba(255, 255, 255, 0.35);
+
+  /* ---------- Type families ----------
+     본문 · 제목은 Pretendard. 손글씨(Gaegu 300)는 제목의 한 줄에만, 라틴 라벨은 Space Grotesk.
+     손글씨는 소유자의 손글씨가 디지털화되기 전까지의 대역이다. */
+  --font-ko: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --font-hand: 'Gaegu', 'Apple SD Gothic Neo', cursive;
+  --font-latin: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+
+  /* ---------- Type scale ---------- */
+  --type-hero: clamp(46px, 6.6vw, 92px);
+  /* English words are longer than Korean 어절; at the Korean size each line wraps. */
+  --type-hero-en: clamp(40px, 5vw, 70px);
+  --type-section: clamp(32px, 4.6vw, 56px);
+  --type-step: clamp(22px, 2.2vw, 28px);
+  --type-faq-q: clamp(17px, 1.8vw, 20px);
+  --type-stat: clamp(20px, 2.2vw, 26px);
+  --type-channel: 19px;
+  --type-lead: 17px;
+  --type-body: 16px;
+  --type-small: 15px;
+  --type-table: 14.5px;
+  --type-meta: 14px;
+  --type-stat-label: 13.5px;
+  --type-label: 12px;
+  --type-badge: 11px;
+  --type-nav: 15.5px;
+  --type-nav-mobile: 14.5px;
+  --type-notice: 16.5px;
+  --type-notice-mobile: 14.5px;
+  --type-logo: 46px;
+  /* 손글씨 줄은 같은 크기의 고딕보다 작아 보여 조금 키운다. */
+  --hand-scale: 1.12em;
+
+  /* ---------- Letter-spacing ----------
+     한국어 제목은 아주 좁게. 영어는 같은 값이면 글자가 붙어 버려 덜 좁힌다. */
+  --track-hero: -0.065em;
+  --track-section: -0.06em;
+  --track-title: -0.05em;
+  --track-q: -0.04em;
+  --track-body: -0.01em;
+  --track-hero-en: -0.035em;
+  --track-section-en: -0.03em;
+  --track-title-en: -0.02em;
+  --track-logo: -0.08em;
+  --track-label: 0.18em;
+  --track-label-wide: 0.14em;
+
+  /* ---------- Line-height ---------- */
+  --lead-hero: 1.04;
+  --lead-section: 1.08;
+  --lead-tight: 1.2;
+  --lead-body: 1.7;
+  --lead-relaxed: 1.75;
+
+  /* ---------- Shape ----------
+     로고 키트(ㅇ ㅣ / ㅁ)의 획 두께 하나로 모든 도형을 그린다. 사진은 크게 둥글게. */
+  --kit-stroke: 10px;
+  --radius-photo: clamp(24px, 3.4vw, 48px);
+  --radius-card: 20px;
+  --radius-table: 14px;
+  --radius-pill: 999px;
+  --rule: 1px;
+  --rule-strong: 1.5px;
+
+  /* ---------- Space ---------- */
+  --wrap: 1200px;
+  --side: 16px;
+  --space-band: clamp(36px, 4vw, 60px);
+  --space-head: clamp(32px, 4.5vw, 56px);
+  --space-hero-top: clamp(24px, 3.5vw, 56px);
+  --space-hero-bottom: clamp(56px, 7vw, 112px);
+  --gap-hero: clamp(48px, 7vw, 120px);
+  --gap-gallery: clamp(8px, 2vw, 28px);
+  --pill-pad: 14px 52px;
+  --pill-pad-sm: 10px 36px;
+  --gap-desc: 18px;
+  --focus-ring: 3px solid var(--cobalt);
+  --focus-offset: 3px;
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* ===================== 2. LEGACY ===================== */
+
   /* ---------- Color ---------- */
-  --ink: #1c1c1a;
+  --ink: #111111;
   --ink-hover: #3d3d38;
   --text-strong: #2d2d2a;
   --text-body: #55554c;
@@ -20,7 +122,7 @@
   --link-hover: #6e6e64;
   --border: #e5e5e0;
   --surface: #f4f4f0;
-  --bg: #fbfbf9;
+  --bg: #fafaf8;
   --placeholder-stripe: #eaeae3;
 
   /* The one non-neutral in the palette, and only for form validation. A

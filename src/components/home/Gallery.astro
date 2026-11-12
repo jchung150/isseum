@@ -1,0 +1,184 @@
+---
+/**
+ * 공간 안내: dark band with a photo gallery, three photos per page.
+ *
+ * Without script the strip scrolls sideways with snap points, so every photo is
+ * still reachable. Script switches it to paged mode and reveals the buttons.
+ * Prev/next never grey out (owner's call); at either end they simply stop.
+ */
+import { Image } from 'astro:assets';
+import { content } from '../../data';
+import type { Lang } from '../../data/i18n';
+import { galleryPhotos, photos } from '../../data/media';
+
+interface Props {
+  lang: Lang;
+}
+
+const { space } = content[Astro.props.lang].home;
+const PER_PAGE = 3;
+const pages = Math.ceil(galleryPhotos.length / PER_PAGE);
+---
+
+<section class="band gallery-band on-ink" id="space" aria-labelledby="space-title">
+  <div class="wrap">
+    <div class="band__head">
+      <h2 id="space-title" class="band__title">{space.title}</h2>
+      <p class="band__desc">{space.desc}</p>
+    </div>
+
+    <div class="gal" data-gal data-per={PER_PAGE}>
+      <div class="gal__view" data-view>
+        <ul class="gal__track" data-track>
+          {
+            galleryPhotos.map((id, i) => (
+              <li>
+                <Image
+                  src={photos[id]}
+                  alt={space.alts[id]}
+                  widths={[400, 600, 800]}
+                  sizes="(min-width: 1200px) 370px, 33vw"
+                  loading={i < PER_PAGE ? 'eager' : 'lazy'}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="gal__nav" data-nav hidden>
+        <button type="button" class="pill gal__btn" data-prev aria-label={space.prevLabel}>{space.prev}</button>
+        <p class="gal__count" aria-live="polite"><span data-page>1</span> / {pages}</p>
+        <button type="button" class="pill gal__btn" data-next aria-label={space.nextLabel}>{space.next}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-band {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .gallery-band .band__title {
+    color: var(--paper);
+  }
+
+  .gallery-band .band__desc {
+    color: var(--on-dark-muted);
+  }
+
+  .gal {
+    --g: var(--gap-gallery);
+  }
+
+  /* No-script default: a sideways strip with snap points. */
+  .gal__view {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .gal__track {
+    display: flex;
+    gap: var(--g);
+  }
+
+  .gal__track li {
+    flex: 0 0 calc((100% - 2 * var(--g)) / 3);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .gal__track :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+  }
+
+  /* Paged mode, switched on by script. */
+  .gal[data-ready] .gal__view {
+    overflow: hidden;
+  }
+
+  .gal[data-ready] .gal__track {
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .gal__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: 28px;
+  }
+
+  .gal__nav[hidden] {
+    display: none;
+  }
+
+  .gal__count {
+    font: 500 var(--type-body) var(--font-latin);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+
+  .gal__btn {
+    padding: 12px 32px;
+    background: transparent;
+    border-color: var(--paper);
+    color: var(--paper);
+  }
+
+  .gal__btn:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  @media (max-width: 639px) {
+    .gal__btn {
+      padding: 10px 18px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gal[data-ready] .gal__track {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const gal = document.querySelector<HTMLElement>('[data-gal]');
+  const track = gal?.querySelector<HTMLElement>('[data-track]');
+  const nav = gal?.querySelector<HTMLElement>('[data-nav]');
+  if (gal && track && nav) {
+    const per = Number(gal.dataset.per) || 3;
+    const items = [...track.children] as HTMLElement[];
+    const pages = Math.ceil(items.length / per);
+    const out = gal.querySelector('[data-page]');
+    let page = 0;
+
+    const show = () => {
+      track.style.transform = `translateX(calc(${-page} * (100% + var(--g))))`;
+      if (out) out.textContent = String(page + 1);
+      // Off-page photos are hidden from assistive tech and the tab order.
+      items.forEach((item, i) => {
+        const off = Math.floor(i / per) !== page;
+        item.toggleAttribute('inert', off);
+        item.setAttribute('aria-hidden', String(off));
+      });
+    };
+
+    gal.querySelector('[data-prev]')?.addEventListener('click', () => {
+      if (page > 0) { page--; show(); }
+    });
+    gal.querySelector('[data-next]')?.addEventListener('click', () => {
+      if (page < pages - 1) { page++; show(); }
+    });
+
+    gal.setAttribute('data-ready', '');
+    nav.hidden = false;
+    show();
+  }
+</script>

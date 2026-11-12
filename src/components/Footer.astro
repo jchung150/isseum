@@ -1,128 +1,202 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/isseum-logo.png';
-import { business, inquiryChannels, site } from '../config/site';
-import { inquiryCta } from '../data/cta';
-import { footer } from '../data/footer';
-import { header } from '../data/header';
+/**
+ * Footer and contact in one cobalt band: the closing line, the four inquiry
+ * channels, business details and the link to the rental terms. `#contact` is the
+ * target of every inquiry CTA on the site, so every page renders this.
+ */
+import Emblem from './Emblem.astro';
+import { business, kakaoChannelUrl, naverTalkUrl } from '../config/site';
+import { content } from '../data';
+import type { Lang } from '../data/i18n';
 
-type Link = { label: string; href: string; external?: boolean };
-type Row = { term: string; value?: string; links?: Link[] };
+interface Props {
+  lang: Lang;
+}
 
-const info: Row[] = [
-  { term: footer.info.companyName, value: business.companyName },
-  { term: footer.info.representative, value: business.representative },
-  { term: footer.info.address, value: business.address },
-  { term: footer.info.email, links: [{ label: business.email, href: `mailto:${business.email}` }] },
-  { term: footer.info.phone, links: [{ label: business.phone, href: `tel:${business.phone}` }] },
-  // One row for every chat channel, so a second channel doesn't repeat the label.
-  {
-    term: footer.info.chat,
-    links: inquiryChannels.map((channel) => ({ label: channel.name, href: channel.href, external: true })),
-  },
+const { lang } = Astro.props;
+const { footer, channels } = content[lang].common;
+const { business: biz, cards } = footer;
+
+const chats = [
+  { ...cards.naverTalk, href: naverTalkUrl },
+  ...(kakaoChannelUrl ? [{ ...cards.kakao, href: kakaoChannelUrl }] : []),
 ];
+// The rental terms exist in Korean only for now; the English footer says so.
+const rulesHref = '/rules';
 ---
 
-<footer>
-  <div class="grid container">
-    <div>
-      <a href="/" class="logo" aria-label={header.homeLabel(site.name, site.nameLatin)}>
-        <Image src={logo} alt={`${site.name} ${site.nameLatin}`} height={112} densities={[1, 2]} />
-      </a>
-      <dl class="info">
-        {
-          info.map((row) => (
-            <>
-              <dt>{row.term}</dt>
-              <dd>
-                {row.links
-                  ? row.links.map((link, i) => (
-                      <>
-                        {i > 0 && <span class="sep" aria-hidden="true">·</span>}
-                        {link.external ? (
-                          <a href={link.href} target="_blank" rel="noopener">
-                            {link.label}<span class="visually-hidden">{inquiryCta.newWindow}</span>
-                          </a>
-                        ) : (
-                          <a href={link.href}>{link.label}</a>
-                        )}
-                      </>
-                    ))
-                  : row.value}
-              </dd>
-            </>
-          ))
-        }
-      </dl>
-    </div>
-  </div>
+<footer class="contact on-cobalt" id="contact" aria-labelledby="contact-title">
+  <Emblem tone="paper" class="contact__emb" />
+  <div class="wrap">
+    <h2 id="contact-title" class="contact__title">
+      <span class="hand">{footer.heading.hand}</span>{footer.heading.rest}
+    </h2>
 
-  <div class="bottom">
-    <div class="bottom__inner container">
-      <span>{footer.copyright(2026, site.nameLatin)}</span>
-      <span class="bottom__place">{footer.place}</span>
+    <ul class="channels">
+      {
+        chats.map((chat) => (
+          <li>
+            <a class="ch" href={chat.href} target="_blank" rel="noopener">
+              <span class="ch__label">{chat.label}</span>
+              <span class="ch__value">{chat.value}</span>
+              <span class="visually-hidden">{channels.newWindow}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a class="ch" href={`tel:${business.phone}`}>
+          <span class="ch__label">{cards.phone}</span>
+          <span class="ch__value">{business.phone}</span>
+        </a>
+      </li>
+      <li>
+        <a class="ch" href={`mailto:${business.email}`}>
+          <span class="ch__label">{cards.email}</span>
+          <span class="ch__value">{business.email}</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="biz">
+      <dl>
+        <dt>{biz.company.term}</dt><dd>{biz.company.value}</dd>
+        <dt>{biz.representative.term}</dt><dd>{biz.representative.value}</dd>
+        <dt>{biz.address.term}</dt><dd>{biz.address.value}</dd>
+        <dt>{biz.registration.term}</dt><dd>{business.registrationNumber}</dd>
+      </dl>
+      <p class="links">
+        <a href={rulesHref} hreflang={lang === 'ko' ? undefined : 'ko'}>{footer.rulesLink}</a>
+      </p>
     </div>
   </div>
 </footer>
 
 <style>
-  footer {
-    margin-top: var(--space-section);
-    border-top: var(--border-hairline);
-    background: var(--surface);
+  .contact {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--space-band);
+    background: var(--cobalt);
+    color: var(--paper);
   }
 
-  .grid {
+  /* Hangs from the top edge beside the heading, short enough to clear the cards. */
+  .contact :global(.contact__emb) {
+    position: absolute;
+    right: max(var(--side), 6vw);
+    top: -1px;
+    --w: clamp(56px, 6vw, 84px);
+  }
+
+  @media (max-width: 899px) {
+    .contact :global(.contact__emb) {
+      display: none;
+    }
+  }
+
+  .contact__title {
+    position: relative;
+    margin-bottom: var(--space-head);
+    font-size: var(--type-section);
+    font-weight: 900;
+    letter-spacing: var(--track-section);
+    line-height: var(--lead-section);
+    color: var(--paper);
+    text-wrap: balance;
+  }
+
+  :lang(en) .contact__title {
+    letter-spacing: var(--track-section-en);
+  }
+
+  .contact__title .hand {
+    margin-bottom: 0.3em;
+  }
+
+  .channels {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--gap-lg);
-    padding-block: var(--space-footer);
+    gap: var(--space-3);
   }
 
-  .logo :global(img) {
-    height: var(--logo-height-footer);
-    width: auto;
+  @media (min-width: 640px) {
+    .channels {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
-  .info {
-    margin-top: 26px;
+  @media (min-width: 1100px) {
+    .channels {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .ch {
     display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 11px 0;
-    font-size: var(--text-ui);
-    letter-spacing: var(--tracking-ui);
+    gap: 6px;
+    height: 100%;
+    padding: var(--space-6);
+    border: var(--rule) solid var(--lime);
+    border-radius: var(--radius-card);
+    background: var(--cobalt);
+    color: var(--paper);
   }
 
-  .info dt {
-    color: var(--text-secondary);
+  .ch:hover {
+    background: var(--paper);
+    color: var(--cobalt);
   }
 
-  .info dd {
-    color: var(--text-strong);
+  .ch__label {
+    font: 700 var(--type-label) var(--font-latin);
+    letter-spacing: var(--track-label-wide);
+    color: var(--lime);
   }
 
-  .sep {
-    margin-inline: var(--space-2);
-    color: var(--text-tertiary);
+  .ch:hover .ch__label {
+    color: var(--cobalt);
   }
 
-
-  .bottom {
-    border-top: var(--border-hairline);
+  .ch__value {
+    font-size: var(--type-channel);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
   }
 
-  .bottom__inner {
-    padding-block: var(--space-5);
+  .biz {
+    position: relative;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-top: 28px;
+    border-top: var(--rule) solid var(--rule-on-cobalt);
+  }
+
+  .biz dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-1) var(--space-4);
+    font-size: var(--type-meta);
+  }
+
+  .biz dt {
+    color: var(--lime);
+  }
+
+  .links {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    justify-content: space-between;
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    letter-spacing: var(--tracking-meta);
+    gap: var(--space-5);
+    margin-top: var(--space-4);
+    font-size: var(--type-meta);
+    font-weight: 700;
   }
 
-  .bottom__place {
-    letter-spacing: var(--tracking-step);
+  .links a {
+    color: var(--paper);
+  }
+
+  .links a:hover {
+    color: var(--lime);
   }
 </style>

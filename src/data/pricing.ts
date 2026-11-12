@@ -19,6 +19,9 @@
 
 import { business, inquiryChannelNames } from '../config/site';
 import { LONG_TERM_DAYS, MIN_HOURS } from './booking';
+import { RATES, type RateId } from './facts';
+
+const priceOf = (id: RateId) => RATES.find((rate) => rate.id === id)!.price;
 
 /** 1234567 → '1,234,567원' */
 const won = (n: number) => `${n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원`;
@@ -48,14 +51,14 @@ const rateInputs: RateInput[] = [
     label: '주중',
     short: '주중(월–목)',
     when: '월요일 – 목요일',
-    price: 140_000,
+    price: priceOf('weekday'),
   },
   {
     id: 'weekend',
     label: '주말 · 공휴일',
     short: '주말(금–일)·공휴일',
     when: '금요일 · 토요일 · 일요일 · 공휴일',
-    price: 170_000,
+    price: priceOf('weekend'),
   },
 ];
 

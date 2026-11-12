@@ -17,21 +17,10 @@
 
 /* ══════════════════════════  제약  ══════════════════════════ */
 
-/** Minimum bookable duration, in hours. */
-export const MIN_HOURS = 3;
-
-/** Hard capacity of the main hall. */
-export const MAX_GUESTS = 90;
-
-/** Business hours, matching the 08–22시 stat on the home page. */
-export const OPEN_HOUR = 8;
-export const CLOSE_HOUR = 22;
-
-/**
- * Consecutive days at which a rental counts as 장기 대관 and is quoted by hand.
- * The form only takes a single date, so these requests go by phone or email.
- */
-export const LONG_TERM_DAYS = 14;
+// 숫자는 facts.ts가 가진다. 영어 페이지도 같은 값을 읽어야 해서 옮겼고, 기존
+// 소비처(api/booking.ts, faq, pricing)가 깨지지 않도록 여기서 다시 내보낸다.
+import { MAX_GUESTS, MIN_HOURS, REFUND_TIERS } from './facts';
+export { CLOSE_HOUR, LONG_TERM_DAYS, MAX_GUESTS, MIN_HOURS, OPEN_HOUR } from './facts';
 
 /* ══════════════════════════  페이지  ══════════════════════════ */
 
@@ -375,15 +364,11 @@ export type RefundTier = { when: string; rate: string };
 export const refundSection = {
   id: 'refund',
   title: '취소 및 환불 정책',
-  tiers: [
-    { when: '이용 8일 전 취소', rate: '100% 환불' },
-    { when: '이용 7일 전 취소', rate: '70% 환불' },
-    { when: '이용 6일 전 취소', rate: '60% 환불' },
-    { when: '이용 5일 전 취소', rate: '50% 환불' },
-    { when: '이용 4일 전 취소', rate: '40% 환불' },
-    { when: '이용 3일 전 취소', rate: '30% 환불' },
-    { when: '이용 2일 전 ~ 당일 취소', rate: '환불 불가' },
-  ] as RefundTier[],
+  // 등급은 facts.ts의 숫자에서 만든다. 마지막 등급은 '그 날부터 당일까지'.
+  tiers: REFUND_TIERS.map((tier, i, all): RefundTier => ({
+    when: i === all.length - 1 ? `이용 ${tier.daysBefore}일 전 ~ 당일 취소` : `이용 ${tier.daysBefore}일 전 취소`,
+    rate: tier.percent > 0 ? `${tier.percent}% 환불` : '환불 불가',
+  })),
   exceptions: [
     {
       label: '결제 직후 취소 예외 — ',

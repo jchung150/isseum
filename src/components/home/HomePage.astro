@@ -1,0 +1,27 @@
+---
+/** The home page, shared by `/` and `/en`. Every string comes from content[lang]. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Notice from './Notice.astro';
+import Hero from './Hero.astro';
+import Stats from './Stats.astro';
+import Gallery from './Gallery.astro';
+import Process from './Process.astro';
+import Faq from './Faq.astro';
+import { content } from '../../data';
+import type { Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<BaseLayout lang={lang} title={content[lang].home.title} isHome translated>
+  <Notice lang={lang} slot="top" />
+  <Hero lang={lang} />
+  <Stats lang={lang} />
+  <Gallery lang={lang} />
+  <Process lang={lang} />
+  <Faq lang={lang} />
+</BaseLayout>
