@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>03 세 가지 배치 · 톤 다운</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&amp;family=Gaegu:wght@300&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1080px; height: 1350px; box-sizing: border-box; background: #ffffff; color: #111111; font-family: 'Noto Sans KR', sans-serif; padding: 80px; display: flex; flex-direction: column; gap: 36px;">
+  <h2 style="margin: 0; font-weight: 900; font-size: 64px; letter-spacing: -0.05em; line-height: 1.1; color: #0526c5;">같은 방, 세 가지 배치</h2>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1;">
+    <div style="display: flex; flex-direction: column; gap: 18px; min-height: 0;">
+      <img src="/_blob/eb7b54d9019c8cf15bc79b9ffd691e08" alt="강의형으로 테이블을 배치한 메인 홀" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 12px;">
+      <svg aria-hidden="true" viewBox="0 0 200 90" style="width: 140px; height: 63px;" fill="none" stroke="#0526c5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M86 8 C 96 7, 106 8, 114 9"></path>
+        <path d="M30 34 C 70 32, 130 33, 170 35"></path><path d="M38 46 C 39 50, 41 52, 44 52 M70 46 C 70 50, 72 52, 75 52 M126 46 C 126 50, 128 52, 131 52 M156 46 C 157 50, 159 52, 162 52"></path>
+        <path d="M30 66 C 70 64, 130 65, 170 67"></path><path d="M38 78 C 39 82, 41 84, 44 84 M70 78 C 70 82, 72 84, 75 84 M126 78 C 126 82, 128 84, 131 84 M156 78 C 157 82, 159 84, 162 84"></path>
+      </svg>
+      <p style="margin: 0; font-weight: 700; font-size: 30px; letter-spacing: -0.03em;">강의형</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 18px; min-height: 0;">
+      <img src="/_blob/521cb3098ea887e239531ea93b92f009" alt="극장형으로 좌석을 배치한 메인 홀" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 12px;">
+      <svg aria-hidden="true" viewBox="0 0 200 90" style="width: 140px; height: 63px;" fill="none" stroke="#0526c5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M70 8 C 95 6, 110 7, 130 9"></path>
+        <path d="M36 34 C 38 40, 42 42, 46 41 M66 34 C 67 40, 71 42, 75 41 M96 34 C 97 40, 101 42, 105 41 M126 34 C 127 40, 131 42, 135 41 M156 34 C 157 40, 161 42, 165 41"></path>
+        <path d="M36 58 C 38 64, 42 66, 46 65 M66 58 C 67 64, 71 66, 75 65 M96 58 C 97 64, 101 66, 105 65 M126 58 C 127 64, 131 66, 135 65 M156 58 C 157 64, 161 66, 165 65"></path>
+        <path d="M51 80 C 53 86, 57 88, 61 87 M81 80 C 82 86, 86 88, 90 87 M111 80 C 112 86, 116 88, 120 87 M141 80 C 142 86, 146 88, 150 87"></path>
+      </svg>
+      <p style="margin: 0; font-weight: 700; font-size: 30px; letter-spacing: -0.03em;">극장형</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 18px; min-height: 0;">
+      <img src="/_blob/a91be1ce999c3afbc95550730440f976" alt="소파와 라운지 체어를 배치한 메인 홀" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 12px;">
+      <svg aria-hidden="true" viewBox="0 0 200 90" style="width: 140px; height: 63px;" fill="none" stroke="#0526c5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M78 40 C 78 28, 122 27, 123 40 C 124 54, 79 55, 78 40 Z"></path>
+        <path d="M40 22 C 50 14, 62 16, 64 26 C 66 34, 50 38, 40 22"></path>
+        <path d="M160 22 C 150 14, 138 16, 136 26 C 134 34, 150 38, 160 22"></path>
+        <path d="M60 70 C 80 80, 120 80, 140 70 C 142 82, 58 84, 60 70"></path>
+      </svg>
+      <p style="margin: 0; font-weight: 700; font-size: 30px; letter-spacing: -0.03em;">라운지형</p>
+    </div>
+  </div>
+  <p style="margin: 0; font-size: 28px; line-height: 1.6; color: #44443e;">테이블과 의자는 모두 이동식이에요. 행사에 맞게 자유롭게 옮겨 보세요.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1350}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
