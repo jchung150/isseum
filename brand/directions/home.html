@@ -88,6 +88,8 @@
      Placeholder face until the owner's own handwriting is digitised. */
   .hand { display: block; font-family: 'Gaegu', 'Apple SD Gothic Neo', cursive; font-weight: 300; font-size: 1.12em; letter-spacing: -0.01em; line-height: .92; margin-bottom: .04em; }
   .contact-h .hand { margin-bottom: .3em; }
+  /* Same gap as the footer heading: .3em of the 1.12em handwritten line = .336em of the heading. */
+  .line-gap { display: block; margin-top: .336em; }
   .hero .en { font: 500 clamp(17px, 1.6vw, 20px) var(--latin); color: var(--body); }
   .hero .lead { max-width: 28em; color: var(--body); font-size: 17px; line-height: 1.75; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -287,7 +289,7 @@
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="hl">MULTI CULTURAL SPACE IN SEOUL</p>
-        <h1 id="hero-title"><span class="hand">이야기가</span>피어나는 곳에,<br>이씀</h1>        <p class="lead">이씀은 홍대입구역 근처에 위치한 약 60평 규모의 가변형 복합문화공간입니다. 아이디어를 나누는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드와 팬이 만나는 팝업스토어와 팬미팅까지. 모든 형태의 이야기를, 이곳에서 자유롭게 펼쳐보세요.</p>
+        <h1 id="hero-title"><span class="hand">이야기가</span>피어나는 곳에,<span class="line-gap">이씀</span></h1>        <p class="lead">이씀은 홍대입구역 근처에 위치한 약 60평 규모의 가변형 복합문화공간입니다. 아이디어를 나누는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드와 팬이 만나는 팝업스토어와 팬미팅까지. 모든 형태의 이야기를, 이곳에서 자유롭게 펼쳐보세요.</p>
         <div class="btns"><a class="btn pri" href="#contact">대관 문의하기</a><a class="btn" href="#space">공간 둘러보기</a></div>
       </div>
       <div class="hero-vis">
