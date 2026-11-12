@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이씀 기호 시스템</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Direction B developed into a system. Draft only; tokens move to src/styles/tokens.css after sign-off. */
+  :root {
+    --cobalt: #0526c5;
+    --lime: #eafda1;
+    --ink: #111111;
+    --paper: #ffffff;
+    --mist: #eeeeea;
+    --sheet: #e4e4df;
+    --logo: url(../../src/assets/isseum-logo.png);
+    --hall: url(../../src/assets/isseum_main-hall_01.jpg);
+    --lounge: url(../../src/assets/isseum_main-hall_05.jpg);
+    --room: url(../../src/assets/isseum_project-room_01.jpg);
+    --latin: 'Space Grotesk', sans-serif;
+    /* One stroke weight for every kit piece, relative to the piece's container. */
+    --k: 6cqw;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--sheet); color: var(--ink); font-family: Pretendard, system-ui, sans-serif; letter-spacing: -0.01em; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  a:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 3px; }
+
+  .hero { background: var(--cobalt); color: var(--paper); padding: 56px 0 48px; }
+  .hero .eb { font: 500 12px var(--latin); letter-spacing: .2em; }
+  .hero h1 { font-size: clamp(36px, 6vw, 72px); font-weight: 800; letter-spacing: -0.05em; line-height: 1.02; margin-top: 12px; }
+  .hero p { margin-top: 16px; max-width: 36em; line-height: 1.7; font-size: 15.5px; }
+  .hero nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .hero nav a { color: var(--paper); text-decoration: none; border: 1px solid var(--paper); padding: 6px 12px; font-size: 14px; }
+
+  section.part { padding: 56px 0 8px; }
+  .ph { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: baseline; margin-bottom: 18px; }
+  .ph .n { font: 700 13px var(--latin); color: var(--cobalt); }
+  .ph h2 { font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; letter-spacing: -0.04em; }
+  .ph p { flex: 1 1 340px; font-size: 14.5px; line-height: 1.65; color: #44443e; }
+
+  /* Hairline grid */
+  .hg { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); }
+  .hg > * { background: var(--paper); }
+
+  /* Colour */
+  .sw { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .sw div { padding: 72px 14px 14px; font-size: 13px; line-height: 1.55; }
+  .sw b { display: block; font-size: 15px; }
+  .ratio { display: flex; height: 28px; margin-top: 12px; border: 1px solid var(--ink); }
+  .ratio span { display: block; }
+  .ratio-cap { font-size: 12.5px; color: #55554c; margin-top: 6px; }
+  .pairs { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-top: 16px; }
+  .pairs div { padding: 16px 14px; font-weight: 700; font-size: 17px; display: grid; gap: 6px; }
+  .pairs small { font: 500 12px var(--latin); }
+
+  /* Logo */
+  .mark { display: block; aspect-ratio: 496 / 984; background: var(--m, var(--ink)); -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+  .logos { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .lc { min-height: 280px; display: grid; place-items: center; position: relative; padding: 28px; container-type: inline-size; }
+  .lc small { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--cap, #55554c); }
+  .lockup { display: flex; align-items: center; gap: 16px; color: var(--m, var(--ink)); }
+  .lockup .mark { height: 84px; }
+  .lockup b { font-size: 36px; font-weight: 800; letter-spacing: -0.05em; display: block; line-height: 1; }
+  .lockup span { font: 500 13px var(--latin); letter-spacing: .3em; }
+
+  /* The kit: four pieces taken from the mark. Sized by the container (cqw) so they scale as a set. */
+  .kit { display: flex; align-items: center; gap: 3cqw; }
+  .k-o { width: 18cqw; aspect-ratio: 1; border-radius: 50%; border: var(--k) solid var(--c1, var(--ink)); }
+  .k-i { width: var(--k); height: 18cqw; background: var(--c2, var(--ink)); }
+  .k-s { width: 22cqw; height: var(--k); background: var(--c3, var(--cobalt)); transform: rotate(-31deg); }
+  .k-m { width: 20cqw; height: 15cqw; border: var(--k) solid var(--c4, var(--ink)); }
+
+  .rules { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .rules div { padding: 18px; font-size: 14.5px; line-height: 1.65; }
+  .rules b { display: block; margin-bottom: 4px; }
+
+  /* Posters */
+  .posters { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .pc .cap { font-size: 12.5px; color: #55554c; margin-top: 8px; line-height: 1.5; }
+  .poster { aspect-ratio: 4 / 5; position: relative; overflow: hidden; container-type: inline-size; border: 1px solid var(--ink); }
+  .poster.sq { aspect-ratio: 1; }
+  .poster.st { aspect-ratio: 9 / 16; }
+  .note { position: absolute; top: 6px; right: 6px; z-index: 5; font: 600 11px Pretendard, sans-serif; background: var(--paper); color: var(--ink); padding: 2px 6px; border: 1px solid var(--ink); }
+  .ab { position: absolute; }
+  .f-lat { font-family: var(--latin); }
+  .meta { position: absolute; left: 7cqw; right: 7cqw; bottom: 5cqw; display: flex; justify-content: space-between; font: 500 3.2cqw var(--latin); letter-spacing: .03em; padding-top: 2cqw; border-top: .5cqw solid currentColor; }
+  .photo { background-size: cover; background-position: center; filter: grayscale(1) contrast(1.05); }
+
+  /* P1 rental — cobalt */
+  .p1 { background: var(--cobalt); color: var(--paper); }
+  .p1 .photo { inset: 0 0 55% 0; background-image: var(--hall); mix-blend-mode: luminosity; opacity: .9; }
+  .p1 .o { left: 7cqw; top: 64cqw; width: 30cqw; aspect-ratio: 1; border-radius: 50%; border: 6cqw solid var(--lime); }
+  .p1 .i { left: 41cqw; top: 64cqw; width: 6cqw; height: 30cqw; background: var(--lime); }
+  .p1 .t { left: 54cqw; right: 6cqw; top: 64cqw; font-size: 6.6cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.1; }
+
+  /* P2 program — lime */
+  .p2 { background: var(--lime); color: var(--cobalt); }
+  .p2 .s { width: 130cqw; height: 13cqw; background: var(--cobalt); transform: rotate(-31deg); left: -15cqw; top: 54cqw; }
+  .p2 .m { right: 7cqw; top: 8cqw; width: 28cqw; height: 21cqw; border: 5.5cqw solid var(--ink); }
+  .p2 .big { left: 7cqw; top: 7cqw; font: 700 12.5cqw/.9 var(--latin); letter-spacing: -0.05em; }
+  .p2 .ko { left: 7cqw; bottom: 15cqw; font-size: 7.6cqw; font-weight: 800; letter-spacing: -0.05em; color: var(--ink); }
+
+  /* P3 typographic notice — white, kit as frame */
+  .p3 { background: var(--paper); color: var(--ink); }
+  .p3 .o { right: -18cqw; top: -18cqw; width: 70cqw; aspect-ratio: 1; border-radius: 50%; border: 9cqw solid var(--cobalt); }
+  .p3 .eb { left: 7cqw; top: 8cqw; font: 700 3.4cqw var(--latin); letter-spacing: .18em; color: var(--cobalt); }
+  .p3 .h { left: 7cqw; right: 7cqw; top: 46cqw; font-size: 10.5cqw; font-weight: 800; letter-spacing: -0.06em; line-height: 1.05; }
+  .p3 .sub { left: 7cqw; top: 82cqw; font-size: 3.8cqw; line-height: 1.55; color: #44443e; }
+  .p3 .bar { left: 0; right: 0; bottom: 0; height: 3cqw; background: var(--lime); }
+
+  /* Square + story for Instagram */
+  .sq1 { background: var(--paper); }
+  .sq1 .photo { inset: 0; background-image: var(--lounge); }
+  .sq1 .tag { left: 6cqw; bottom: 6cqw; background: var(--cobalt); color: var(--paper); padding: 3cqw 4cqw; font-size: 6cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.15; }
+  .sq1 .k-o { position: absolute; right: 6cqw; top: 6cqw; width: 16cqw; border-width: 4cqw; border-color: var(--lime); }
+  .st1 { background: var(--cobalt); color: var(--paper); }
+  .st1 .photo { left: 7cqw; right: 7cqw; top: 30cqw; height: 70cqw; background-image: var(--room); }
+  .st1 .m { left: 7cqw; top: 7cqw; width: 8cqw; --m: var(--paper); }
+  .st1 .h { left: 7cqw; right: 7cqw; top: 112cqw; font-size: 11cqw; font-weight: 800; letter-spacing: -0.06em; line-height: 1.05; }
+  .st1 .s { left: 7cqw; top: 158cqw; width: 30cqw; height: 4cqw; background: var(--lime); transform: rotate(-31deg); transform-origin: left; }
+  .st1 .meta { bottom: 6cqw; }
+
+  /* Web */
+  .web { border: 1px solid var(--ink); background: var(--paper); overflow: hidden; }
+  .wb { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 20px; border-bottom: 1px solid var(--ink); font-size: 14px; }
+  .wb nav { display: flex; gap: 18px; flex-wrap: wrap; }
+  .wbody { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .wbody { grid-template-columns: 1.05fr 1fr; } }
+  .wcopy { padding: clamp(24px, 4vw, 52px); display: grid; gap: 18px; align-content: center; }
+  .wcopy h3 { font-size: clamp(34px, 5vw, 60px); font-weight: 800; letter-spacing: -0.06em; line-height: 1.04; }
+  .wcopy p { font: 500 16px var(--latin); color: #44443e; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { padding: 13px 20px; font-size: 14.5px; font-weight: 700; border: 1px solid var(--ink); }
+  .btn.pri { background: var(--cobalt); border-color: var(--cobalt); color: var(--paper); }
+  .wvis { position: relative; min-height: 320px; background: var(--lime); overflow: hidden; container-type: inline-size; }
+  .wvis .photo { position: absolute; inset: 10cqw 10cqw 0 22cqw; background-image: var(--hall); }
+  .wvis .k-o { position: absolute; left: 6cqw; top: 6cqw; width: 26cqw; border-width: 6cqw; border-color: var(--cobalt); z-index: 2; }
+  .wvis .k-s { position: absolute; left: 0; bottom: 14cqw; width: 50cqw; height: 6cqw; z-index: 2; }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--ink); border-top: 1px solid var(--ink); }
+  .strip div { background: var(--paper); padding: 18px 20px; }
+  .strip b { display: block; font-size: 20px; font-weight: 800; letter-spacing: -0.04em; }
+  .strip span { font-size: 13px; color: #55554c; }
+
+  .foot { padding: 48px 0 72px; font-size: 14px; line-height: 1.75; color: #44443e; }
+  .foot b { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eb">ISSEUM VISUAL SYSTEM — DRAFT 1</p>
+    <h1>이씀 기호 시스템</h1>
+    <p>B 방향을 발전시킨 시안입니다. 이씀 마크를 원·막대·사선·사각형 네 조각으로 나눠 씁니다. 색은 코발트와 라임입니다. 슬로건과 프로그램 포스터는 예시이며, 날짜와 가격은 넣지 않았습니다.</p>
+    <nav aria-label="목차"><a href="#color">색</a><a href="#logo">로고</a><a href="#kit">도형 조각</a><a href="#posters">포스터</a><a href="#sns">인스타그램</a><a href="#web">웹</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="part" id="color">
+  <div class="ph"><span class="n">01</span><h2>색</h2><p>흰 바탕이 기본이고 코발트가 주인공입니다. 라임은 아주 조금만 씁니다. 검정은 글자와 도형 테두리에만 씁니다.</p></div>
+  <div class="hg sw">
+    <div style="background:var(--cobalt);color:var(--paper)"><b>코발트</b>#0526C5<br>주인공 · 버튼 · 포스터 바탕</div>
+    <div style="background:var(--lime)"><b>라임</b>#EAFDA1<br>포인트 · 프로그램 포스터 바탕</div>
+    <div style="background:var(--ink);color:var(--paper)"><b>검정</b>#111111<br>글자 · 도형 테두리</div>
+    <div><b>흰색</b>#FFFFFF<br>기본 바탕</div>
+    <div style="background:var(--mist)"><b>안개</b>#EEEEEA<br>보조 면 · 구획</div>
+  </div>
+  <div class="ratio" aria-hidden="true"><span style="flex:55;background:var(--paper)"></span><span style="flex:20;background:var(--cobalt)"></span><span style="flex:15;background:var(--ink)"></span><span style="flex:10;background:var(--lime)"></span></div>
+  <p class="ratio-cap">면적 비율 기준: 흰색 55 · 코발트 20 · 검정 15 · 라임 10</p>
+  <div class="hg pairs">
+    <div style="background:var(--cobalt);color:var(--paper)">흰 글자 / 코발트<small>10.1 : 1 ✓</small></div>
+    <div style="background:var(--lime);color:var(--cobalt)">코발트 글자 / 라임<small>9.1 : 1 ✓</small></div>
+    <div style="background:var(--cobalt);color:var(--lime)">라임 글자 / 코발트<small>9.1 : 1 ✓</small></div>
+    <div style="background:var(--lime)">검정 글자 / 라임<small>17 : 1 ✓</small></div>
+    <div style="background:var(--cobalt);color:var(--ink)">검정 글자 / 코발트<small style="color:var(--paper)">1.9 : 1 ✗ 금지</small></div>
+    <div style="color:var(--lime)">라임 글자 / 흰 바탕<small style="color:var(--ink)">1.1 : 1 ✗ 금지</small></div>
+  </div>
+</section>
+
+<section class="part" id="logo">
+  <div class="ph"><span class="n">02</span><h2>로고</h2><p>세로 마크가 기본입니다. 공간이 좁을 때는 가로 조합을 씁니다. 네 조각을 한 줄로 늘어놓은 '조각 로고'는 보조 로고로, 인스타그램 프로필과 스티커에 씁니다.</p></div>
+  <div class="hg logos">
+    <div class="lc"><span class="mark" style="height:190px;--m:var(--cobalt)"></span><small>기본 · 코발트</small></div>
+    <div class="lc" style="background:var(--cobalt);--cap:var(--paper)"><span class="mark" style="height:190px;--m:var(--paper)"></span><small>반전 · 흰색</small></div>
+    <div class="lc" style="background:var(--lime)"><span class="mark" style="height:190px;--m:var(--cobalt)"></span><small>라임 바탕</small></div>
+    <div class="lc"><div class="lockup" style="--m:var(--ink)"><span class="mark"></span><div><b>이씀</b><span>ISSEUM</span></div></div><small>가로 조합</small></div>
+    <div class="lc"><div class="kit" aria-label="조각 로고: 원, 막대, 사선, 사각형" style="--k:4.5cqw"><span class="k-o"></span><span class="k-i"></span><span class="k-s"></span><span class="k-m"></span></div><small>조각 로고 (보조)</small></div>
+    <div class="lc" style="background:var(--mist)"><div style="width:120px;aspect-ratio:1;border-radius:50%;background:var(--lime);display:grid;place-items:center;container-type:inline-size"><span class="k-o" style="width:50cqw;border-width:11cqw;border-color:var(--cobalt)"></span></div><small>프로필 사진 · 파비콘</small></div>
+    <div class="lc" style="background:var(--lime)"><div class="kit" aria-label="조각 로고" style="--k:4.5cqw;--c1:var(--cobalt);--c2:var(--cobalt);--c3:var(--ink);--c4:var(--cobalt)"><span class="k-o"></span><span class="k-i"></span><span class="k-s"></span><span class="k-m"></span></div><small>조각 로고 · 라임 바탕</small></div>
+    <div class="lc" style="background:var(--cobalt);--cap:var(--paper)"><div class="lockup" style="--m:var(--paper)"><span class="mark"></span><div><b>이씀</b><span>ISSEUM</span></div></div><small>가로 조합 · 반전</small></div>
+  </div>
+</section>
+
+<section class="part" id="kit">
+  <div class="ph"><span class="n">03</span><h2>도형 조각 사용 규칙</h2><p>조각들은 자유롭게 놓아도 됩니다. 아래 네 가지만 지키면, 매번 다르게 생겨도 이씀으로 읽힙니다.</p></div>
+  <div class="hg rules">
+    <div><b>1. 굵기는 하나</b>원의 테두리, 막대, 사선, 사각형 테두리는 한 화면 안에서 같은 굵기로 씁니다.</div>
+    <div><b>2. 사선은 −31°</b>마크의 'ㅆ'에서 나온 각도입니다. 다른 각도로 돌리지 않습니다.</div>
+    <div><b>3. 잘려도 됩니다</b>화면 밖으로 반쯤 나가도 괜찮습니다. 레퍼런스와 가장 다른 이씀만의 리듬이 여기서 나옵니다.</div>
+    <div><b>4. 한 화면에 두세 조각</b>네 조각을 한꺼번에 쓰는 건 조각 로고뿐입니다. 포스터에는 두세 개만 씁니다.</div>
+  </div>
+</section>
+
+<section class="part" id="posters">
+  <div class="ph"><span class="n">04</span><h2>포스터 시리즈</h2><p>바탕색으로 종류를 나눕니다. <b>코발트는 대관, 라임은 프로그램, 흰색은 공지</b>입니다. 멀리서 색만 봐도 무슨 포스터인지 알 수 있습니다.</p></div>
+  <div class="posters">
+    <div class="pc">
+      <div class="poster p1"><div class="ab photo" role="img" aria-label="강연대가 있는 메인 홀"></div><span class="ab o"></span><span class="ab i"></span><p class="ab t">당신의 일을<br>여기서<br>열어 보세요</p><div class="meta"><span>ISSEUM / HONGDAE</span><span>198㎡ · 90 PPL</span></div></div>
+      <p class="cap">대관 · 코발트 바탕, 'ㅇ'과 'ㅣ'</p>
+    </div>
+    <div class="pc">
+      <div class="poster p2"><span class="note">시안용 예시</span><span class="ab s"></span><span class="ab m"></span><p class="ab big">DRY<br>CLAY<br>WORK<br>SHOP</p><p class="ab ko">손으로 빚는 서울</p><div class="meta"><span>2027 SUMMER</span><span>ISSEUM, SEOUL</span></div></div>
+      <p class="cap">프로그램 · 라임 바탕, 사선과 사각형</p>
+    </div>
+    <div class="pc">
+      <div class="poster p3"><span class="note">시안용 예시</span><span class="ab o"></span><p class="ab eb">NOTICE</p><p class="ab h">새로운 일이<br>일어나는 곳</p><p class="ab sub">이씀은 2027년 여름부터<br>직접 만든 프로그램을 엽니다.</p><span class="ab bar"></span></div>
+      <p class="cap">공지 · 흰 바탕, 화면 밖으로 잘린 원</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="sns">
+  <div class="ph"><span class="n">05</span><h2>인스타그램</h2><p>피드는 정사각형 사진에 코발트 라벨 하나를 얹습니다. 스토리는 세로 화면 전체를 코발트로 채웁니다. 사람이 있는 행사 사진이 들어오면 이 틀이 가장 빛납니다.</p></div>
+  <div class="posters" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+    <div class="pc">
+      <div class="poster sq sq1"><div class="ab photo" role="img" aria-label="라운지로 꾸민 메인 홀"></div><span class="k-o"></span><p class="ab tag">라운지로<br>바꾼 메인 홀</p></div>
+      <p class="cap">피드 1:1 · 사진 + 코발트 라벨</p>
+    </div>
+    <div class="pc" style="max-width:300px">
+      <div class="poster st st1"><span class="ab mark m"></span><div class="ab photo" role="img" aria-label="긴 테이블이 있는 프로젝트 룸"></div><p class="ab h">작은 모임은<br>프로젝트 룸에서</p><span class="ab s"></span><div class="meta"><span>ISSEUM</span><span>HONGDAE</span></div></div>
+      <p class="cap">스토리 9:16</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="web">
+  <div class="ph"><span class="n">06</span><h2>웹사이트 첫 화면</h2><p>프로그램이 앞에, 대관이 옆에 섭니다. 숫자 띠는 지금 사이트의 사실 정보를 그대로 씁니다.</p></div>
+  <div class="web">
+    <div class="wb"><div class="lockup" style="--m:var(--cobalt)"><span class="mark" style="height:34px"></span><b style="font-size:20px;color:var(--ink)">이씀</b></div><nav><span>프로그램</span><span>대관</span><span>소개</span><span>EN</span></nav></div>
+    <div class="wbody">
+      <div class="wcopy"><h3>새로운 일이<br>일어나는 곳</h3><p>Where new things happen.</p><div class="btns"><span class="btn pri">프로그램 보기</span><span class="btn">대관 문의</span></div></div>
+      <div class="wvis"><div class="photo" role="img" aria-label="메인 홀"></div><span class="k-o"></span><span class="k-s"></span></div>
+    </div>
+    <div class="strip"><div><b>198㎡</b><span>메인 홀 면적</span></div><div><b>최대 90인</b><span>동시 수용 인원</span></div><div><b>홍대입구역 5분</b><span>1번 출구</span></div><div><b>08–22시</b><span>대관 가능 시간</span></div></div>
+  </div>
+</section>
+
+<div class="foot">
+  <p><b>레퍼런스와 구별되는 지점.</b> 색은 같지만 형태는 이씀 마크에서 나왔습니다. 한국어 제목이 먼저 오고 굵게 섭니다. 조각이 화면 밖으로 잘려 나가는 구성도 이씀만의 것입니다. 리오프라인의 로고, 글꼴, 화면 구성은 쓰지 않았습니다.</p>
+  <p style="margin-top:10px"><b>남은 것.</b> 사람이 있는 행사 사진, 슬로건 확정, 프로그램 이름과 일정.</p>
+</div>
+</main>
+</body>
+</html>
