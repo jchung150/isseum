@@ -155,6 +155,13 @@
       "w": 1080,
       "x": 3640,
       "y": 0
+    },
+    "Seminar.dc.html": {
+      "x": 4840,
+      "y": 0,
+      "w": 1080,
+      "h": 1350,
+      "title": "10 손그림 · 세미나"
     }
   },
   "createdOnFiles": {
@@ -227,7 +234,8 @@
     "HlStory.dc.html",
     "Highlights.dc.html",
     "Layouts2.dc.html",
-    "Booking2.dc.html"
+    "Booking2.dc.html",
+    "Seminar.dc.html"
   ],
   "pages": [],
   "title": "이씀 인스타그램 샘플"
