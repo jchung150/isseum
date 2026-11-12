@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>03 공간 · 세 가지 배치</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&amp;family=Gaegu:wght@300&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1080px; height: 1350px; box-sizing: border-box; position: relative; overflow: hidden; background: #eafda1; color: #111111; font-family: 'Noto Sans KR', sans-serif; padding: 72px 80px; display: flex; flex-direction: column; gap: 28px;">
+  <h2 style="margin: 0; font-weight: 900; font-size: 84px; letter-spacing: -0.06em; line-height: 1.06;"><span style="display: block; font-family: 'Gaegu', cursive; font-weight: 300; font-size: 1.12em; letter-spacing: -0.01em; line-height: 0.92; margin-bottom: 0.1em;">같은 방,</span>세 가지 배치</h2>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; flex-grow: 1;">
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <img src="/_blob/eb7b54d9019c8cf15bc79b9ffd691e08" alt="강의형으로 테이블을 배치한 메인 홀" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 32px;">
+      <p style="margin: 0; display: flex; gap: 12px; align-items: center; font-weight: 900; font-size: 34px; letter-spacing: -0.04em;"><span style="width: 44px; height: 44px; box-sizing: border-box; border: 8px solid #0526c5; display: inline-grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #0526c5; flex: none;">1</span>강의형</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <img src="/_blob/521cb3098ea887e239531ea93b92f009" alt="극장형으로 좌석을 배치한 메인 홀" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 32px;">
+      <p style="margin: 0; display: flex; gap: 12px; align-items: center; font-weight: 900; font-size: 34px; letter-spacing: -0.04em;"><span style="width: 44px; height: 44px; box-sizing: border-box; border: 8px solid #0526c5; display: inline-grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #0526c5; flex: none;">2</span>극장형</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <img src="/_blob/a91be1ce999c3afbc95550730440f976" alt="소파와 라운지 체어를 배치한 메인 홀 라운지 구성" style="width: 100%; flex-grow: 1; min-height: 0; object-fit: cover; border-radius: 32px;">
+      <p style="margin: 0; display: flex; gap: 12px; align-items: center; font-weight: 900; font-size: 34px; letter-spacing: -0.04em;"><span style="width: 44px; height: 44px; box-sizing: border-box; border: 8px solid #0526c5; display: inline-grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #0526c5; flex: none;">3</span>라운지형</p>
+    </div>
+  </div>
+  <p style="margin: 0; font-size: 30px; font-weight: 500; line-height: 1.5;">행사에 맞춰 테이블과 의자를 자유롭게 옮길 수 있어요.</p>
+  <div style="display: flex; justify-content: space-between; border-top: 3px solid #111111; padding-top: 18px; font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 26px; letter-spacing: 0.04em;">
+    <span>MAIN HALL · 198㎡</span><span>ISSEUM / HONGDAE</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1350}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
