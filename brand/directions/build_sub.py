@@ -167,7 +167,7 @@ rules_css = '''
 
 page('rules.html', '대관 규정 · 이씀', rules_css, f'''
 <div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><span aria-current="page">대관 규정</span><a class="back" href="./"><span aria-hidden="true">←</span> 뒤로가기</a></nav>
+  <nav class="crumb" aria-label="현재 위치"><span aria-current="page">대관 규정</span><a class="back" href="./"><span aria-hidden="true">←</span> 목록으로</a></nav>
   <section class="page-head" aria-labelledby="rules-title">
     <p class="hl">RENTAL POLICY</p>
     <h1 id="rules-title">대관 규정</h1>
@@ -178,7 +178,7 @@ page('rules.html', '대관 규정 · 이씀', rules_css, f'''
     <nav aria-label="규정 목차"><ol class="rtoc">{"".join(toc)}</ol></nav>
     <div>
       {"".join(secs)}
-      <div class="rules-cta"><a class="btn sm" href="./"><span aria-hidden="true">←</span>&nbsp;뒤로가기</a><a class="btn pri" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener">네이버 톡톡으로 문의</a><a class="btn" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener">카카오톡으로 문의</a></div>
+      <div class="rules-cta"><a class="btn sm" href="./"><span aria-hidden="true">←</span>&nbsp;목록으로</a><a class="btn pri" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener">네이버 톡톡으로 문의</a><a class="btn" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener">카카오톡으로 문의</a></div>
     </div>
   </div>
 </div>
@@ -310,12 +310,12 @@ for g in groups_g:
 for i, (fname, p, gtitle, n) in enumerate(flat):
     prev_ = flat[i - 1] if i > 0 else None
     next_ = flat[i + 1] if i + 1 < len(flat) else None
-    pager = ('<div class="pager"><a class="btn sm pri" href="guide.html"><span aria-hidden="true">←</span>&nbsp;뒤로가기</a><div class="pn">'
+    pager = ('<div class="pager"><a class="btn sm pri" href="guide.html"><span aria-hidden="true">←</span>&nbsp;목록으로</a><div class="pn">'
              + (f'<a class="btn sm" href="{prev_[0]}">← {prev_[3]:02d} {esc(prev_[1]["title"])}</a>' if prev_ else '')
              + (f'<a class="btn sm" href="{next_[0]}">{next_[3]:02d} {esc(next_[1]["title"])} →</a>' if next_ else '') + '</div></div>')
     page(fname, f'{p["title"]} · 이씀', doc_css, f'''
 <div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><span aria-current="page">{esc(p["title"])}</span><a class="back" href="guide.html"><span aria-hidden="true">←</span> 뒤로가기</a></nav>
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><span aria-current="page">{esc(p["title"])}</span><a class="back" href="guide.html"><span aria-hidden="true">←</span> 목록으로</a></nav>
   <section class="page-head"><p class="hl">{n:02d} · {esc(gtitle)}</p><h1>{esc(p["title"])}</h1><p class="lead">{esc(p["summary"])}</p></section>
   <article class="doc">{blocks_html(p["blocks"], fname)}{pager}</article>
 </div>
@@ -324,9 +324,9 @@ for i, (fname, p, gtitle, n) in enumerate(flat):
         cname = fname.replace('.html', f'-{c["slug"]}.html')
         page(cname, f'{c["title"]} · 이씀', doc_css, f'''
 <div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><a href="{fname}">{esc(p["title"])}</a><span aria-hidden="true">/</span><span aria-current="page">{esc(c["title"])}</span><a class="back" href="{fname}"><span aria-hidden="true">←</span> 뒤로가기</a></nav>
+  <nav class="crumb" aria-label="현재 위치"><a href="guide.html">이용 안내</a><span aria-hidden="true">/</span><a href="{fname}">{esc(p["title"])}</a><span aria-hidden="true">/</span><span aria-current="page">{esc(c["title"])}</span><a class="back" href="{fname}"><span aria-hidden="true">←</span> 목록으로</a></nav>
   <section class="page-head"><p class="hl">{n:02d} · {esc(p["title"])}</p><h1>{esc(c["title"])}</h1><p class="lead">{esc(c["summary"])}</p></section>
-  <article class="doc">{blocks_html(c["blocks"], cname)}<div class="pager"><a class="btn sm pri" href="{fname}"><span aria-hidden="true">←</span>&nbsp;뒤로가기</a><div class="pn"><a class="btn sm" href="guide.html">목차로 돌아가기 →</a></div></div></article>
+  <article class="doc">{blocks_html(c["blocks"], cname)}<div class="pager"><a class="btn sm pri" href="{fname}"><span aria-hidden="true">←</span>&nbsp;목록으로</a><div class="pn"><a class="btn sm" href="guide.html">목차로 돌아가기 →</a></div></div></article>
 </div>
 ''')
 
@@ -359,14 +359,14 @@ a.gl:hover .ga { transform: translateX(4px); }
 '''
 page('guide.html', '이용 안내 · 이씀', guide_css, f'''
 <div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><span aria-current="page">이용 안내</span><a class="back" href="./"><span aria-hidden="true">←</span> 뒤로가기</a></nav>
+  <nav class="crumb" aria-label="현재 위치"><span aria-current="page">이용 안내</span><a class="back" href="./"><span aria-hidden="true">←</span> 목록으로</a></nav>
   <section class="page-head" aria-labelledby="guide-title">
     <p class="hl">GUIDE</p>
     <h1 id="guide-title">이용 안내</h1>
     <p class="lead">출입과 동선부터 기기 사용법과 퇴실 정리까지, 공간을 이용하시는 데 필요한 안내를 사진과 함께 담았습니다.</p>
   </section>
   <div class="gflow">{"".join(cols)}</div>
-  <div class="pager" style="padding-bottom:var(--space)"><a class="btn sm" href="./"><span aria-hidden="true">←</span>&nbsp;뒤로가기</a></div>
+  <div class="pager" style="padding-bottom:var(--space)"><a class="btn sm" href="./"><span aria-hidden="true">←</span>&nbsp;목록으로</a></div>
 </div>
 ''')
 print('guide pages:', len(flat), '+ children')
