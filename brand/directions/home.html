@@ -78,9 +78,17 @@
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .hero-vis { position: relative; }
   .hero-vis .ph { aspect-ratio: 4 / 5; max-width: 100%; border-radius: var(--r-photo); background: url(img/ev-full.jpg) center / cover; }
-  .hero-vis .k-o { position: absolute; left: -36px; bottom: 56px; width: 112px; --t: 22px; background: var(--page); }
+  /* Emblem: ● / ○ stacked on a cobalt slab, built from the kit pieces. Sized by --w. */
+  .emb { --w: 96px; --fg: var(--paper); position: relative; display: block; width: var(--w); aspect-ratio: 232 / 434; background: var(--cobalt); flex: none; }
+  .emb.inv { --fg: var(--cobalt); background: var(--paper); }
+  .emb i { position: absolute; display: block; }
+  .emb .dot { left: 29.5%; top: 11%; width: 41%; aspect-ratio: 1; border-radius: 50%; background: var(--fg); }
+  .emb .sl { left: 34%; top: 38%; width: 32%; height: 25%; background: var(--fg); clip-path: polygon(64% 0, 100% 0, 36% 100%, 0 100%); }
+  .emb .ring { left: 29.5%; top: 68%; width: 41%; aspect-ratio: 1; border-radius: 50%; border: calc(var(--w) * .045) solid var(--fg); }
+  .hero-vis .emb { position: absolute; left: -28px; bottom: 48px; --w: 92px; }
+  .logo-slot { display: grid; place-items: center; width: 150px; height: 44px; border: 1.5px dashed var(--muted); border-radius: 10px; font-size: 12px; color: var(--muted); }
   .hero-vis .tag { position: absolute; right: 22px; top: 22px; background: var(--paper); border-radius: 999px; padding: 7px 14px; font: 500 12.5px var(--latin); letter-spacing: .04em; }
-  @media (max-width: 899px) { .hero-vis .k-o { left: -8px; width: 80px; --t: 16px; } }
+  @media (max-width: 899px) { .hero-vis .emb { left: -6px; --w: 64px; } }
 
   .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 24px; border-top: 1px solid var(--ink); padding-block: 36px; }
   @media (min-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } }
@@ -190,7 +198,8 @@
   .contact .sec-head h2 { color: var(--paper); }
   .contact .sec-head .h-en { color: var(--lime); }
   .contact .sec-head p.d { color: var(--paper); opacity: .85; }
-  .contact .k-o { position: absolute; right: -90px; top: -90px; width: 300px; --t: 48px; --kc: var(--lime); }
+  .contact .emb { position: absolute; right: max(16px, 6vw); top: -1px; --w: clamp(72px, 9vw, 128px); }
+  @media (max-width: 899px) { .contact .emb { display: none; } }
   .channels { display: grid; gap: 12px; grid-template-columns: 1fr; position: relative; }
   @media (min-width: 640px) { .channels { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .channels { grid-template-columns: repeat(4, 1fr); } }
@@ -214,7 +223,7 @@
 <div class="promo"><div class="wrap">2027년 여름, 이씀이 직접 만든 프로그램이 열립니다<a href="#program">미리 보기 →</a></div></div>
 <header class="hdr">
   <div class="wrap">
-    <a href="#top" class="brand" aria-label="이씀 ISSEUM 처음으로">이씀<small>ISSEUM</small></a>
+    <a href="#top" class="logo-slot" aria-label="이씀 처음으로">로고 자리</a>
     <nav class="nav" aria-label="주요 메뉴">
       <a href="#program">프로그램</a><a href="#space">공간</a><a href="#equipment">장비</a><a href="#price">요금</a><a href="#process">대관 절차</a><a href="#faq">FAQ</a>
     </nav>
@@ -234,7 +243,7 @@
       </div>
       <div class="hero-vis">
         <div class="ph" role="img" aria-label="참석자로 가득 찬 이씀 메인 홀"></div>
-        <span class="k-o" aria-hidden="true"></span>
+        <span class="emb" aria-hidden="true"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
         <span class="tag">MAIN HALL · 198㎡</span>
       </div>
     </div>
@@ -379,7 +388,7 @@
   </section>
 
   <section class="contact sec" id="contact" aria-labelledby="contact-title">
-    <span class="k-o" aria-hidden="true"></span>
+    <span class="emb inv" aria-hidden="true"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
     <div class="wrap">
       <div class="sec-head">
         <div><p class="eb" style="color:var(--lime)">Contact</p><h2 id="contact-title">당신의 일을<br>여기서 열어 보세요</h2><p class="h-en">Open your thing here.</p></div>
@@ -397,7 +406,7 @@
 
 <footer class="ftr">
   <div class="wrap">
-    <p class="brand" aria-hidden="true">이씀<small>ISSEUM</small></p>
+    <span class="emb" aria-hidden="true" style="--w:56px"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
     <div>
       <dl>
         <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
