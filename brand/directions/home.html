@@ -43,8 +43,8 @@
   .k-m { display: block; border: var(--t) solid var(--kc, var(--ink)); }
 
   /* Header */
-  .promo { background: var(--cobalt); color: var(--paper); text-align: center; font-size: 14.5px; font-weight: 500; }
-  .promo .wrap { padding-block: 11px; }
+  .promo { background: var(--cobalt); color: var(--paper); text-align: center; font-size: 16.5px; font-weight: 500; }
+  .promo .wrap { padding-block: 18px; }
   .promo a { font-weight: 700; margin-left: 12px; white-space: nowrap; }
   .promo a:hover { color: var(--lime); }
   .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--page); }
@@ -56,16 +56,17 @@
   @media (max-width: 899px) {
     .hdr .wrap { padding-block: 14px; gap: 12px; }
     .nav { order: 3; flex: 1 0 100%; flex-wrap: nowrap; overflow-x: auto; gap: 22px; font-size: 14.5px; padding-bottom: 2px; white-space: nowrap; }
-    .promo { font-size: 13px; }
+    .promo { font-size: 14.5px; }
+    .promo .wrap { padding-block: 14px; }
   }
   .nav a:hover { color: var(--cobalt); }
   .hdr-cta { display: flex; gap: 8px; align-items: center; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 999px; font-size: 15px; font-weight: 700; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); line-height: 1.2; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 52px; border-radius: 999px; font-size: 15px; font-weight: 700; border: 1.5px solid var(--cobalt); background: var(--paper); color: var(--ink); line-height: 1.2; }
   .btn.pri { background: var(--cobalt); border-color: var(--cobalt); color: var(--paper); }
   .btn.pri:hover { background: var(--ink); border-color: var(--ink); }
   .btn:not(.pri):hover { background: var(--lime); }
-  .btn.sm { padding: 10px 18px; font-size: 14px; }
-  .lang { font: 700 13px var(--latin); border: 1px solid var(--ink); padding: 8px 12px; border-radius: 999px; }
+  .btn.sm { padding: 10px 36px; font-size: 14px; }
+  .lang { font: 700 13px var(--latin); border: 1.5px solid var(--cobalt); color: var(--cobalt); padding: 8px 12px; border-radius: 999px; }
 
   /* Hero */
   .hero-grid { display: grid; grid-template-columns: 1fr; gap: 48px; padding-block: clamp(48px, 7vw, 112px) clamp(56px, 7vw, 112px); align-items: center; }
@@ -77,7 +78,12 @@
   .hero .lead { max-width: 28em; color: var(--body); font-size: 17px; line-height: 1.75; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .hero-vis { position: relative; }
-  .hero-vis .ph { aspect-ratio: 4 / 5; max-width: 100%; border-radius: var(--r-photo); background: url(img/ev-full.jpg) center / cover; }
+  .hero-vis .ph { position: relative; aspect-ratio: 4 / 5; max-width: 100%; border-radius: var(--r-photo); overflow: hidden; background: var(--mist); }
+  .hero-vis .ph i { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  /* Each overlay fades in over 1s, holds ~4s, fades out; staggered 5s apart. The base layer shows between them and when motion is reduced. */
+  .hero-vis .ph i + i { opacity: 0; animation: heroFade 25s ease-in-out infinite backwards; }
+  @keyframes heroFade { 0% { opacity: 0; } 4% { opacity: 1; } 20% { opacity: 1; } 24% { opacity: 0; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .hero-vis .ph i + i { animation: none; } }
   /* Emblem: the four kit pieces (ㅇ ㅣ / ㅁ) stacked in order on a cobalt slab. One stroke weight, sized by --w. */
   .emb { --w: 96px; --s: calc(var(--w) * .07); --fg: var(--paper); position: relative; display: block; width: var(--w); aspect-ratio: 232 / 520; background: var(--cobalt); flex: none; }
   .emb.inv { --fg: var(--cobalt); background: var(--paper); }
@@ -91,10 +97,12 @@
   .hero-vis .tag { position: absolute; right: 22px; top: 22px; background: var(--paper); border-radius: 999px; padding: 7px 14px; font: 500 12.5px var(--latin); letter-spacing: .04em; }
   @media (max-width: 899px) { .hero-vis .emb { left: -6px; --w: 64px; } }
 
-  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 24px; padding-block: 36px; }
-  .stats-band { border-block: 1px solid var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 0; padding-block: 40px; text-align: center; }
+  .stats > div + div { border-left: 1px solid #cfcfc8; }
+  @media (max-width: 899px) { .stats > div:nth-child(3) { border-left: 0; } }
+  .stats-band { background: var(--mist); border-block: 1px solid var(--ink); }
   @media (min-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } }
-  .stats > div { min-width: 0; }
+  .stats > div { min-width: 0; padding-inline: 12px; }
   .stats b { display: block; font-size: clamp(20px, 2.2vw, 26px); font-weight: 900; letter-spacing: -0.05em; line-height: 1.2; }
   .stats span { font-size: 13.5px; color: var(--muted); }
 
@@ -107,19 +115,14 @@
   .sec-head .h-en { font: 500 15px var(--latin); color: var(--muted); margin-top: 8px; }
   .sec-head p.d { color: var(--body); max-width: 34em; }
 
-  /* Happened here (event photos) */
-  .happened-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); }
-  @media (min-width: 900px) { .happened-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; } }
-  .ev { position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--mist); min-height: 180px; }
-  .ev img { width: 100%; height: 100%; object-fit: cover; }
-  .ev figcaption { position: absolute; left: 14px; bottom: 14px; background: var(--paper); color: var(--ink); font-size: 13.5px; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
-  @media (min-width: 900px) {
-    .ev.wide { grid-column: span 2; grid-row: span 2; }
-    .ev.tall { grid-row: span 2; }
-    .ev.round { background: none; display: grid; place-items: center; border-radius: 0; }
-    .ev.round img { width: 92%; height: auto; aspect-ratio: 1; border-radius: 50%; outline: 12px solid var(--lime); outline-offset: -1px; }
-    .ev.round figcaption { left: 8%; bottom: 8%; }
-  }
+  .dark { background: var(--ink); color: var(--paper); }
+  .dark .sec-head h2 { color: var(--paper); }
+  .dark .sec-head .h-en, .dark .sec-head p.d { color: #c9c9c2; }
+  .dark .eb { color: var(--lime); }
+  .dark .sp p { color: #c9c9c2; }
+  .dark .sp .meta { color: var(--lime); }
+  .dark .sp .no { border-color: var(--paper); background: var(--ink); color: var(--paper); }
+  .dark .sp:first-child .no { border-color: var(--lime); }
 
   /* Spaces */
   .spaces { display: grid; gap: 48px 24px; grid-template-columns: 1fr; }
@@ -213,7 +216,7 @@
         <div class="btns"><a class="btn pri" href="#contact">대관 문의하기</a><a class="btn" href="#space">공간 둘러보기</a></div>
       </div>
       <div class="hero-vis">
-        <div class="ph" role="img" aria-label="참석자로 가득 찬 이씀 메인 홀"></div>
+        <div class="ph" role="img" aria-label="이씀에서 열린 세미나와 워크숍 장면"><i style="background-image:url(img/ev-full.jpg)"></i><i style="background-image:url(img/ev-qa.jpg);animation-delay:5s"></i><i style="background-image:url(img/ev-room.jpg);animation-delay:10s"></i><i style="background-image:url(img/ev-podium.jpg);animation-delay:15s"></i><i style="background-image:url(img/ev-laptops.jpg);animation-delay:20s"></i></div>
         <span class="emb" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
         <span class="tag">MAIN HALL · 198㎡</span>
       </div>
@@ -228,24 +231,8 @@
   </div></div></div>
 
 
-  <section class="sec" id="happened" aria-labelledby="happened-title">
-    <div class="wrap">
-      <div class="sec-head">
-        <div><p class="eb">Happened here</p><h2 id="happened-title">이씀에서 열린 일</h2></div>
-        <p class="d">세미나, 워크숍, 소모임까지. 이씀을 빌린 분들이 이 공간에서 만든 장면입니다.</p>
-      </div>
-      <div class="happened-grid">
-        <figure class="ev wide" style="margin:0"><img src="img/ev-qa.jpg" alt="메인 홀 세미나에서 참석자가 질문하는 장면" loading="lazy"><figcaption>세미나</figcaption></figure>
-        <figure class="ev round" style="margin:0"><img src="img/ev-podium.jpg" alt="강연대 앞에서 발표하는 연사" loading="lazy"><figcaption>강연</figcaption></figure>
-        <figure class="ev tall" style="margin:0"><img src="img/ev-room.jpg" alt="프로젝트 룸에서 노트북을 펴고 회의하는 사람들" loading="lazy"><figcaption>소모임</figcaption></figure>
-        <figure class="ev" style="margin:0"><img src="img/ev-groups.jpg" alt="테이블별로 모여 앉은 워크숍" loading="lazy"><figcaption>워크숍</figcaption></figure>
-        <figure class="ev wide" style="margin:0;grid-row:span 1"><img src="img/ev-laptops.jpg" alt="노트북을 펴고 교육에 참여한 사람들로 채워진 메인 홀" loading="lazy"><figcaption>교육</figcaption></figure>
-        <figure class="ev" style="margin:0;grid-column:span 2"><img src="img/ev-bar.jpg" alt="바 카운터에 차려진 커피와 다과" loading="lazy"><figcaption>케이터링</figcaption></figure>
-      </div>
-    </div>
-  </section>
 
-  <section class="sec" id="space" aria-labelledby="space-title" style="padding-top:0">
+  <section class="sec dark" id="space" aria-labelledby="space-title">
     <div class="wrap">
       <div class="sec-head">
         <div><p class="eb">Space</p><h2 id="space-title">공간 안내</h2><p class="h-en">Four rooms, one booking</p></div>
@@ -304,6 +291,7 @@
         <p class="d">더 궁금한 점은 톡톡이나 카카오톡으로 물어봐 주세요.</p>
       </div>
       <div class="faq">
+        <details open><summary>대관료가 얼마인가요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>전체 대관 기준 시간당 요금이며, 표기 금액에는 부가세가 포함되어 있습니다. 최소 3시간부터 이용하실 수 있습니다.</p><div class="refund"><div><span>주중 (월–목)</span><b>시간당 140,000원</b></div><div><span>주말 (금–일) · 공휴일</span><b>시간당 170,000원</b></div></div><p>메인 홀 · 프로젝트 룸 · 파우더 룸 · 바 전 영역과 보유 장비 전체를 함께 이용하시며, 일부 공간만 단독으로 대관하지는 않습니다.</p><p>대관 시간에는 준비와 철수(정리) 시간이 모두 포함되며, 이용 시간을 초과할 경우 30분 단위로 추가 요금이 부과됩니다. 결제는 일정 문의 후 네이버 예약에서 해 주세요.</p></div></details>
         <details><summary>예약을 취소하면 환불되나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>취소 시점에 따라 아래와 같이 환불됩니다.</p>
           <div class="refund"><div><span>이용 8일 전 취소</span><b>100% 환불</b></div><div><span>이용 7일 전 취소</span><b>70% 환불</b></div><div><span>이용 6일 전 취소</span><b>60% 환불</b></div><div><span>이용 5일 전 취소</span><b>50% 환불</b></div><div><span>이용 4일 전 취소</span><b>40% 환불</b></div><div><span>이용 3일 전 취소</span><b>30% 환불</b></div><div><span>이용 2일 전 ~ 당일 취소</span><b>환불 불가</b></div></div></div></details>
         <details><summary>촬영도 할 수 있나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>네, 가능합니다. 다만 촬영은 참여 인원과 장비, 세트 규모에 따라 특수 청소가 필요할 수 있어 일반 대관과 요금이 달라질 수 있습니다. 촬영 일정과 내용, 인원을 먼저 알려 주시면 요금을 안내해 드리겠습니다.</p></div></details>
