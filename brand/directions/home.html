@@ -174,7 +174,8 @@
   .contact .sec-head h2 { color: var(--paper); }
   .contact .sec-head .h-en { color: var(--lime); }
   .contact .sec-head p.d { color: var(--paper); opacity: .85; }
-  .contact .emb { position: absolute; right: max(16px, 6vw); top: -1px; --w: clamp(72px, 9vw, 128px); }
+  /* Hangs from the top edge beside the heading, short enough to clear the channel cards. */
+  .contact .emb { position: absolute; right: max(16px, 6vw); top: -1px; --w: clamp(56px, 6vw, 84px); }
   @media (max-width: 899px) { .contact .emb { display: none; } }
   .channels { display: grid; gap: 12px; grid-template-columns: 1fr; position: relative; }
   @media (min-width: 640px) { .channels { grid-template-columns: repeat(2, 1fr); } }
@@ -185,13 +186,12 @@
   a.ch:hover { background: var(--paper); color: var(--cobalt); }
 
   /* Footer */
-  .ftr { padding-block: 72px 80px; }
-  .ftr .wrap { display: grid; gap: 24px; }
-  @media (min-width: 900px) { .ftr .wrap { grid-template-columns: auto 1fr; align-items: start; gap: 48px; } }
-  .ftr dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; font-size: 14px; color: var(--body); }
-  .ftr dt { color: var(--muted); }
-  .ftr dd { margin: 0; }
-  .draft { font-size: 13px; color: var(--muted); margin-top: 16px; }
+.contact-h { font-size: clamp(32px, 4.6vw, 56px); font-weight: 900; letter-spacing: -0.06em; line-height: 1.08; color: var(--paper); margin-bottom: clamp(32px, 4.5vw, 56px); position: relative; }
+  .biz { margin-top: clamp(40px, 5vw, 64px); padding-top: 28px; border-top: 1px solid rgba(255,255,255,.35); position: relative; }
+  .biz dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; font-size: 14px; color: var(--paper); }
+  .biz dt { color: var(--lime); }
+  .biz dd { margin: 0; }
+  .draft { font-size: 13px; color: var(--paper); opacity: .7; margin-top: 16px; }
 
 
   /* ===== v8 ===== */
@@ -360,27 +360,19 @@
     </div>
   </section>
 
-  <section class="contact sec" id="contact" aria-labelledby="contact-title">
-    <span class="emb inv" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
-    <div class="wrap">
-      <div class="sec-head">
-        <div><p class="eb" style="color:var(--lime)">Contact</p><h2 id="contact-title">당신의 일을<br>여기서 열어 보세요</h2><p class="h-en">Open your thing here.</p></div>
-        <p class="d">날짜와 시간, 인원, 행사 성격을 남겨 주시면 예약 가능 여부를 안내해 드립니다.</p>
-      </div>
-      <div class="channels">
-        <a class="ch" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener"><span class="l">NAVER TALK</span><span class="v">네이버 톡톡 →</span></a>
-        <a class="ch" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener"><span class="l">KAKAOTALK</span><span class="v">카카오톡 채널 →</span></a>
-        <div class="ch"><span class="l">PHONE</span><span class="v">010-6899-4417</span></div>
-        <div class="ch"><span class="l">EMAIL</span><span class="v">hello@isseum.com</span></div>
-      </div>
-    </div>
-  </section>
 </main>
 
-<footer class="ftr">
+<footer class="contact sec" id="contact" aria-labelledby="contact-title">
+  <span class="emb inv" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
   <div class="wrap">
-    <span class="emb" aria-hidden="true" style="--w:56px"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
-    <div>
+    <h2 id="contact-title" class="contact-h">당신의 일을<br>여기서 열어 보세요</h2>
+    <div class="channels">
+      <a class="ch" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener"><span class="l">NAVER TALK</span><span class="v">네이버 톡톡 →</span></a>
+      <a class="ch" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener"><span class="l">KAKAOTALK</span><span class="v">카카오톡 채널 →</span></a>
+      <div class="ch"><span class="l">PHONE</span><span class="v">010-6899-4417</span></div>
+      <div class="ch"><span class="l">EMAIL</span><span class="v">hello@isseum.com</span></div>
+    </div>
+    <div class="biz">
       <dl>
         <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
         <dt>대표</dt><dd>정용철</dd>
