@@ -78,13 +78,14 @@
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .hero-vis { position: relative; }
   .hero-vis .ph { aspect-ratio: 4 / 5; max-width: 100%; border-radius: var(--r-photo); background: url(img/ev-full.jpg) center / cover; }
-  /* Emblem: ● / ○ stacked on a cobalt slab, built from the kit pieces. Sized by --w. */
-  .emb { --w: 96px; --fg: var(--paper); position: relative; display: block; width: var(--w); aspect-ratio: 232 / 434; background: var(--cobalt); flex: none; }
+  /* Emblem: the four kit pieces (ㅇ ㅣ / ㅁ) stacked in order on a cobalt slab. One stroke weight, sized by --w. */
+  .emb { --w: 96px; --s: calc(var(--w) * .07); --fg: var(--paper); position: relative; display: block; width: var(--w); aspect-ratio: 232 / 520; background: var(--cobalt); flex: none; }
   .emb.inv { --fg: var(--cobalt); background: var(--paper); }
   .emb i { position: absolute; display: block; }
-  .emb .dot { left: 29.5%; top: 11%; width: 41%; aspect-ratio: 1; border-radius: 50%; background: var(--fg); }
-  .emb .sl { left: 34%; top: 38%; width: 32%; height: 25%; background: var(--fg); clip-path: polygon(64% 0, 100% 0, 36% 100%, 0 100%); }
-  .emb .ring { left: 29.5%; top: 68%; width: 41%; aspect-ratio: 1; border-radius: 50%; border: calc(var(--w) * .045) solid var(--fg); }
+  .emb .o { left: 27%; top: 7%; width: 46%; aspect-ratio: 1; border-radius: 50%; border: var(--s) solid var(--fg); }
+  .emb .bar { left: 46.5%; top: 32%; width: var(--s); height: 16%; background: var(--fg); }
+  .emb .sl { left: 22%; top: 52%; width: 56%; height: 15%; background: var(--fg); clip-path: polygon(0 74%, 100% 0, 100% 26%, 0 100%); }
+  .emb .sq { left: 25%; top: 74%; width: 50%; height: 17%; border: var(--s) solid var(--fg); }
   .hero-vis .emb { position: absolute; left: -28px; bottom: 48px; --w: 92px; }
   .logo-slot { display: grid; place-items: center; width: 150px; height: 44px; border: 1.5px dashed var(--muted); border-radius: 10px; font-size: 12px; color: var(--muted); }
   .hero-vis .tag { position: absolute; right: 22px; top: 22px; background: var(--paper); border-radius: 999px; padding: 7px 14px; font: 500 12.5px var(--latin); letter-spacing: .04em; }
@@ -243,7 +244,7 @@
       </div>
       <div class="hero-vis">
         <div class="ph" role="img" aria-label="참석자로 가득 찬 이씀 메인 홀"></div>
-        <span class="emb" aria-hidden="true"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
+        <span class="emb" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
         <span class="tag">MAIN HALL · 198㎡</span>
       </div>
     </div>
@@ -388,7 +389,7 @@
   </section>
 
   <section class="contact sec" id="contact" aria-labelledby="contact-title">
-    <span class="emb inv" aria-hidden="true"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
+    <span class="emb inv" aria-hidden="true"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
     <div class="wrap">
       <div class="sec-head">
         <div><p class="eb" style="color:var(--lime)">Contact</p><h2 id="contact-title">당신의 일을<br>여기서 열어 보세요</h2><p class="h-en">Open your thing here.</p></div>
@@ -406,7 +407,7 @@
 
 <footer class="ftr">
   <div class="wrap">
-    <span class="emb" aria-hidden="true" style="--w:56px"><i class="dot"></i><i class="sl"></i><i class="ring"></i></span>
+    <span class="emb" aria-hidden="true" style="--w:56px"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
     <div>
       <dl>
         <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
