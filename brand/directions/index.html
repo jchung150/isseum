@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이씀 시각 방향 비교</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Space+Grotesk:wght@500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* Comparison sheet only. Not site code: nothing here goes to src/ until a direction is chosen. */
+  :root {
+    --sheet-bg: #ecebe7;
+    --sheet-ink: #1c1c1a;
+    --sheet-muted: #6e6e64;
+    --logo: url(../../src/assets/isseum-logo.png);
+    --photo-hall: url(../../src/assets/isseum_main-hall_01.jpg);
+    --photo-lounge: url(../../src/assets/isseum_main-hall_05.jpg);
+    --photo-room: url(../../src/assets/isseum_project-room_01.jpg);
+    --photo-bar: url(../../src/assets/isseum_bar_01.jpg);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--sheet-bg); color: var(--sheet-ink); font-family: Pretendard, system-ui, sans-serif; letter-spacing: -0.01em; }
+  .sheet-head { max-width: 1200px; margin: 0 auto; padding: 48px 16px 24px; }
+  .sheet-head h1 { font-size: clamp(24px, 3vw, 34px); font-weight: 700; letter-spacing: -0.03em; }
+  .sheet-head p { margin-top: 10px; color: var(--sheet-muted); max-width: 40em; line-height: 1.6; font-size: 15px; }
+  .jump { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .jump a { color: inherit; border: 1px solid currentColor; padding: 6px 12px; text-decoration: none; font-size: 14px; }
+  a:focus-visible { outline: 2px solid var(--sheet-ink); outline-offset: 3px; }
+
+  section.dir { max-width: 1200px; margin: 0 auto 40px; padding: clamp(24px, 4vw, 48px) 16px; background: var(--d-bg); color: var(--d-ink); }
+  .dir-head { display: grid; gap: 12px; grid-template-columns: 1fr; margin-bottom: 32px; }
+  @media (min-width: 900px) { .dir-head { grid-template-columns: 1fr 1fr; align-items: end; } }
+  .dir-tag { font-family: var(--d-latin); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; opacity: .7; }
+  .dir-name { font-family: var(--d-display); font-weight: var(--d-display-w); font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.04em; line-height: 1.05; }
+  .dir-why { font-size: 15px; line-height: 1.7; max-width: 36em; }
+  .dir-why b { font-weight: 700; }
+
+  h3.part { font-family: var(--d-latin); font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; margin: 36px 0 14px; opacity: .65; font-weight: 500; }
+
+  /* Palette */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--d-line); border: 1px solid var(--d-line); }
+  .sw { background: var(--c); color: var(--on, #fff); padding: 56px 12px 12px; font-size: 12.5px; line-height: 1.5; }
+  .sw b { display: block; font-size: 14px; }
+
+  /* Logo row */
+  .logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--d-line); border: 1px solid var(--d-line); }
+  .logo-cell { background: var(--cell, var(--d-bg)); min-height: 260px; display: grid; place-items: center; padding: 28px; position: relative; }
+  .logo-cell small { position: absolute; left: 12px; bottom: 10px; font-size: 11.5px; opacity: .6; color: var(--cell-ink, var(--d-ink)); }
+  .mark { display: block; aspect-ratio: 496 / 984; background: var(--mark, var(--d-ink)); -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+  .lockup { display: flex; align-items: center; gap: 16px; color: var(--cell-ink, var(--d-ink)); }
+  .lockup .mark { height: 84px; }
+  .lockup .words { display: grid; gap: 4px; }
+  .lockup .ko { font-family: var(--d-display); font-weight: var(--d-display-w); font-size: 34px; letter-spacing: -0.04em; line-height: 1; }
+  .lockup .en { font-family: var(--d-latin); font-size: 13px; letter-spacing: 0.32em; }
+
+  /* Posters */
+  .posters { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .poster { aspect-ratio: 4 / 5; position: relative; overflow: hidden; container-type: inline-size; }
+  .poster .note { position: absolute; top: 8px; right: 8px; z-index: 3; font: 600 11px Pretendard, sans-serif; background: #fff; color: #111; padding: 3px 7px; }
+  .cap { font-size: 12.5px; opacity: .65; margin-top: 8px; line-height: 1.5; }
+
+  /* Web hero */
+  .web { border: 1px solid var(--d-line); overflow: hidden; }
+  .web-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--d-line); font-size: 13.5px; gap: 12px; flex-wrap: wrap; }
+  .web-bar nav { display: flex; gap: 18px; flex-wrap: wrap; }
+  .web-body { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .web-body { grid-template-columns: 1.1fr 1fr; } }
+  .web-copy { padding: clamp(24px, 4vw, 48px); display: grid; gap: 18px; align-content: center; }
+  .web-photo { min-height: 260px; background: var(--photo-hall) center / cover; }
+  .web-h { font-family: var(--d-display); font-weight: var(--d-display-w); font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.04em; line-height: 1.12; }
+  .web-sub { font-family: var(--d-latin); font-size: 15px; opacity: .7; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { padding: 12px 18px; font-size: 14px; font-weight: 600; border-radius: var(--d-radius); border: 1px solid var(--d-ink); }
+  .btn.primary { background: var(--d-btn); color: var(--d-btn-ink); border-color: var(--d-btn); }
+
+  .verdict { margin-top: 32px; display: grid; gap: 1px; background: var(--d-line); border: 1px solid var(--d-line); grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .verdict { grid-template-columns: 1fr 1fr; } }
+  .verdict div { background: var(--d-bg); padding: 18px; font-size: 14.5px; line-height: 1.65; }
+  .verdict b { display: block; margin-bottom: 4px; }
+
+  /* ============ A. 점토 CLAY ============ */
+  #clay { --d-bg: #f4efe6; --d-ink: #2b211b; --d-line: #dccfbd; --d-accent: #b4532f; --d-btn: #b4532f; --d-btn-ink: #fff;
+          --d-display: Pretendard, sans-serif; --d-display-w: 700; --d-latin: 'Instrument Serif', serif; --d-radius: 999px; }
+  #clay .dir-tag, #clay h3.part, #clay .web-sub, #clay .lockup .en { font-style: italic; letter-spacing: 0.02em; text-transform: none; font-size: 16px; }
+  .clay-p1 { background: #b4532f; color: #fff7ee; padding: 7cqw; display: grid; grid-template-rows: 1fr auto auto; gap: 5cqw; }
+  .clay-p1 .ph { border-radius: 40cqw 40cqw 0 0; background: var(--photo-lounge) center / cover; }
+  .clay-p1 h4 { font-size: 9.5cqw; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }
+  .clay-p1 .it { font: italic 6cqw 'Instrument Serif', serif; }
+  .clay-p1 .ft { display: flex; justify-content: space-between; align-items: end; font-size: 3.4cqw; line-height: 1.5; }
+  .clay-p1 .mark { height: 14cqw; --mark: #fff7ee; }
+  .clay-p2 { background: #f4efe6; color: #2b211b; padding: 7cqw; display: grid; grid-template-rows: 1fr auto; border: 1px solid #dccfbd; }
+  .clay-p2 .blob { position: absolute; width: 70cqw; height: 70cqw; right: -14cqw; top: 8cqw; background: #e3cdb3; border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%; }
+  .clay-p2 .blob2 { position: absolute; width: 30cqw; height: 30cqw; left: 10cqw; top: 62cqw; background: #b4532f; border-radius: 50%; }
+  .clay-p2 .top { position: relative; font: italic 13cqw/0.95 'Instrument Serif', serif; letter-spacing: -0.02em; }
+  .clay-p2 .bot { position: relative; display: grid; gap: 2cqw; }
+  .clay-p2 .bot b { font-size: 6cqw; letter-spacing: -0.03em; }
+  .clay-p2 .bot span { font-size: 3.4cqw; line-height: 1.5; }
+
+  /* ============ B. 기호 SIGNAL ============ */
+  #signal { --d-bg: #ffffff; --d-ink: #111111; --d-line: #111111; --d-accent: #f2368f; --d-btn: #111; --d-btn-ink: #fff;
+            --d-display: Pretendard, sans-serif; --d-display-w: 800; --d-latin: 'Space Grotesk', sans-serif; --d-radius: 0; }
+  .sig-p1 { background: #f2368f; color: #111; }
+  .sig-p1 .ph { position: absolute; inset: 0 0 55% 0; background: var(--photo-hall) center / cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: multiply; }
+  .sig-p1 .circ { position: absolute; width: 34cqw; height: 34cqw; border: 6cqw solid #111; border-radius: 50%; left: 7cqw; top: 64cqw; }
+  .sig-p1 .bar { position: absolute; width: 6cqw; height: 34cqw; background: #111; left: 46cqw; top: 64cqw; }
+  .sig-p1 .txt { position: absolute; left: 58cqw; right: 6cqw; top: 64cqw; font-size: 7cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.08; }
+  .sig-p1 .ft { position: absolute; left: 7cqw; right: 6cqw; bottom: 5cqw; display: flex; justify-content: space-between; font: 500 3.2cqw 'Space Grotesk', sans-serif; letter-spacing: 0.04em; border-top: 0.5cqw solid #111; padding-top: 2cqw; }
+  .sig-p2 { background: #fff; color: #111; border: 1px solid #111; }
+  .sig-p2 .slash { position: absolute; width: 120cqw; height: 12cqw; background: #f2368f; transform: rotate(-31deg); left: -10cqw; top: 40cqw; }
+  .sig-p2 .sq { position: absolute; width: 30cqw; height: 22cqw; border: 5cqw solid #111; right: 7cqw; top: 7cqw; }
+  .sig-p2 .big { position: absolute; left: 7cqw; top: 7cqw; font: 700 12cqw/0.92 'Space Grotesk', sans-serif; letter-spacing: -0.05em; }
+  .sig-p2 .ko { position: absolute; left: 7cqw; bottom: 16cqw; font-size: 7.5cqw; font-weight: 800; letter-spacing: -0.05em; line-height: 1.12; }
+  .sig-p2 .ft { position: absolute; left: 7cqw; right: 7cqw; bottom: 5cqw; display: flex; justify-content: space-between; font: 500 3.2cqw 'Space Grotesk', sans-serif; letter-spacing: 0.04em; }
+  .shape-kit { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .shape-kit i { display: block; background: #111; }
+
+  /* ============ C. 고요 QUIET ============ */
+  #quiet { --d-bg: #fbfbf9; --d-ink: #1c1c1a; --d-line: #e5e5e0; --d-accent: #2f4a3a; --d-btn: #2f4a3a; --d-btn-ink: #fbfbf9;
+           --d-display: 'Noto Serif KR', serif; --d-display-w: 500; --d-latin: 'Noto Serif KR', serif; --d-radius: 2px; }
+  .q-p1 { background: #fbfbf9; color: #1c1c1a; border: 1px solid #e5e5e0; padding: 8cqw; display: grid; grid-template-rows: auto 1fr auto; gap: 6cqw; }
+  .q-p1 .top { display: flex; justify-content: space-between; font: 500 2.8cqw 'Noto Serif KR', serif; letter-spacing: 0.3em; }
+  .q-p1 .ph { background: var(--photo-room) center / cover; }
+  .q-p1 h4 { font: 500 7.6cqw/1.3 'Noto Serif KR', serif; letter-spacing: -0.04em; }
+  .q-p1 .ft { display: flex; justify-content: space-between; align-items: end; font-size: 3.2cqw; color: #55554c; line-height: 1.6; }
+  .q-p1 .mark { height: 12cqw; --mark: #2f4a3a; }
+  .q-p2 { background: #2f4a3a; color: #f1efe6; padding: 8cqw; display: grid; grid-template-rows: auto 1fr auto; }
+  .q-p2 .top { font: 500 2.8cqw 'Noto Serif KR', serif; letter-spacing: 0.3em; opacity: .75; }
+  .q-p2 h4 { align-self: center; font: 500 11cqw/1.15 'Noto Serif KR', serif; letter-spacing: -0.04em; }
+  .q-p2 h4 small { display: block; font-size: 4.2cqw; margin-top: 4cqw; letter-spacing: 0; opacity: .8; }
+  .q-p2 .ft { border-top: 1px solid rgba(241,239,230,.35); padding-top: 3cqw; display: flex; justify-content: space-between; font-size: 3.2cqw; }
+
+  .foot { max-width: 1200px; margin: 0 auto; padding: 0 16px 64px; font-size: 14px; color: var(--sheet-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<header class="sheet-head">
+  <h1>이씀 시각 방향 비교</h1>
+  <p>세 방향 모두 기존 '이씀' 마크는 그대로 두고, 그 마크를 어떻게 운용할지를 다르게 했습니다. 슬로건 "새로운 일이 일어나는 곳"은 가안입니다. 'Dry Clay Workshop' 포스터는 2027년 여름 프로그램을 가정한 시안용 예시이며, 날짜와 가격은 넣지 않았습니다.</p>
+  <nav class="jump" aria-label="방향 바로가기">
+    <a href="#clay">A. 점토</a><a href="#signal">B. 기호</a><a href="#quiet">C. 고요</a>
+  </nav>
+</header>
+
+<!-- ================= A ================= -->
+<section class="dir" id="clay">
+  <div class="dir-head">
+    <div>
+      <p class="dir-tag">Direction A — warm &amp; handmade</p>
+      <h2 class="dir-name">A. 점토</h2>
+    </div>
+    <p class="dir-why"><b>손으로 만드는 따뜻함.</b> 테라코타와 모래색이 공방과 워크숍의 느낌을 줍니다. 둥근 모서리와 영문 이탤릭 세리프가 관광객에게 친근하게 다가갑니다. 클레이 워크숍과 가장 직접적으로 이어지는 방향입니다.</p>
+  </div>
+
+  <h3 class="part">Colour</h3>
+  <div class="swatches">
+    <div class="sw" style="--c:#b4532f"><b>테라코타</b>#B4532F · 강조</div>
+    <div class="sw" style="--c:#e3cdb3;--on:#2b211b"><b>모래</b>#E3CDB3 · 면</div>
+    <div class="sw" style="--c:#f4efe6;--on:#2b211b"><b>종이</b>#F4EFE6 · 바탕</div>
+    <div class="sw" style="--c:#2b211b"><b>흙갈색</b>#2B211B · 글자</div>
+  </div>
+
+  <h3 class="part">Logo</h3>
+  <div class="logos">
+    <div class="logo-cell"><span class="mark" style="height:180px;--mark:#2b211b"></span><small>기본 마크</small></div>
+    <div class="logo-cell"><div class="lockup"><span class="mark" style="--mark:#b4532f"></span><div class="words"><span class="ko">이씀</span><span class="en">Isseum, Seoul</span></div></div><small>가로 조합</small></div>
+    <div class="logo-cell" style="--cell:#b4532f;--cell-ink:#fff7ee"><span class="mark" style="height:180px;--mark:#fff7ee"></span><small>색 바탕</small></div>
+  </div>
+
+  <h3 class="part">Posters</h3>
+  <div class="posters">
+    <div>
+      <div class="poster clay-p1">
+        <div class="ph" role="img" aria-label="라운지로 꾸민 메인 홀"></div>
+        <div><h4>당신의 일을<br>여기서 열어 보세요</h4><p class="it">Open your thing here.</p></div>
+        <div class="ft"><span>홍대입구역 1번 출구 5분<br>198㎡ · 최대 90인</span><span class="mark"></span></div>
+      </div>
+      <p class="cap">대관 포스터 · 아치형 사진 프레임</p>
+    </div>
+    <div>
+      <div class="poster clay-p2">
+        <span class="note">시안용 예시</span>
+        <div class="blob"></div><div class="blob2"></div>
+        <p class="top">Dry Clay<br>Workshop</p>
+        <div class="bot"><b>손으로 빚는 서울</b><span>Make a small piece of Seoul with your hands.<br>2027 Summer · Isseum, Hongdae</span></div>
+      </div>
+      <p class="cap">프로그램 포스터 · 점토 덩어리 같은 형태</p>
+    </div>
+  </div>
+
+  <h3 class="part">Website</h3>
+  <div class="web">
+    <div class="web-bar"><div class="lockup"><span class="mark" style="height:32px;--mark:#b4532f"></span><span class="ko" style="font-size:20px">이씀</span></div><nav><span>프로그램</span><span>대관</span><span>소개</span><span>EN</span></nav></div>
+    <div class="web-body">
+      <div class="web-copy"><p class="web-h">새로운 일이<br>일어나는 곳</p><p class="web-sub" style="font-style:italic;font-size:19px">Where new things happen.</p><div class="btns"><span class="btn primary">프로그램 보기</span><span class="btn">대관 문의</span></div></div>
+      <div class="web-photo" style="background-image:var(--photo-lounge);border-radius:200px 200px 0 0;margin:24px 24px 0"></div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div><b>얻는 것</b>따뜻함과 친근함. 외국인 관광객에게 "만들기 체험"이 바로 전달됩니다.</div>
+    <div><b>잃는 것</b>지금의 깔끔하고 각진 인상. 팬미팅, 쇼케이스, 기업 행사 같은 대관 고객에게는 공방처럼 보일 수 있습니다.</div>
+  </div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="dir" id="signal">
+  <div class="dir-head">
+    <div>
+      <p class="dir-tag">Direction B — shape kit</p>
+      <h2 class="dir-name">B. 기호</h2>
+    </div>
+    <p class="dir-why"><b>로고를 해체해 놀이 도구로 씁니다.</b> 이씀 마크는 원, 막대, 사선, 사각형으로 만들어져 있습니다. 이 네 조각을 포스터마다 다르게 배치하면, 매번 다르게 생겼어도 늘 이씀으로 읽힙니다. 흑백 바탕에 핫핑크 한 색만 더합니다. 레퍼런스의 "자유롭지만 깔끔한" 느낌에 가장 가깝고, 홍대와도 잘 어울립니다.</p>
+  </div>
+
+  <h3 class="part">Colour</h3>
+  <div class="swatches">
+    <div class="sw" style="--c:#f2368f;--on:#111"><b>핫핑크</b>#F2368F · 강조 (검정 글자만)</div>
+    <div class="sw" style="--c:#111"><b>검정</b>#111111 · 글자, 도형</div>
+    <div class="sw" style="--c:#fff;--on:#111"><b>흰색</b>#FFFFFF · 바탕</div>
+    <div class="sw" style="--c:#e9e9e6;--on:#111"><b>회색</b>#E9E9E6 · 보조 면</div>
+  </div>
+
+  <h3 class="part">Logo + shape kit</h3>
+  <div class="logos">
+    <div class="logo-cell"><span class="mark" style="height:180px"></span><small>기본 마크</small></div>
+    <div class="logo-cell" style="--cell:#f2368f"><div class="lockup"><span class="mark"></span><div class="words"><span class="ko">이씀</span><span class="en">ISSEUM</span></div></div><small>가로 조합</small></div>
+    <div class="logo-cell"><div class="shape-kit" aria-label="원, 막대, 사선, 사각형"><i style="width:56px;height:56px;border-radius:50%;background:none;border:12px solid #111"></i><i style="width:12px;height:64px"></i><i style="width:70px;height:12px;transform:rotate(-31deg);background:#f2368f"></i><i style="width:56px;height:42px;background:none;border:11px solid #111"></i></div><small>마크에서 꺼낸 네 조각</small></div>
+  </div>
+
+  <h3 class="part">Posters</h3>
+  <div class="posters">
+    <div>
+      <div class="poster sig-p1">
+        <div class="ph" role="img" aria-label="강연대가 있는 메인 홀"></div>
+        <div class="circ"></div><div class="bar"></div>
+        <p class="txt">당신의 일을 여기서 열어 보세요</p>
+        <div class="ft"><span>ISSEUM / HONGDAE</span><span>198㎡ · 90 PPL</span></div>
+      </div>
+      <p class="cap">대관 포스터 · 마크의 'ㅇ'과 'ㅣ'를 크게</p>
+    </div>
+    <div>
+      <div class="poster sig-p2">
+        <span class="note">시안용 예시</span>
+        <div class="slash"></div><div class="sq"></div>
+        <p class="big">DRY<br>CLAY<br>WORK<br>SHOP</p>
+        <p class="ko">손으로 빚는 서울</p>
+        <div class="ft"><span>2027 SUMMER</span><span>ISSEUM, SEOUL</span></div>
+      </div>
+      <p class="cap">프로그램 포스터 · 사선과 사각형</p>
+    </div>
+  </div>
+
+  <h3 class="part">Website</h3>
+  <div class="web">
+    <div class="web-bar"><div class="lockup"><span class="mark" style="height:32px"></span><span class="ko" style="font-size:20px">이씀</span></div><nav><span>프로그램</span><span>대관</span><span>소개</span><span>EN</span></nav></div>
+    <div class="web-body">
+      <div class="web-copy"><p class="web-h">새로운 일이<br>일어나는 곳</p><p class="web-sub">Where new things happen.</p><div class="btns"><span class="btn primary">프로그램 보기</span><span class="btn">대관 문의</span></div></div>
+      <div class="web-photo" style="background:#f2368f;position:relative"><div style="position:absolute;inset:0;background:var(--photo-hall) center/cover;filter:grayscale(1);mix-blend-mode:multiply"></div></div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div><b>얻는 것</b>생기와 확장성. 포스터를 계속 새로 만들어도 하나의 브랜드로 묶입니다. 인스타그램에서 눈에 잘 띕니다.</div>
+    <div><b>잃는 것</b>지금의 차분함과 고급스러움. 핫핑크는 흰 바탕 위 글자색으로 쓰면 읽기 어려워서 면과 도형에만 씁니다.</div>
+  </div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="dir" id="quiet">
+  <div class="dir-head">
+    <div>
+      <p class="dir-tag">Direction C — quiet editorial</p>
+      <h2 class="dir-name">C. 고요</h2>
+    </div>
+    <p class="dir-why"><b>지금의 이씀을 한 단계 다듬습니다.</b> 따뜻한 무채색, 세리프 제목, 각진 모서리는 그대로 둡니다. 여기에 깊은 초록 한 색과 잡지 같은 여백을 더합니다. 변화가 가장 적고, 지금 사이트에서 가장 쉽게 옮겨갈 수 있습니다.</p>
+  </div>
+
+  <h3 class="part">Colour</h3>
+  <div class="swatches">
+    <div class="sw" style="--c:#2f4a3a"><b>깊은 초록</b>#2F4A3A · 강조</div>
+    <div class="sw" style="--c:#1c1c1a"><b>먹</b>#1C1C1A · 글자 (현행)</div>
+    <div class="sw" style="--c:#f4f4f0;--on:#1c1c1a"><b>회백</b>#F4F4F0 · 면 (현행)</div>
+    <div class="sw" style="--c:#fbfbf9;--on:#1c1c1a"><b>바탕</b>#FBFBF9 (현행)</div>
+  </div>
+
+  <h3 class="part">Logo</h3>
+  <div class="logos">
+    <div class="logo-cell"><span class="mark" style="height:180px"></span><small>기본 마크</small></div>
+    <div class="logo-cell"><div class="lockup"><span class="mark" style="--mark:#2f4a3a"></span><div class="words"><span class="ko">이씀</span><span class="en" style="font-size:11px">ISSEUM · SEOUL</span></div></div><small>가로 조합</small></div>
+    <div class="logo-cell" style="--cell:#2f4a3a;--cell-ink:#f1efe6"><span class="mark" style="height:180px;--mark:#f1efe6"></span><small>색 바탕</small></div>
+  </div>
+
+  <h3 class="part">Posters</h3>
+  <div class="posters">
+    <div>
+      <div class="poster q-p1">
+        <div class="top"><span>ISSEUM</span><span>RENTAL</span></div>
+        <div class="ph" role="img" aria-label="소파와 긴 테이블이 있는 프로젝트 룸"></div>
+        <div><h4>당신의 일을<br>여기서 열어 보세요</h4></div>
+        <div class="ft"><span>홍대입구역 1번 출구 5분<br>198㎡ · 최대 90인</span><span class="mark"></span></div>
+      </div>
+      <p class="cap">대관 포스터 · 잡지 지면처럼</p>
+    </div>
+    <div>
+      <div class="poster q-p2">
+        <span class="note">시안용 예시</span>
+        <p class="top">PROGRAM · 2027 SUMMER</p>
+        <h4>손으로 빚는<br>서울<small>Dry Clay Workshop</small></h4>
+        <div class="ft"><span>Isseum, Hongdae</span><span>Seoul</span></div>
+      </div>
+      <p class="cap">프로그램 포스터 · 글자만으로</p>
+    </div>
+  </div>
+
+  <h3 class="part">Website</h3>
+  <div class="web">
+    <div class="web-bar"><div class="lockup"><span class="mark" style="height:32px"></span><span class="ko" style="font-size:20px">이씀</span></div><nav><span>프로그램</span><span>대관</span><span>소개</span><span>EN</span></nav></div>
+    <div class="web-body">
+      <div class="web-copy"><p class="web-h">새로운 일이<br>일어나는 곳</p><p class="web-sub">Where new things happen.</p><div class="btns"><span class="btn primary">프로그램 보기</span><span class="btn">대관 문의</span></div></div>
+      <div class="web-photo"></div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div><b>얻는 것</b>안정감과 신뢰. 기업 행사나 북토크 같은 대관 고객에게 가장 잘 맞고, 사이트 개편 비용도 가장 적습니다.</div>
+    <div><b>잃는 것</b>레퍼런스에서 좋아하신 "자유로움". 세 방향 중 가장 조용해서, 내년 참여형 프로그램의 활기는 덜 보입니다.</div>
+  </div>
+</section>
+
+<p class="foot">공통 메모: 지금 사진은 모두 사람이 없는 빈 공간입니다. 어느 방향을 고르든, "일이 일어나는 곳"을 보여주려면 행사 중이거나 사람이 있는 사진이 필요합니다.</p>
+</body>
+</html>
