@@ -108,3 +108,9 @@ a.ch:hover { background: var(--paper); color: var(--cobalt); }
   * { transition: none !important; }
 }
 .page-head .hand.inline { display: inline; font-size: 1.12em; margin: 0; }
+/* Back link: right end of the breadcrumb row, and first button of the bottom pager. */
+.crumb { align-items: center; }
+.crumb .back { margin-left: auto; color: var(--cobalt); font-weight: 700; border: 1.5px solid var(--cobalt); border-radius: 999px; padding: 6px 16px; }
+.crumb .back:hover { background: var(--lime); }
+.pager .pn { display: flex; gap: 8px; flex-wrap: wrap; }
+.rules-cta { align-items: center; }
