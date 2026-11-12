@@ -43,18 +43,16 @@
   .k-m { display: block; border: var(--t) solid var(--kc, var(--ink)); }
 
   /* Header */
-  /* Notice ticker: two identical runs side by side; shifting by one run (-50% → 0) loops seamlessly, left to right. */
+  /* Notice ticker: a single line enters at the left edge and exits at the right, then starts over.
+     Duration is set in script from the distance so the speed is the same on every screen width. */
   .promo { background: var(--cobalt); color: var(--paper); font-size: 16.5px; font-weight: 500; overflow: hidden; }
-  .promo-track { display: flex; width: max-content; padding-block: 18px; animation: promoRun 40s linear infinite; }
+  .promo-track { width: max-content; padding-block: 18px; white-space: nowrap; animation: promoRun 30s linear infinite; }
   .promo-track:hover { animation-play-state: paused; }
-  .promo-run { display: flex; flex: none; }
-  .promo-item { white-space: nowrap; padding-right: 72px; }
   .promo a { font-weight: 700; margin-left: 12px; white-space: nowrap; }
   .promo a:hover { color: var(--lime); }
-  @keyframes promoRun { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+  @keyframes promoRun { from { transform: translateX(-100%); } to { transform: translateX(100vw); } }
   @media (prefers-reduced-motion: reduce) {
-    .promo-track { animation: none; width: auto; justify-content: center; }
-    .promo-run[aria-hidden="true"], .promo-run .promo-item + .promo-item { display: none; }
+    .promo-track { animation: none; width: auto; text-align: center; }
   }
   .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--page); }
   .hdr .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px 40px; padding-block: 26px; flex-wrap: wrap; }
@@ -77,7 +75,8 @@
   .btn.pri:hover { background: var(--ink); border-color: var(--ink); }
   .btn:not(.pri):hover { background: var(--lime); }
   .btn.sm { padding: 10px 36px; font-size: 14px; }
-  .lang { font: 700 13px var(--latin); border: 1.5px solid var(--cobalt); color: var(--cobalt); padding: 8px 12px; border-radius: 999px; }
+  .lang:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+  .lang { cursor: pointer; background: transparent; font: 700 13px var(--latin); border: 1.5px solid var(--cobalt); color: var(--cobalt); padding: 8px 12px; border-radius: 999px; }
 
   /* Hero */
   .hero-grid { display: grid; grid-template-columns: 1fr; gap: 48px; padding-block: clamp(24px, 3.5vw, 56px) clamp(56px, 7vw, 112px); align-items: center; }
@@ -265,17 +264,14 @@
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
-<div class="promo" role="region" aria-label="공지"><div class="promo-track">
-  <div class="promo-run"><span class="promo-item">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact">대관 문의 →</a></span><span class="promo-item" aria-hidden="true">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact" tabindex="-1">대관 문의 →</a></span><span class="promo-item" aria-hidden="true">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact" tabindex="-1">대관 문의 →</a></span></div>
-  <div class="promo-run" aria-hidden="true"><span class="promo-item">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact" tabindex="-1">대관 문의 →</a></span><span class="promo-item">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact" tabindex="-1">대관 문의 →</a></span><span class="promo-item">주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact" tabindex="-1">대관 문의 →</a></span></div>
-</div></div>
+<div class="promo" role="region" aria-label="공지"><div class="promo-track" data-ticker>주중 시간당 140,000원 · 최소 3시간 · 부가세 포함<a href="#contact">대관 문의 →</a></div></div>
 <header class="hdr">
   <div class="wrap">
     <a href="#top" class="logo-slot" aria-label="이씀 처음으로">로고 자리</a>
     <nav class="nav" aria-label="주요 메뉴">
       <a href="#space">공간 안내</a><a href="#process">대관 절차</a><span class="soon" aria-label="프로그램, 준비 중">프로그램<small>준비 중</small></span><a href="#faq">FAQ</a>
     </nav>
-    <div class="hdr-cta"><span class="lang" title="영어 페이지 (준비 중)">EN</span><a class="btn pri sm" href="#contact">대관 문의</a></div>
+    <div class="hdr-cta"><button type="button" class="lang" data-lang aria-label="언어 전환 (영어 페이지 준비 중)">EN</button><a class="btn pri sm" href="#contact">대관 문의</a></div>
   </div>
 </header>
 
@@ -420,6 +416,17 @@
     next.addEventListener('click', (e) => { e.preventDefault(); if (page < pages - 1) { page++; show(); } });
     show();
   }
+  // Ticker: ~58px per second whatever the screen width (1.5x the first version).
+  const tick = document.querySelector('[data-ticker]');
+  const setPace = () => {
+    if (!tick) return;
+    const d = (tick.offsetWidth + innerWidth) / 58;
+    tick.style.animationDuration = d + 's';
+    tick.style.animationDelay = (-d * 0.4) + 's'; // start with the line already on screen, not an empty bar
+  };
+  setPace(); addEventListener('resize', setPace);
+  const lang = document.querySelector('[data-lang]');
+  if (lang) lang.addEventListener('click', () => { lang.textContent = lang.textContent === 'EN' ? 'KOR' : 'EN'; });
   document.querySelectorAll('[data-open]').forEach((a) => a.addEventListener('click', () => {
     const d = document.getElementById(a.dataset.open);
     if (d) d.open = true;
