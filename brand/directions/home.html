@@ -1,0 +1,401 @@
+<title>이씀 홈페이지 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: white page, cobalt carries the voice, lime marks programs; the logo's four pieces (ㅇ ㅣ / ㅁ) frame photos and numbers. */
+  :root {
+    --cobalt: #0526c5;
+    --lime: #eafda1;
+    --ink: #111111;
+    --paper: #ffffff;
+    --mist: #eeeeea;
+    --body: #44443e;
+    --muted: #6b6b63;
+    --ko: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    --latin: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    --t: 10px; /* the kit's single stroke weight */
+    color-scheme: light;
+  }
+  /* Deliberately single-theme: the brand is white + cobalt + lime in every context. */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--ko); font-size: 16px; line-height: 1.7; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .lat { font-family: var(--latin); }
+  .eb { font: 700 12px var(--latin); letter-spacing: .18em; text-transform: uppercase; color: var(--cobalt); }
+
+  /* Mark (the real logo, recoloured through a mask) */
+  .mark { display: block; aspect-ratio: 496 / 984; background: var(--mc, var(--cobalt)); -webkit-mask: url(img/mark.png) center / contain no-repeat; mask: url(img/mark.png) center / contain no-repeat; }
+
+  /* Kit pieces */
+  .k-o { display: block; aspect-ratio: 1; border-radius: 50%; border: var(--t) solid var(--kc, var(--cobalt)); }
+  .k-i { display: block; width: var(--t); background: var(--kc, var(--ink)); }
+  .k-s { display: block; height: var(--t); background: var(--kc, var(--cobalt)); transform: rotate(-31deg); }
+  .k-m { display: block; border: var(--t) solid var(--kc, var(--ink)); }
+
+  /* Header */
+  .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--paper); border-bottom: 1px solid var(--ink); }
+  .hdr .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 20px; letter-spacing: -0.05em; }
+  .brand .mark { height: 34px; }
+  .nav { display: flex; gap: 4px 20px; flex-wrap: wrap; font-size: 14.5px; font-weight: 500; }
+  .nav a:hover { color: var(--cobalt); }
+  .hdr-cta { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 15px; font-weight: 700; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); line-height: 1.2; }
+  .btn.pri { background: var(--cobalt); border-color: var(--cobalt); color: var(--paper); }
+  .btn.pri:hover { background: var(--ink); border-color: var(--ink); }
+  .btn:not(.pri):hover { background: var(--lime); }
+  .btn.sm { padding: 9px 14px; font-size: 14px; }
+  .lang { font: 700 13px var(--latin); border: 1px solid var(--ink); padding: 7px 10px; }
+
+  /* Hero */
+  .hero { border-bottom: 1px solid var(--ink); }
+  .hero-grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.05fr 1fr; } }
+  .hero-copy { display: grid; gap: 22px; align-content: center; padding-block: clamp(40px, 7vw, 96px); padding-right: 24px; }
+  .hero h1 { font-size: clamp(44px, 7.4vw, 92px); font-weight: 900; letter-spacing: -0.065em; line-height: 1.02; }
+  .hero .en { font: 500 clamp(17px, 1.6vw, 20px) var(--latin); color: var(--body); }
+  .hero .lead { max-width: 30em; color: var(--body); font-size: 16px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero-vis { position: relative; background: var(--lime); min-height: 380px; overflow: hidden; container-type: inline-size; margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px))); }
+  @media (min-width: 900px) { .hero-vis { border-left: 1px solid var(--ink); } }
+  @media (min-width: 1232px) { .hero-vis { margin-right: calc((100vw - 1200px) / -2 - 16px); } }
+  .hero-vis .ph { position: absolute; inset: 12% 0 0 24%; background: url(img/ev-full.jpg) center / cover; }
+  .hero-vis .k-o { position: absolute; left: 6%; top: 7%; width: min(40%, 230px); --t: clamp(18px, 5.5cqw, 36px); z-index: 2; }
+  .hero-vis .k-s { position: absolute; left: -4%; bottom: 14%; width: 56%; --t: clamp(18px, 5.5cqw, 36px); z-index: 2; }
+  .hero-vis .tag { position: absolute; right: 0; bottom: 0; z-index: 3; background: var(--paper); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); padding: 8px 14px; font: 500 12.5px var(--latin); letter-spacing: .04em; }
+
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--ink); border-bottom: 1px solid var(--ink); }
+  @media (min-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stats > div { background: var(--paper); padding: 20px max(16px, 2vw); }
+  .stats b { display: block; font-size: clamp(20px, 2.2vw, 26px); font-weight: 900; letter-spacing: -0.05em; line-height: 1.2; }
+  .stats span { font-size: 13.5px; color: var(--muted); }
+
+  /* Sections */
+  section { scroll-margin-top: 80px; }
+  .sec { padding-block: clamp(64px, 8vw, 112px); }
+  .sec-head { display: grid; gap: 12px; margin-bottom: clamp(28px, 4vw, 48px); }
+  @media (min-width: 900px) { .sec-head { grid-template-columns: 1fr 1fr; align-items: end; gap: 32px; } }
+  .sec-head h2 { font-size: clamp(32px, 4.6vw, 56px); font-weight: 900; letter-spacing: -0.06em; line-height: 1.08; }
+  .sec-head .h-en { font: 500 15px var(--latin); color: var(--muted); margin-top: 8px; }
+  .sec-head p.d { color: var(--body); max-width: 34em; }
+
+  /* Program */
+  .program { background: var(--lime); border-block: 1px solid var(--ink); }
+  .program .sec-head .eb { color: var(--cobalt); }
+  .prog-grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .prog-grid { grid-template-columns: 1.2fr 1fr; } }
+  .prog-card { position: relative; background: var(--paper); border: 1px solid var(--ink); overflow: hidden; min-height: 360px; container-type: inline-size; }
+  .prog-card .flag { position: absolute; top: 12px; right: 12px; z-index: 3; font-size: 12px; font-weight: 700; border: 1px solid var(--ink); padding: 3px 8px; background: var(--paper); }
+  .prog-card .big { position: absolute; left: 7cqw; top: 7cqw; font: 700 clamp(40px, 11cqw, 84px)/.9 var(--latin); letter-spacing: -0.05em; color: var(--cobalt); }
+  .prog-card .k-s { position: absolute; left: -10%; top: 58%; width: 120%; --t: clamp(22px, 7cqw, 52px); }
+  .prog-card .k-m { position: absolute; right: 7cqw; top: 9cqw; width: 22cqw; height: 16cqw; --t: clamp(12px, 4cqw, 30px); }
+  .prog-card .ko { position: absolute; left: 7cqw; bottom: 7cqw; font-size: clamp(24px, 6cqw, 40px); font-weight: 900; letter-spacing: -0.06em; }
+  .prog-list { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); align-content: start; }
+  .prog-list > div { background: var(--paper); padding: 22px; display: grid; gap: 6px; }
+  .prog-list b { font-size: 19px; font-weight: 900; letter-spacing: -0.04em; }
+  .prog-list span { color: var(--body); font-size: 15px; }
+
+  /* Happened here (event photos) */
+  .happened-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 900px) { .happened-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; } }
+  .ev { position: relative; overflow: hidden; border: 1px solid var(--ink); background: var(--mist); min-height: 180px; }
+  .ev img { width: 100%; height: 100%; object-fit: cover; }
+  .ev figcaption { position: absolute; left: 0; bottom: 0; background: var(--cobalt); color: var(--paper); font-size: 14px; font-weight: 700; padding: 6px 12px; }
+  @media (min-width: 900px) {
+    .ev.wide { grid-column: span 2; grid-row: span 2; }
+    .ev.tall { grid-row: span 2; }
+    .ev.round { border: 0; background: none; display: grid; place-items: center; }
+    .ev.round img { width: 92%; height: auto; aspect-ratio: 1; border-radius: 50%; outline: 12px solid var(--lime); outline-offset: -1px; }
+    .ev.round figcaption { left: 4%; }
+  }
+
+  /* Spaces */
+  .spaces { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .spaces { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .spaces { grid-template-columns: repeat(4, 1fr); } }
+  .sp { background: var(--paper); display: grid; grid-template-rows: auto 1fr; }
+  .sp .pic { aspect-ratio: 4 / 5; position: relative; overflow: hidden; border-bottom: 1px solid var(--ink); }
+  .sp .pic img { width: 100%; height: 100%; object-fit: cover; }
+  .sp .no { position: absolute; left: 14px; top: 14px; width: 46px; height: 36px; border: 7px solid var(--ink); background: var(--paper); display: grid; place-items: center; font: 700 13px var(--latin); }
+  .sp:first-child .no { border-color: var(--cobalt); }
+  .sp .txt { padding: 20px; display: grid; gap: 10px; align-content: start; }
+  .sp h3 { font-size: 22px; font-weight: 900; letter-spacing: -0.05em; }
+  .sp p { color: var(--body); font-size: 15px; line-height: 1.65; }
+  .sp .meta { font-size: 13px; color: var(--cobalt); font-weight: 700; }
+
+  /* Equipment */
+  .equip { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .equip { grid-template-columns: repeat(2, 1fr); } }
+  .equip li { list-style: none; background: var(--paper); padding: 16px 20px; display: flex; gap: 16px; align-items: baseline; font-weight: 500; }
+  .equip li span { font: 700 12px var(--latin); color: var(--muted); font-variant-numeric: tabular-nums; flex: none; width: 22px; }
+  .equip { padding: 0; margin: 0; }
+
+  /* Pricing */
+  .price-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .price-grid { grid-template-columns: 1fr 1fr; } }
+  .rates { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); align-content: start; }
+  .rate { background: var(--paper); padding: 24px; display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  .rate:first-child { background: var(--cobalt); color: var(--paper); }
+  .rate .k { font-size: 20px; font-weight: 900; letter-spacing: -0.04em; }
+  .rate .w { font-size: 13.5px; opacity: .8; }
+  .rate .p { font-size: clamp(30px, 4vw, 44px); font-weight: 900; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .rate .p small { font-size: 15px; font-weight: 500; margin-left: 4px; letter-spacing: 0; }
+  .notes { display: grid; gap: 14px; margin: 0; padding: 0; }
+  .notes li { list-style: none; display: grid; grid-template-columns: 96px 1fr; gap: 12px; font-size: 15px; color: var(--body); border-top: 1px solid var(--ink); padding-top: 12px; }
+  .notes b { color: var(--ink); }
+
+  /* Process */
+  .steps { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .steps { grid-template-columns: repeat(4, 1fr); } }
+  .step { background: var(--paper); padding: 24px; display: grid; gap: 14px; align-content: start; }
+  .step .n { width: 58px; height: 44px; border: 9px solid var(--ink); display: grid; place-items: center; font: 700 15px var(--latin); }
+  .step:first-child .n { border-color: var(--cobalt); }
+  .step h3 { font-size: 21px; font-weight: 900; letter-spacing: -0.05em; }
+  .step p { color: var(--body); font-size: 15px; }
+  .step .btn { justify-self: start; margin-top: 4px; }
+
+  /* FAQ */
+  .faq { border-top: 1px solid var(--ink); }
+  .faq details { border-bottom: 1px solid var(--ink); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 20px 0; font-size: clamp(17px, 1.8vw, 20px); font-weight: 700; letter-spacing: -0.04em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .pm { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 6px solid var(--cobalt); transition: background .15s; }
+  .faq details[open] summary .pm { background: var(--lime); }
+  .faq .a { padding: 0 0 24px; display: grid; gap: 10px; color: var(--body); max-width: 44em; }
+  .refund { display: grid; gap: 1px; background: var(--ink); border: 1px solid var(--ink); max-width: 420px; font-size: 14.5px; }
+  .refund div { background: var(--paper); display: flex; justify-content: space-between; padding: 9px 14px; font-variant-numeric: tabular-nums; }
+
+  /* Contact band */
+  .contact { background: var(--cobalt); color: var(--paper); position: relative; overflow: hidden; }
+  .contact .sec-head h2 { color: var(--paper); }
+  .contact .sec-head .h-en { color: var(--lime); }
+  .contact .sec-head p.d { color: var(--paper); opacity: .85; }
+  .contact .k-o { position: absolute; right: -90px; top: -90px; width: 300px; --t: 48px; --kc: var(--lime); }
+  .channels { display: grid; gap: 1px; background: var(--paper); border: 1px solid var(--paper); grid-template-columns: 1fr; position: relative; }
+  @media (min-width: 640px) { .channels { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .channels { grid-template-columns: repeat(4, 1fr); } }
+  .ch { background: var(--cobalt); padding: 22px; display: grid; gap: 6px; }
+  .ch .l { font: 700 12px var(--latin); letter-spacing: .14em; color: var(--lime); }
+  .ch .v { font-size: 19px; font-weight: 700; letter-spacing: -0.03em; user-select: all; overflow-wrap: anywhere; }
+  a.ch:hover { background: var(--ink); }
+
+  /* Footer */
+  .ftr { padding-block: 40px 48px; border-top: 1px solid var(--ink); }
+  .ftr .wrap { display: grid; gap: 24px; }
+  @media (min-width: 900px) { .ftr .wrap { grid-template-columns: auto 1fr; align-items: start; gap: 48px; } }
+  .ftr .mark { height: 96px; }
+  .ftr dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; font-size: 14px; color: var(--body); }
+  .ftr dt { color: var(--muted); }
+  .ftr dd { margin: 0; }
+  .draft { font-size: 13px; color: var(--muted); margin-top: 16px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="hdr">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="이씀 ISSEUM 처음으로"><span class="mark" aria-hidden="true"></span>이씀</a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="#program">프로그램</a><a href="#space">공간</a><a href="#equipment">장비</a><a href="#price">요금</a><a href="#process">대관 절차</a><a href="#faq">FAQ</a>
+    </nav>
+    <div class="hdr-cta"><span class="lang" title="영어 페이지 (준비 중)">EN</span><a class="btn pri sm" href="#contact">대관 문의</a></div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eb">Hongdae · Seoul</p>
+        <h1 id="hero-title">새로운 일이<br>일어나는 곳</h1>
+        <p class="en">Where new things happen.</p>
+        <p class="lead">홍대입구역 1번 출구에서 5분, 약 60평 규모의 가변형 복합문화공간입니다. 워크숍, 북토크, 팝업, 팬미팅, 쇼케이스, 촬영까지 당신의 일을 여기서 열어 보세요.</p>
+        <div class="btns"><a class="btn pri" href="#contact">대관 문의하기</a><a class="btn" href="#space">공간 둘러보기</a></div>
+      </div>
+      <div class="hero-vis" role="img" aria-label="참석자로 가득 찬 이씀 메인 홀">
+        <div class="ph"></div>
+        <span class="k-o" aria-hidden="true"></span>
+        <span class="k-s" aria-hidden="true"></span>
+        <span class="tag">MAIN HALL · 198㎡</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats wrap" style="padding:0;max-width:none">
+    <div><b>198㎡ (약 60평)</b><span>메인 홀 면적</span></div>
+    <div><b>최대 90인</b><span>동시 수용 인원</span></div>
+    <div><b>4개 영역</b><span>메인 홀 · 프로젝트 룸 · 파우더 룸 · 바</span></div>
+    <div><b>08–22시</b><span>대관 가능 시간</span></div>
+  </div>
+
+  <section class="program sec" id="program" aria-labelledby="program-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Program · 2027 Summer</p><h2 id="program-title">이씀이 직접 여는<br>프로그램</h2><p class="h-en">Programs made by Isseum</p></div>
+        <p class="d">2027년 여름부터 이씀이 직접 기획한 프로그램을 엽니다. 서울을 찾은 여행자가 손으로 무언가를 만들고, 사람을 만나고, 하루를 남기고 가는 자리입니다.</p>
+      </div>
+      <div class="prog-grid">
+        <div class="prog-card" role="img" aria-label="드라이 클레이 워크숍 예시 포스터">
+          <span class="flag">예시 · 준비 중</span>
+          <p class="big">DRY<br>CLAY<br>WORK<br>SHOP</p>
+          <span class="k-s" aria-hidden="true"></span>
+          <span class="k-m" aria-hidden="true"></span>
+          <p class="ko">손으로 빚는 서울</p>
+        </div>
+        <div class="prog-list">
+          <div><b>서울을 찾은 여행자를 위해</b><span>외국인 여행자를 위한 프로그램으로 준비하고 있습니다. 일정과 신청 방법은 정해지는 대로 이곳에서 알려 드립니다.</span></div>
+          <div><b>지금은 대관을 받고 있어요</b><span>프로그램이 열리기 전까지 이씀은 대관 공간으로 운영됩니다. 워크숍과 행사를 직접 열어 보세요.</span></div>
+          <div><a class="btn" href="#contact" style="justify-self:start">소식 받기 · 문의하기</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="happened" aria-labelledby="happened-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Happened here</p><h2 id="happened-title">이씀에서 열린 일</h2></div>
+        <p class="d">세미나, 워크숍, 소모임까지. 이씀을 빌린 분들이 이 공간에서 만든 장면입니다.</p>
+      </div>
+      <div class="happened-grid">
+        <figure class="ev wide" style="margin:0"><img src="img/ev-qa.jpg" alt="메인 홀 세미나에서 참석자가 질문하는 장면" loading="lazy"><figcaption>세미나</figcaption></figure>
+        <figure class="ev round" style="margin:0"><img src="img/ev-podium.jpg" alt="강연대 앞에서 발표하는 연사" loading="lazy"><figcaption>강연</figcaption></figure>
+        <figure class="ev tall" style="margin:0"><img src="img/ev-room.jpg" alt="프로젝트 룸에서 노트북을 펴고 회의하는 사람들" loading="lazy"><figcaption>소모임</figcaption></figure>
+        <figure class="ev" style="margin:0"><img src="img/ev-groups.jpg" alt="테이블별로 모여 앉은 워크숍" loading="lazy"><figcaption>워크숍</figcaption></figure>
+        <figure class="ev wide" style="margin:0;grid-row:span 1"><img src="img/ev-laptops.jpg" alt="노트북을 펴고 교육에 참여한 사람들로 채워진 메인 홀" loading="lazy"><figcaption>교육</figcaption></figure>
+        <figure class="ev" style="margin:0"><img src="img/ev-bar.jpg" alt="바 카운터에 차려진 커피와 다과" loading="lazy"><figcaption>케이터링</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="space" aria-labelledby="space-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Space</p><h2 id="space-title">공간 안내</h2><p class="h-en">Four rooms, one booking</p></div>
+        <p class="d">네 개 영역을 한 번에 빌립니다. 메인 홀은 행사에 맞춰 가구를 자유롭게 옮길 수 있습니다.</p>
+      </div>
+      <div class="spaces">
+        <article class="sp"><div class="pic"><img src="img/hall.jpg" alt="테이블과 의자를 배치하고 강연대를 세팅한 이씀 메인 홀" loading="lazy"><span class="no">01</span></div><div class="txt"><h3>메인 홀</h3><p>대형 TV와 자유로운 가구 배치가 가능한 메인 행사 공간. 공연, 상영, 브랜드 쇼케이스까지 폭넓게 소화합니다.</p><p class="meta">최대 90인 착석 · 독립 공조</p></div></article>
+        <article class="sp"><div class="pic"><img src="img/room.jpg" alt="회의용 타원 테이블과 소파, 벽걸이 TV가 있는 프로젝트 룸" loading="lazy"><span class="no">02</span></div><div class="txt"><h3>프로젝트 룸</h3><p>미팅, 소모임, 출연자 대기실로 활용 가능한 프라이빗 룸. 독립 조명과 도어록으로 분리 운영됩니다.</p><p class="meta">최대 10인 착석 · 독립 공조</p></div></article>
+        <article class="sp"><div class="pic"><img src="img/powder.jpg" alt="조명이 둘러진 화장 거울과 의자가 놓인 파우더 룸" loading="lazy"><span class="no">03</span></div><div class="txt"><h3>파우더 룸</h3><p>거울과 조명이 갖춰진 준비 공간. 연사와 출연자의 메이크업, 의상 교체, 리허설 대기 용도로 사용합니다.</p><p class="meta">화장대 · 행거 비치</p></div></article>
+        <article class="sp"><div class="pic"><img src="img/bar.jpg" alt="우드 카운터와 싱크대를 갖춘 오픈 바 영역" loading="lazy"><span class="no">04</span></div><div class="txt"><h3>바(Bar)</h3><p>음료 제공 및 네트워킹을 위한 오픈 바 공간. 케이터링 반입과 간단한 조주 세팅이 가능합니다.</p><p class="meta">정수기 · 싱크대 · 냉장 설비</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="equipment" aria-labelledby="equipment-title" style="background:var(--mist);border-block:1px solid var(--ink)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Equipment &amp; Props</p><h2 id="equipment-title">보유 장비</h2></div>
+        <p class="d">대관 요금에 모든 장비 이용이 포함됩니다.</p>
+      </div>
+      <ul class="equip">
+        <li><span>01</span>JBL 6채널 입체 음향 시스템</li>
+        <li><span>02</span>슈어(SHURE) 무선 마이크</li>
+        <li><span>03</span>100인치 삼성 스마트 TV</li>
+        <li><span>04</span>이동형 TV</li>
+        <li><span>05</span>기본 의자</li>
+        <li><span>06</span>이동식 다목적 테이블</li>
+        <li><span>07</span>3인용 소파 &amp; 1인용 라운지 체어</li>
+        <li><span>08</span>이동식 강연대</li>
+        <li><span>09</span>스탠드 조명</li>
+        <li><span>10</span>초고속 Wi-Fi</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="price" aria-labelledby="price-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Price</p><h2 id="price-title">대관 요금</h2><p class="h-en">Per hour, VAT included</p></div>
+        <p class="d">전체 대관 기준 시간당 요금입니다. 부가세가 포함되어 있고, 최소 3시간부터 신청하실 수 있습니다.</p>
+      </div>
+      <div class="price-grid">
+        <div class="rates">
+          <div class="rate"><div><p class="k">주중</p><p class="w">월요일 – 목요일</p></div><p class="p">140,000원<small>/ 시간</small></p></div>
+          <div class="rate"><div><p class="k">주말 · 공휴일</p><p class="w">금요일 · 토요일 · 일요일 · 공휴일</p></div><p class="p">170,000원<small>/ 시간</small></p></div>
+        </div>
+        <ul class="notes">
+          <li><b>최소 이용</b><span>대관은 최소 3시간부터 신청하실 수 있습니다.</span></li>
+          <li><b>전체 대관</b><span>메인 홀 · 프로젝트 룸 · 파우더 룸 · 바 전 영역과 보유 장비 전체를 함께 이용하시며, 일부 공간만 단독으로 대관하지는 않습니다.</span></li>
+          <li><b>이용 시간</b><span>대관 시간에는 준비와 철수(정리) 시간이 모두 포함되며, 이용 시간을 초과할 경우 30분 단위로 추가 요금이 부과됩니다.</span></li>
+          <li><b>결제</b><span>일정 문의 후 네이버 예약에서 결제해 주세요.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="process" aria-labelledby="process-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">Rental Process</p><h2 id="process-title">대관 절차</h2></div>
+        <p class="d">문의부터 입실까지 네 단계입니다.</p>
+      </div>
+      <ol class="steps" style="margin:0;padding:0;list-style:none">
+        <li class="step"><span class="n">01</span><h3>일정 문의</h3><p>네이버 톡톡이나 카카오톡으로 희망 날짜와 시간, 인원, 행사 성격을 남겨 주세요. 담당자가 예약 가능 여부를 안내해 드립니다.</p><a class="btn sm" href="#contact">문의 채널 보기</a></li>
+        <li class="step"><span class="n">02</span><h3>네이버 예약 및 결제</h3><p>가능하다는 안내를 받으시면 네이버 예약에서 같은 날짜와 시간으로 예약하고 결제해 주세요.</p><a class="btn sm" href="https://booking.naver.com/booking/10/bizes/1734060" target="_blank" rel="noopener">네이버 예약</a></li>
+        <li class="step"><span class="n">03</span><h3>이용 매뉴얼 전송</h3><p>이용 시작 1시간 전, 현관 비밀번호와 입퇴실 방법, 장비 사용 안내를 문자로 보내드립니다.</p></li>
+        <li class="step"><span class="n">04</span><h3>입실 및 이용</h3><p>공간을 이용하신 후 원상복구를 마치고 퇴실하시면 됩니다.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="faq" aria-labelledby="faq-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb">FAQ</p><h2 id="faq-title">자주 묻는 질문</h2></div>
+        <p class="d">더 궁금한 점은 톡톡이나 카카오톡으로 물어봐 주세요.</p>
+      </div>
+      <div class="faq">
+        <details><summary>예약을 취소하면 환불되나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>취소 시점에 따라 아래와 같이 환불됩니다.</p>
+          <div class="refund"><div><span>이용 8일 전 취소</span><b>100% 환불</b></div><div><span>이용 7일 전 취소</span><b>70% 환불</b></div><div><span>이용 6일 전 취소</span><b>60% 환불</b></div><div><span>이용 5일 전 취소</span><b>50% 환불</b></div><div><span>이용 4일 전 취소</span><b>40% 환불</b></div><div><span>이용 3일 전 취소</span><b>30% 환불</b></div><div><span>이용 2일 전 ~ 당일 취소</span><b>환불 불가</b></div></div></div></details>
+        <details><summary>촬영도 할 수 있나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>네, 가능합니다. 다만 촬영은 참여 인원과 장비, 세트 규모에 따라 특수 청소가 필요할 수 있어 일반 대관과 요금이 달라질 수 있습니다. 촬영 일정과 내용, 인원을 먼저 알려 주시면 요금을 안내해 드리겠습니다.</p></div></details>
+        <details><summary>몇 명까지 이용할 수 있나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>메인 홀 기준 최대 90인까지 착석 가능합니다. 프로젝트 룸은 최대 10인입니다. 예약 인원을 초과하여 입실할 경우 사전 고지가 필요합니다.</p></div></details>
+        <details><summary>주차가 가능한가요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>건물 내 기계식 주차장에 최대 5대까지 주차하실 수 있습니다.</p><p>기계식 주차장 규격 제한이 있어 SUV 등 일부 대형·RV 차량은 입고가 어려울 수 있습니다. 방문객 차량은 인근 유료 주차장 이용을 사전에 안내 부탁드립니다.</p></div></details>
+        <details><summary>지하 공간인데 답답하지 않나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>급배기 시스템을 갖추고 있어 지하 특유의 답답함과 습도가 없습니다. 메인 홀과 프로젝트 룸은 각각 독립 공조로 운영됩니다.</p></div></details>
+        <details><summary>음식을 가져와도 되나요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>완제품 형태의 음료와 다과류는 반입 가능합니다. 다만 공간 내 현장 조리와 국물류 음식 반입은 삼가해 주시기 바랍니다.</p></div></details>
+        <details><summary>엘리베이터나 휠체어 접근이 가능한가요?<span class="pm" aria-hidden="true"></span></summary><div class="a"><p>주출입구에 단차가 없어 휠체어 진입이 원활하며, 엘리베이터로 지하 1층까지 이동하실 수 있습니다.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact sec" id="contact" aria-labelledby="contact-title">
+    <span class="k-o" aria-hidden="true"></span>
+    <div class="wrap">
+      <div class="sec-head">
+        <div><p class="eb" style="color:var(--lime)">Contact</p><h2 id="contact-title">당신의 일을<br>여기서 열어 보세요</h2><p class="h-en">Open your thing here.</p></div>
+        <p class="d">날짜와 시간, 인원, 행사 성격을 남겨 주시면 예약 가능 여부를 안내해 드립니다.</p>
+      </div>
+      <div class="channels">
+        <a class="ch" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener"><span class="l">NAVER TALK</span><span class="v">네이버 톡톡 →</span></a>
+        <a class="ch" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener"><span class="l">KAKAOTALK</span><span class="v">카카오톡 채널 →</span></a>
+        <div class="ch"><span class="l">PHONE</span><span class="v">010-6899-4417</span></div>
+        <div class="ch"><span class="l">EMAIL</span><span class="v">hello@isseum.com</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <span class="mark" aria-hidden="true" style="--mc:var(--ink)"></span>
+    <div>
+      <dl>
+        <dt>상호</dt><dd>영준피엠씨(YOUNGJUN PMC)</dd>
+        <dt>대표</dt><dd>정용철</dd>
+        <dt>주소</dt><dd>서울특별시 마포구 월드컵북로 22, 지하 1층</dd>
+        <dt>사업자등록번호</dt><dd>105-04-11192</dd>
+      </dl>
+      <p class="draft">리브랜딩 시안입니다. 실제 사이트(isseum.com)와 다를 수 있습니다.</p>
+    </div>
+  </div>
+</footer>
