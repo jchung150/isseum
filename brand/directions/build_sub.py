@@ -166,8 +166,7 @@ rules_css = '''
 '''
 
 page('rules.html', '대관 규정 · 이씀', rules_css, f'''
-<div class="wrap">
-  <nav class="crumb" aria-label="현재 위치"><span aria-current="page">대관 규정</span><a class="back" href="./"><span aria-hidden="true">←</span> 목록으로</a></nav>
+<div class="wrap" id="top">
   <section class="page-head" aria-labelledby="rules-title">
     <p class="hl">RENTAL POLICY</p>
     <h1 id="rules-title">대관 규정</h1>
@@ -178,7 +177,8 @@ page('rules.html', '대관 규정 · 이씀', rules_css, f'''
     <nav aria-label="규정 목차"><ol class="rtoc">{"".join(toc)}</ol></nav>
     <div>
       {"".join(secs)}
-      <div class="rules-cta"><a class="btn sm" href="./"><span aria-hidden="true">←</span>&nbsp;목록으로</a><a class="btn pri" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener">네이버 톡톡으로 문의</a><a class="btn" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener">카카오톡으로 문의</a></div>
+      <div class="rules-cta"><a class="btn pri" href="https://talk.naver.com/ct/wxgdt7v" target="_blank" rel="noopener">네이버 톡톡으로 문의</a><a class="btn" href="https://pf.kakao.com/_ZGxomX/chat" target="_blank" rel="noopener">카카오톡으로 문의</a></div>
+      <div class="pager"><a class="btn sm" href="#top"><span aria-hidden="true">↑</span>&nbsp;위로가기</a></div>
     </div>
   </div>
 </div>

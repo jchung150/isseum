@@ -114,3 +114,5 @@ a.ch:hover { background: var(--paper); color: var(--cobalt); }
 .crumb .back:hover { background: var(--lime); }
 .pager .pn { display: flex; gap: 8px; flex-wrap: wrap; }
 .rules-cta { align-items: center; }
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--mist); margin-top: clamp(40px, 5vw, 64px); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
