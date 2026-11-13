@@ -1,11 +1,7 @@
 /** 모든 한국어 페이지에 걸리는 문구. 모양은 types.ts의 Common. */
 
 import { business, kakaoChannelUrl } from '../../config/site';
-import { MIN_HOURS, RATES } from '../facts';
-import { grouped } from '../i18n';
 import type { Common } from '../types';
-
-const weekday = RATES.find((rate) => rate.id === 'weekday')!;
 
 export const common: Common = {
   site: {
@@ -25,7 +21,7 @@ export const common: Common = {
   },
   notice: {
     region: '공지',
-    text: `주중 시간당 ${grouped(weekday.price)}원 · 최소 ${MIN_HOURS}시간 · 부가세 포함`,
+    text: '이씀에 오신 것을 환영합니다.',
     link: '대관 문의 →',
     close: '공지 닫기',
   },

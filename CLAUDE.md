@@ -139,7 +139,7 @@ src/
 
 ## 대관 요금
 
-요금 숫자는 `src/data/facts.ts`의 `RATES`에만 있다. 홈 FAQ 표(두 언어), 공지 띠, JSON-LD
+요금 숫자는 `src/data/facts.ts`의 `RATES`에만 있다. 홈 FAQ 표(두 언어)와 JSON-LD
 `priceRange`가 이 값을 읽는다.
 
 부가세 포함 · 시간당 · 최소 3시간 · **전체 대관만**(부분 대관 없음):

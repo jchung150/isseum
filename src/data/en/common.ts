@@ -5,11 +5,7 @@
  * restated. The romanised name and address were confirmed by the owner (2026-11-12).
  */
 
-import { MIN_HOURS, RATES } from '../facts';
-import { grouped } from '../i18n';
 import type { Common } from '../types';
-
-const weekday = RATES.find((rate) => rate.id === 'weekday')!;
 
 export const common: Common = {
   site: {
@@ -29,7 +25,7 @@ export const common: Common = {
   },
   notice: {
     region: 'Notice',
-    text: `Weekdays ₩${grouped(weekday.price)} per hour · ${MIN_HOURS}-hour minimum · VAT included`,
+    text: 'Welcome to ISSEUM.',
     link: 'Inquire →',
     close: 'Close notice',
   },
