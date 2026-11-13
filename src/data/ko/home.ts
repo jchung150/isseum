@@ -3,7 +3,7 @@
  * 숫자는 facts.ts에서 읽는다. 모양은 types.ts의 Home.
  */
 
-import { kakaoChannelUrl } from '../../config/site';
+import { bookingUrl, kakaoChannelUrl } from '../../config/site';
 import {
   AREA,
   CLOSE_HOUR,
@@ -80,7 +80,8 @@ export const home: Home = {
       },
       {
         title: '예약 및 결제',
-        body: '가능하다는 안내를 받으시면 같은 날짜와 시간으로 예약하고 결제해 주세요.',
+        body: '가능하다는 안내를 받으시면 {link}에서 같은 날짜와 시간으로 예약하고 결제해 주세요.',
+        link: { text: '네이버 예약', href: bookingUrl },
       },
       {
         title: '이용 매뉴얼 전송',

@@ -88,7 +88,15 @@ export type Home = {
     /** 갤러리 사진의 대체 텍스트. media.ts의 id마다 하나씩. */
     alts: Record<PhotoId, string>;
   };
-  process: { title: string; desc: string; steps: { title: string; body: string }[] };
+  process: {
+    title: string;
+    desc: string;
+    /**
+     * `{link}` in a body is replaced by an inline link (not a button), e.g. the
+     * Naver Booking calendar in step 2.
+     */
+    steps: { title: string; body: string; link?: { text: string; href: string } }[];
+  };
   faq: { title: string; desc: string; items: FaqItem[] };
 };
 
@@ -127,4 +135,16 @@ export type Rules = {
   refund: { id: string; title: string; tiers: RefundTier[]; exceptions: PolicyLine[] };
 };
 
-export type Content = { common: Common; home: Home; rules: Rules; guide: Guide };
+/** 404. `links` paths are language-neutral; the page prefixes /en itself. */
+export type NotFound = {
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  home: string;
+  linksLabel: string;
+  links: { label: string; path: string }[];
+};
+
+export type Content = { common: Common; home: Home; rules: Rules; guide: Guide; notFound: NotFound };

@@ -5,6 +5,28 @@ import cloudflare from '@astrojs/cloudflare';
 // Single source for the flag — keeps the sitemap in step with the nav, footer
 // and noindex meta instead of duplicating the decision here.
 import { showEventsPage } from './src/config/site.ts';
+import { existsSync } from 'node:fs';
+import { mkdir, rename, rmdir } from 'node:fs/promises';
+
+/**
+ * Cloudflare's `not_found_handling: "404-page"` serves the nearest `404.html`
+ * up the path, so a miss under /en/ can get the English page. Astro only emits
+ * the root 404 as a file; with `format: 'directory'` /en/404 lands at
+ * en/404/index.html. Move it to en/404.html after the build.
+ */
+/** @type {import('astro').AstroIntegration} */
+const localized404 = {
+  name: 'localized-404',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      const from = new URL('en/404/index.html', dir);
+      if (!existsSync(from)) return;
+      await mkdir(new URL('en/', dir), { recursive: true });
+      await rename(from, new URL('en/404.html', dir));
+      await rmdir(new URL('en/404/', dir));
+    },
+  },
+};
 
 // https://astro.build/config
 export default defineConfig({
@@ -34,11 +56,11 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   integrations: [
+    localized404,
     sitemap({
-      // /booking is noindex (it's a form, not content), and /events is hidden
-      // until there is real photography. Everything else lives on one page.
-      filter: (page) =>
-        !page.includes('/booking') && (showEventsPage || !page.includes('/events')),
+      // /events is hidden until there is real photography. 404 pages (one per
+      // language) are not content.
+      filter: (page) => !/\/404\/?$/.test(page) && (showEventsPage || !page.includes('/events')),
     }),
   ],
   image: {

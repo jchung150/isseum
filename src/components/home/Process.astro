@@ -7,7 +7,8 @@ interface Props {
   lang: Lang;
 }
 
-const { process } = content[Astro.props.lang].home;
+const { home, common } = content[Astro.props.lang];
+const { process } = home;
 ---
 
 <section class="band proc" id="process" aria-labelledby="process-title">
@@ -22,7 +23,18 @@ const { process } = content[Astro.props.lang].home;
           <li>
             <span class="sq" aria-hidden="true">{pad2(i + 1)}</span>
             <h3>{step.title}</h3>
-            <p>{step.body}</p>
+            {step.link ? (
+              <p>
+                {step.body.split('{link}')[0]}
+                <a href={step.link.href} target="_blank" rel="noopener">
+                  {step.link.text}
+                  <span class="visually-hidden">{common.channels.newWindow}</span>
+                </a>
+                {step.body.split('{link}')[1]}
+              </p>
+            ) : (
+              <p>{step.body}</p>
+            )}
           </li>
         ))
       }
@@ -124,5 +136,18 @@ const { process } = content[Astro.props.lang].home;
   p {
     color: var(--on-lime-body);
     font-size: var(--type-small);
+  }
+
+  /* Links are undecorated site-wide; this one sits mid-sentence, so it needs a
+     visible underline to read as a link. */
+  p a {
+    color: var(--cobalt);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  p a:hover {
+    color: var(--ink);
   }
 </style>

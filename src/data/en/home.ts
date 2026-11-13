@@ -3,6 +3,7 @@
  * same facts (read from facts.ts), same order, same shape (types.ts → Home).
  */
 
+import { bookingUrl } from '../../config/site';
 import {
   AREA,
   CLOSE_HOUR,
@@ -83,7 +84,8 @@ export const home: Home = {
       },
       {
         title: 'Book and pay',
-        body: 'Once we confirm, book and pay for the same date and time.',
+        body: 'Once we confirm, book and pay for the same date and time on {link}.',
+        link: { text: 'Naver Booking', href: bookingUrl },
       },
       {
         title: 'Get the guide',

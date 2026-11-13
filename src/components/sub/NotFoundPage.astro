@@ -1,0 +1,106 @@
+---
+/**
+ * 404, shared by /404 and /en/404. Cloudflare's `not_found_handling: "404-page"`
+ * serves the nearest 404.html up the path, so a miss under /en/ gets the English one.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from './PageHead.astro';
+import Emblem from '../Emblem.astro';
+import { content } from '../../data';
+import { localePath, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { notFound } = content[lang];
+const home = localePath(lang);
+const href = (path: string) => (path.startsWith('/#') ? `${home}${path.slice(1)}` : localePath(lang, path));
+---
+
+<BaseLayout lang={lang} title={notFound.title} description={notFound.description} noindex>
+  <div class="wrap nf">
+    <div>
+      <PageHead id="nf-title" eyebrow={notFound.eyebrow} title={notFound.heading} lead={notFound.lead} />
+      <nav aria-label={notFound.linksLabel}>
+        <ul class="links">
+          {
+            notFound.links.map((link) => (
+              <li>
+                <a href={href(link.path)}>
+                  <span>{link.label}</span>
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div class="actions">
+        <a class="pill pill--solid" href={home}><span aria-hidden="true">←</span>&nbsp;{notFound.home}</a>
+      </div>
+    </div>
+    <Emblem class="nf__emb" />
+  </div>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-bottom: var(--space-band);
+  }
+
+  @media (min-width: 900px) {
+    .nf {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--gap-hero);
+    }
+  }
+
+  .nf :global(.nf__emb) {
+    --w: clamp(96px, 12vw, 160px);
+    justify-self: center;
+  }
+
+  @media (max-width: 899px) {
+    .nf :global(.nf__emb) {
+      display: none;
+    }
+  }
+
+  .links {
+    max-width: 560px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .links a {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+    border-bottom: var(--rule) solid var(--mist);
+    font-size: var(--type-lead);
+    font-weight: 700;
+  }
+
+  .links a:hover {
+    color: var(--cobalt);
+  }
+
+  .arrow {
+    color: var(--cobalt);
+    transition: transform var(--transition-fast);
+  }
+
+  .links a:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .actions {
+    margin-top: 36px;
+  }
+</style>

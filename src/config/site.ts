@@ -1,4 +1,3 @@
-import { bookingCta, inquiryCta } from '../data/cta';
 
 /*
  * 언어와 무관한 설정: 외부 링크, 사업자 정보, 키, 플래그. 화면에 보이는 문장은
@@ -28,27 +27,6 @@ export const naverTalkUrl = 'https://talk.naver.com/ct/wxgdt7v';
  */
 export const kakaoChannelUrl: string | null = 'https://pf.kakao.com/_ZGxomX/chat';
 
-export const inquiryChannels = [
-  { name: inquiryCta.channels.naverTalk, href: naverTalkUrl },
-  ...(kakaoChannelUrl ? [{ name: inquiryCta.channels.kakao, href: kakaoChannelUrl }] : []),
-];
-
-/** 문장 안에서 채널을 부를 때 쓴다. 카카오톡을 끄면 문구에서도 함께 빠진다. */
-export const inquiryChannelNames = inquiryChannels.map((channel) => channel.name).join(', ');
-
-/**
- * Cloudflare Turnstile site key. Public by design — it is visible in the HTML.
- * The matching secret is a Worker secret (TURNSTILE_SECRET) and must never be
- * committed here.
- *
- * The real key is bound to isseum.com / www.isseum.com / *.workers.dev and so
- * cannot work on localhost; dev falls back to Cloudflare's published test key,
- * which passes on any host.
- */
-export const turnstileSiteKey = import.meta.env.DEV
-  ? '1x00000000000000000000AA'
-  : '0x4AAAAAAEWoGEkb4C3IUaVj';
-
 /**
  * 네이버 서치어드바이저 소유확인 토큰. Public by design — it ships in the HTML.
  *
@@ -77,23 +55,3 @@ export const naverMapUrl = 'https://naver.me/xRgs5iMX';
  * sitemap. astro.config.mjs imports this same flag for the sitemap filter.
  */
 export const showEventsPage = false;
-
-/*
- * 푸터의 '주요 안내' 링크 목록은 삭제됐다. 이용 안내 매뉴얼은 실제 대관하는
- * 사람에게 주는 문서라 불특정 다수에게 내걸 이유가 없고, 나머지 링크도 같은
- * 판단으로 함께 내렸다. 예약 CTA는 헤더 버튼에 남는다.
- *
- * 404는 다른 상황이다 — 없는 주소에 도착한 사람에게 갈 곳을 줘야 하므로 목록을
- * 남기되, 같은 이유로 /guide는 넣지 않는다.
- */
-const allNotFoundLinks = [
-  { label: '보유 장비 안내', href: '/#equipment', external: false },
-  { label: '자주 묻는 질문', href: '/#faq', external: false },
-  { label: '지난 행사 아카이브', href: '/events', external: false },
-  ...inquiryChannels.map((channel) => ({ label: channel.name, href: channel.href, external: true })),
-  { label: bookingCta.label, href: bookingUrl, external: true },
-];
-
-export const notFoundLinks = allNotFoundLinks.filter(
-  (link) => showEventsPage || link.href !== '/events'
-);
