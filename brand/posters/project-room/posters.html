@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  Project room posters, A3 portrait (297 × 420 mm), three designs.
+  Open with ?p=1, ?p=2 or ?p=3. Print to PDF from headless Chrome:
+    chrome --headless=new --no-pdf-header-footer --print-to-pdf=poster-1.pdf "file://.../posters.html?p=1"
+  Sizes are in mm so the PDF is exact A3. No bleed: for a print shop that
+  trims, ask for 3 mm bleed and extend the backgrounds.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: 297mm 420mm; margin: 0; }
+  :root { --cobalt: #0526c5; --lime: #eafda1; --ink: #111; --paper: #fff; --page: #fafaf8; --body: #44443e; }
+  html, body { margin: 0; }
+  body { -webkit-font-smoothing: antialiased; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: Pretendard, sans-serif; word-break: keep-all; }
+  .poster { display: none; position: relative; width: 297mm; height: 420mm; overflow: hidden; box-sizing: border-box; padding: 24mm; }
+  .poster.on { display: block; }
+  .meta { position: absolute; left: 24mm; right: 24mm; top: 22mm; display: flex; justify-content: space-between; font: 700 4.2mm 'Space Grotesk', sans-serif; letter-spacing: .18em; }
+  h1 { margin: 0; font-weight: 900; letter-spacing: -0.065em; line-height: 1.04; }
+  h1 .hand { display: block; font: 300 1.12em/.92 'Gaegu', cursive; letter-spacing: -0.01em; margin-bottom: .08em; }
+
+  /* Kit pieces (ㅇ ㅣ / ㅁ), one stroke weight per poster. */
+  .k { position: absolute; display: block; box-sizing: border-box; }
+  .k.o { border-radius: 50%; border: var(--t) solid var(--c); }
+  .k.i { width: var(--t); background: var(--c); }
+  .k.s { height: var(--t); background: var(--c); transform: rotate(-31deg); transform-origin: left center; }
+  .k.m { border: var(--t) solid var(--c); }
+
+  /* 1 — 이야기가 피어나는 곳: the four pieces stacked as one tall mark on cobalt. */
+  .p1 { background: var(--cobalt); color: var(--paper); --c: var(--paper); --t: 9mm; }
+  .p1 .meta { color: var(--lime); }
+  .p1 .o { left: 158mm; top: 50mm; width: 80mm; height: 80mm; }
+  .p1 .i { left: 193.5mm; top: 144mm; height: 40mm; }
+  .p1 .s { left: 152mm; top: 236mm; width: 96mm; --c: var(--lime); }
+  .p1 .m { left: 162mm; top: 246mm; width: 72mm; height: 44mm; }
+  .p1 h1 { position: absolute; left: 24mm; bottom: 40mm; font-size: 34mm; }
+  .p1 .sub { position: absolute; left: 24mm; bottom: 24mm; margin: 0; font-size: 5.2mm; font-weight: 500; opacity: .9; }
+
+  /* 2 — 모든 형태의 이야기를: the pieces taken apart and scattered on lime. */
+  .p2 { background: var(--lime); color: var(--ink); --c: var(--cobalt); --t: 11mm; }
+  .p2 .meta { color: var(--cobalt); }
+  .p2 .o { left: -46mm; top: 40mm; width: 190mm; height: 190mm; }
+  .p2 .i { left: 196mm; top: 44mm; height: 120mm; }
+  .p2 .s { left: 120mm; top: 238mm; width: 150mm; }
+  .p2 .m { left: 222mm; top: 120mm; width: 96mm; height: 70mm; --c: var(--ink); }
+  .p2 h1 { position: absolute; left: 24mm; right: 24mm; bottom: 52mm; font-size: 23mm; }
+  .p2 h1 .hand { color: var(--cobalt); }
+  .p2 .sub { position: absolute; left: 24mm; bottom: 24mm; margin: 0; font: 700 4.6mm 'Space Grotesk', sans-serif; letter-spacing: .14em; color: var(--cobalt); }
+
+  /* 3 — 이씀에서 열리는 일: line drawing and the kinds of events, on white. */
+  .p3 { background: var(--page); color: var(--ink); }
+  .p3 .meta { color: var(--cobalt); }
+  .p3 h1 { margin-top: 30mm; font-size: 24mm; color: var(--ink); }
+  .p3 h1 .hand { color: var(--cobalt); }
+  .p3 svg { display: block; width: 249mm; height: auto; margin-top: 36mm; }
+  .p3 .kinds { position: absolute; left: 24mm; right: 24mm; bottom: 24mm; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1.4mm solid var(--ink); }
+  .p3 .kinds span { display: flex; align-items: center; gap: 4mm; padding: 6mm 0; border-bottom: .4mm solid #d8d8d0; font-size: 9mm; font-weight: 800; letter-spacing: -0.04em; }
+  .p3 .kinds i { flex: none; width: 5mm; height: 5mm; border: 1.6mm solid var(--cobalt); border-radius: 50%; }
+  .p3 .kinds span:nth-child(3n+2) i { border-radius: 0; }
+  .p3 .kinds span:nth-child(3n) i { width: 7mm; height: 1.6mm; border: 0; background: var(--cobalt); transform: rotate(-31deg); }
+</style>
+</head>
+<body>
+
+<section class="poster p1">
+  <div class="meta"><span>ISSEUM</span><span>MULTI CULTURAL SPACE IN SEOUL</span></div>
+  <span class="k o"></span><span class="k i"></span><span class="k s"></span><span class="k m"></span>
+  <h1><span class="hand">이야기가</span>피어나는 곳</h1>
+  <p class="sub">이씀 · 홍대입구역 복합문화공간</p>
+</section>
+
+<section class="poster p2">
+  <div class="meta"><span>ISSEUM</span><span>EVERY KIND OF STORY</span></div>
+  <span class="k o"></span><span class="k i"></span><span class="k s"></span><span class="k m"></span>
+  <h1><span class="hand">모든 형태의 이야기를,</span>이곳에서 자유롭게 펼쳐보세요</h1>
+  <p class="sub">ISSEUM.COM</p>
+</section>
+
+<section class="poster p3">
+  <div class="meta"><span>ISSEUM</span><span>WHAT HAPPENS HERE</span></div>
+  <h1><span class="hand">이씀에서</span>열리는 일</h1>
+  <svg viewBox="0 0 1100 640" fill="none" stroke="#0526c5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- screen on the wall -->
+  <path d="M640 70 C 760 68, 880 69, 990 72 L 988 230 C 880 232, 760 231, 642 229 Z"></path>
+  <path d="M690 190 C 720 150, 740 170, 770 130 C 800 160, 820 120, 860 150 C 890 130, 910 160, 940 140"></path>
+  <!-- speaker -->
+  <circle cx="520" cy="150" r="34"></circle>
+  <path d="M500 120 C 506 104, 520 102, 534 108 M510 116 C 512 106, 520 104, 528 106"></path>
+  <path d="M508 152 C 510 156, 514 157, 518 154 M528 146 L 529 147 M510 142 L 511 143"></path>
+  <path d="M520 184 C 521 230, 520 270, 519 310"></path>
+  <path d="M520 214 C 548 200, 572 176, 590 150 M590 150 C 594 142, 600 140, 604 144"></path>
+  <path d="M520 220 C 500 240, 490 256, 486 270"></path>
+  <path d="M519 310 C 510 350, 504 380, 498 410 M519 310 C 530 350, 538 380, 544 410"></path>
+  <path d="M484 412 C 492 414, 498 412, 500 408 M542 410 C 548 414, 556 414, 560 410"></path>
+  <!-- podium -->
+  <path d="M450 262 C 490 260, 530 261, 560 264 L 552 420 C 520 421, 490 420, 460 418 Z" fill="#ffffff"></path>
+  <path d="M440 264 C 490 256, 540 257, 572 262"></path>
+  <path d="M486 300 C 500 330, 514 320, 526 300"></path>
+  <!-- little sparkle near speaker -->
+  <path d="M612 120 L 624 108 M618 134 L 636 132 M606 102 L 608 86"></path>
+  <!-- audience from behind -->
+  <circle cx="170" cy="470" r="40"></circle>
+  <path d="M136 452 C 140 432, 160 424, 178 428 M150 440 C 156 426, 176 420, 196 434 M164 432 C 172 420, 190 424, 202 440"></path>
+  <path d="M130 600 C 132 540, 150 515, 170 512 C 192 515, 208 540, 210 600"></path>
+  <circle cx="330" cy="480" r="40"></circle>
+  <path d="M296 470 C 296 446, 318 436, 334 440 C 352 442, 366 456, 368 476"></path>
+  <path d="M352 444 C 368 430, 372 420, 368 408 C 380 414, 382 428, 372 440"></path>
+  <path d="M290 600 C 292 548, 308 522, 330 520 C 352 522, 368 548, 370 600"></path>
+  <!-- hand raised -->
+  <circle cx="690" cy="470" r="40"></circle>
+  <path d="M658 452 L 650 440 M672 438 L 668 424 M690 434 L 690 420 M708 438 L 714 424 M722 452 L 732 442"></path>
+  <path d="M650 600 C 652 548, 668 522, 690 520 C 712 522, 728 548, 730 600"></path>
+  <path d="M722 534 C 744 500, 754 460, 758 418 M758 418 C 756 406, 762 400, 768 404 C 770 410, 766 418, 760 420"></path>
+  <circle cx="860" cy="482" r="40"></circle>
+  <path d="M824 486 C 818 460, 840 440, 862 442 C 884 444, 902 462, 898 488 M836 456 C 850 450, 874 450, 888 458"></path>
+  <path d="M820 600 C 822 550, 838 524, 860 522 C 882 524, 898 550, 900 600"></path>
+  <!-- chairs backs -->
+  <path d="M110 620 C 170 618, 230 619, 250 621 M270 620 C 330 618, 390 619, 410 621 M630 620 C 690 618, 750 619, 770 621 M800 620 C 860 618, 920 619, 940 621"></path>
+  </svg>
+  <div class="kinds"><span><i></i>워크숍</span><span><i></i>세미나</span><span><i></i>북토크</span><span><i></i>팝업스토어</span><span><i></i>팬미팅</span><span><i></i>촬영</span></div>
+</section>
+
+<script>
+  const n = Number(new URLSearchParams(location.search).get('p') || 1);
+  document.querySelectorAll('.poster')[n - 1].classList.add('on');
+</script>
+</body>
+</html>
