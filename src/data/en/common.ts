@@ -2,11 +2,9 @@
  * Shared English copy. Same shape as ko/common.ts (types.ts → Common).
  *
  * Translated from the Korean. Facts come from facts.ts and config/site.ts, never
- * restated. Owner to confirm: the romanised company name and address, and how the
- * representative's name should appear in English (left in Korean until then).
+ * restated. The romanised name and address were confirmed by the owner (2026-11-12).
  */
 
-import { business } from '../../config/site';
 import { MIN_HOURS, RATES } from '../facts';
 import { grouped } from '../i18n';
 import type { Common } from '../types';
@@ -50,10 +48,9 @@ export const common: Common = {
     },
     business: {
       company: { term: 'Company', value: 'YOUNGJUN PMC' },
-      representative: { term: 'Representative', value: business.representative },
+      representative: { term: 'Representative', value: 'YONG CHUL, CHUNG' },
       address: { term: 'Address', value: 'B1, 22 World Cup buk-ro, Mapo-gu, Seoul, Korea' },
       registration: { term: 'Business reg. no.' },
     },
-    rulesLink: 'Rental terms',
   },
 };

@@ -1,13 +1,13 @@
 ---
 /**
  * Footer and contact in one cobalt band: the closing line, the four inquiry
- * channels, business details and the link to the rental terms. `#contact` is the
+ * channels and business details. `#contact` is the
  * target of every inquiry CTA on the site, so every page renders this.
  */
 import Emblem from './Emblem.astro';
 import { business, kakaoChannelUrl, naverTalkUrl } from '../config/site';
 import { content } from '../data';
-import { localePath, type Lang } from '../data/i18n';
+import type { Lang } from '../data/i18n';
 
 interface Props {
   lang: Lang;
@@ -21,7 +21,6 @@ const chats = [
   { ...cards.naverTalk, href: naverTalkUrl },
   ...(kakaoChannelUrl ? [{ ...cards.kakao, href: kakaoChannelUrl }] : []),
 ];
-const rulesHref = localePath(lang, '/rules');
 ---
 
 <footer class="contact on-cobalt" id="contact" aria-labelledby="contact-title">
@@ -64,9 +63,6 @@ const rulesHref = localePath(lang, '/rules');
         <dt>{biz.address.term}</dt><dd>{biz.address.value}</dd>
         <dt>{biz.registration.term}</dt><dd>{business.registrationNumber}</dd>
       </dl>
-      <p class="links">
-        <a href={rulesHref}>{footer.rulesLink}</a>
-      </p>
     </div>
   </div>
 </footer>
@@ -183,19 +179,4 @@ const rulesHref = localePath(lang, '/rules');
     color: var(--lime);
   }
 
-  .links {
-    display: flex;
-    gap: var(--space-5);
-    margin-top: var(--space-4);
-    font-size: var(--type-meta);
-    font-weight: 700;
-  }
-
-  .links a {
-    color: var(--paper);
-  }
-
-  .links a:hover {
-    color: var(--lime);
-  }
 </style>

@@ -45,7 +45,6 @@ export type Common = {
       address: { term: string; value: string };
       registration: { term: string };
     };
-    rulesLink: string;
   };
 };
 

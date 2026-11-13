@@ -48,7 +48,6 @@ export const common: Common = {
       address: { term: '주소', value: business.address },
       registration: { term: '사업자등록번호' },
     },
-    rulesLink: '대관 규정',
   },
 };
 
