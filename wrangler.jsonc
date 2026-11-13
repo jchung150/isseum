@@ -1,26 +1,20 @@
 {
-  // Cloudflare Workers. The site is still almost entirely static assets; the
-  // Astro Cloudflare adapter adds one on-demand route (/api/booking) and the
-  // Worker serves everything else straight from the ASSETS binding.
+  // Cloudflare Workers, static assets only. Since the /booking form and its
+  // /api/booking endpoint were removed (2026-11, bookings go through Naver
+  // Booking), nothing runs on demand: there is no Worker script, and every
+  // request is served straight off the edge from ./dist.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "isseum",
-  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-16",
-  "compatibility_flags": ["nodejs_compat"],
 
   "assets": {
-    // The adapter splits output: static assets in dist/client, Worker in dist/server.
-    "directory": "./dist/client",
-    "binding": "ASSETS",
+    "directory": "./dist",
     // Astro is configured with trailingSlash: 'never', so /rules/ must resolve
     // to /rules rather than both being served.
     "html_handling": "drop-trailing-slash",
-    "not_found_handling": "404-page",
-    // Assets are served first by default, and that router only answers GET/HEAD
-    // — a POST to /api/booking got 405 before ever reaching the Worker. Scoped
-    // to /api/* so static pages still come straight off the edge without
-    // invoking the Worker.
-    "run_worker_first": ["/api/*"]
+    // Serves the nearest 404.html up the path, so misses under /en/ get
+    // en/404.html (emitted by the localized-404 hook in astro.config.mjs).
+    "not_found_handling": "404-page"
   },
 
   // Custom domains declared here instead of clicked in the dashboard: every
@@ -28,28 +22,5 @@
   "routes": [
     { "pattern": "www.isseum.com", "custom_domain": true },
     { "pattern": "isseum.com", "custom_domain": true }
-  ],
-
-  // Cloudflare Email Routing. Sends only to addresses verified as destinations
-  // on this account, which is exactly what the owner notification needs.
-  //
-  // NOTIFY_TO must be an address verified under Email Routing → Destination
-  // addresses. hello@isseum.com is a Google Workspace mailbox (isseum.com's MX
-  // points at Google, not at Email Routing) and was never verified here, so the
-  // Worker addresses hello@theonhouse.com — the one destination on the account.
-  //
-  // Deliverability: the Worker sends as no-reply@isseum.com from Cloudflare's
-  // IPs, so isseum.com's SPF must include _spf.mx.cloudflare.net alongside
-  // Google's. Without it the mail is unauthenticated and Gmail filters it as
-  // spam — which is exactly what happened on the first live send. Cloudflare
-  // does not DKIM-sign for send_email, so SPF is the only authentication this
-  // path can have; an ESP (Resend) is the fix if it ever stops being enough.
-  "send_email": [{ "name": "NOTIFY_EMAIL" }],
-
-  // Not secrets — safe in the repo. The rest (TURNSTILE_SECRET,
-  // SHEET_WEBHOOK_URL, SHEET_SECRET) are set with `wrangler secret put`.
-  "vars": {
-    "NOTIFY_TO": "hello@theonhouse.com",
-    "NOTIFY_FROM": "no-reply@isseum.com"
-  }
+  ]
 }

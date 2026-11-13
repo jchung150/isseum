@@ -3,9 +3,11 @@
 서울 마포구 동교동, 홍대입구역 1번 출구 5분 거리의 약 60평(198㎡) 가변형 복합문화공간
 **이씀**의 대관 마케팅 사이트. 워크숍 · 북토크 · 팝업 · 팬미팅 · 쇼케이스 · 촬영 대관을 받는다.
 
-- **모든 콘텐츠는 한국어다.** 라틴 문자는 `WHY ISSEUM` 같은 장식용 eyebrow 라벨뿐이다.
-- **이미 라이브다.** `https://www.isseum.com`. `/booking` 폼으로 **실제 문의가 들어오므로**
-  그 폼과 `/api/booking` 수정은 프로덕션 변경으로 취급할 것.
+- **한국어가 기본, 영어는 `/en` 아래.** 홈 · 대관 규정 · 이용 안내 · 404가 두 언어로 있고
+  EN/KOR 버튼이 같은 페이지의 다른 언어판으로 간다. 라틴 문자는 한국어 페이지에서 장식용
+  eyebrow 라벨에만 쓴다.
+- **이미 라이브다.** `https://www.isseum.com`. 예약은 **네이버 예약**에서 받는다. 자체
+  `/booking` 폼과 `/api/booking`은 2026-11에 삭제했다(`pre-rebrand` 태그에 남아 있음).
 
 ---
 
@@ -26,10 +28,11 @@
 
 ## 스택
 
-Astro 7 (`output: 'static'`) · TypeScript 6 strict · 순수 CSS · Cloudflare Workers.
+Astro 7 (`output: 'static'`, 어댑터 없음) · TypeScript 6 strict · 순수 CSS ·
+Cloudflare Workers(정적 에셋만).
 **Tailwind 없음, UI 라이브러리 없음, React/Vue/Svelte 없음.** 인터랙션은 `.astro` 안의 바닐라
-`<script>`뿐이다(홈 약 2.5 KB). 이미지는 `astro:assets`(sharp) → WebP. 폰트는 Pretendard +
-Noto Serif KR(CDN). Node 24.x.
+`<script>`뿐이다. 이미지는 `astro:assets`(sharp) → WebP. 폰트는 Pretendard + Gaegu 300(손글씨)
++ Space Grotesk(라틴 라벨), CDN. Noto Serif KR은 숨김 상태인 `/events`만 쓴다. Node 24.x.
 
 ```bash
 npm ci           # npm install 아님 — CI가 lock을 그대로 쓴다
@@ -45,66 +48,67 @@ npm run build    # astro check && astro build → 0 errors/warnings/hints 유지
 ## 저장소 구조
 
 ```
-astro.config.mjs   사이트 URL, 정적 출력, 사이트맵
-wrangler.jsonc     배포 설정 (정적 에셋 + 커스텀 도메인)
+astro.config.mjs   사이트 URL, 정적 출력, 사이트맵, en/404.html을 만드는 빌드 훅
+wrangler.jsonc     배포 설정 (정적 에셋 + 커스텀 도메인, Worker 스크립트 없음)
 design/            읽기 전용 원본 디자인 export. 수정·배포 금지
+brand/             리브랜딩 결정 기록(decisions.md)과 시안(directions/)
 src/
-  config/site.ts   사업자 정보, nav, bookingUrl, 톡톡·카카오톡 링크, showEventsPage 플래그
+  config/site.ts   외부 링크(네이버 예약 · 톡톡 · 카카오톡), 사업자 정보, showEventsPage 플래그
   data/            ★ 사용자에게 보이는 모든 문자열
-    home.ts  spaces.ts  equipment.ts  pricing.ts  faq.ts  booking.ts  events.ts
-    guide.ts  rules.ts  notFound.ts
-  styles/tokens.css  ★ 모든 디자인 값
-  styles/base.css    전역 스타일, 포커스 링, reduced-motion
-  components/      10개, 전부 scoped CSS .astro
-  layouts/BaseLayout.astro
-  pages/           index(공간·장비·요금·절차·FAQ 한 페이지) · booking · rules ·
-                   guide/(목차 + 15개 섹션, 트리에서 생성) · events(숨김) · 404
-    api/booking.ts 유일한 on-demand 라우트
-scripts/booking-sheet/  Apps Script (제출 → Google Sheets)
+    facts.ts         언어와 무관한 숫자: 요금 · 인원 · 시간 · 환불 등급 · 개정일
+    media.ts         홈 사진 / guide-media.ts 이용 안내 사진
+    types.ts         언어별 모듈의 모양(Common · Home · Rules · NotFound)
+    guide-tree.ts    이용 안내 트리 타입과 flatten
+    ko/  en/         common · home · rules · guide · notFound. 같은 이름 = 같은 타입
+    index.ts         content[lang]
+    events.ts        숨김 페이지, 아직 한국어 전용
+  styles/tokens.css  ★ 모든 디자인 값 (BRAND 층 + 옮기지 않은 /events용 LEGACY 층)
+  styles/base.css    전역 스타일, 포커스 링, 브랜드 프리미티브(.wrap .pill .hand .items …)
+  components/      Header · Footer · Emblem, home/(홈 섹션), sub/(규정 · 안내 · 404)
+  layouts/BaseLayout.astro   lang · hreflang · JSON-LD
+  pages/           index · rules · guide/(목차 + 트리에서 생성) · 404 · events(숨김)
+    en/            같은 페이지의 영어판
 ```
 
 ---
 
 ## 지켜야 할 규칙 넷
 
-### 1. 카피는 전부 `src/data/*.ts`에 있다
+### 1. 카피는 전부 `src/data/`에 있다
 
-제목 · 버튼 라벨 · placeholder · `aria-label` · 검증 메시지 · 페이지 `title`까지, 사람이 읽는
-문자열은 `.astro`에 쓰지 않고 `src/data/`에서 export해 이름으로 참조한다. 클라이언트
-`<script>`도 마크업과 같은 모듈에서 import한다(Rollup이 tree-shake하므로 번들 비용 없음).
+제목 · 버튼 라벨 · `aria-label` · 페이지 `title`까지, 사람이 읽는 문자열은 `.astro`에 쓰지 않는다.
+컴포넌트는 `content[lang]`(src/data/index.ts)으로만 문구를 읽는다.
 
-- **어느 모듈이 소유하는가**: 렌더하는 페이지가 아니라 그 대상을 소유한 모듈. 장비 라벨은
-  `equipment.ts`, 대관 규정은 `booking.ts`. 규정은 `/rules`와 `/booking` 2단계 두 곳이
-  **같은 `policyGroups`를 렌더한다** — 옮겨 적으면 동의한 내용과 공개된 내용이 갈라진다.
-  항목 번호(12개)도 저장하지 않고 배열 순서에서 계산한다. 페이지 뼈대(타이틀·섹션 헤더)는 그
-  페이지의 모듈.
+- **문장은 `ko/`와 `en/`에, 숫자는 `facts.ts`에.** 요금 · 인원 · 시간 · 환불 비율 · 개정일은
+  facts.ts 한 곳에만 있고 두 언어의 문장이 그 값을 끼워 넣는다. 숫자를 문장에 다시 적지 말 것.
+- **두 언어는 같은 타입이다**(types.ts, guide-tree.ts). 한쪽에만 문구를 더하면 `astro check`가
+  다른 쪽이 빠졌다고 알린다. 이용 안내는 트리라 타입으로 못 잡으므로, 두 언어의 slug가
+  어긋나면 `/en/guide` 라우트가 빌드를 실패시킨다.
+- **어느 모듈이 소유하는가**: 렌더하는 페이지가 아니라 그 대상을 소유한 모듈. 대관 규정과
+  환불 등급과 벽면 부착 문장(`wallMounting`)은 `rules.ts`가 갖고, 홈 FAQ와 이용 안내가 읽는다.
+  규정 항목 번호(12개)는 저장하지 않고 배열 순서에서 계산한다.
+- **영어판은 번역이다.** 한국어에 없는 사실이나 규칙을 영어에만 더하지 않는다.
 - **상수 하나, 리터럴 둘 금지.** 한쪽이 만들고 다른 쪽이 소비하는 문자열은 같은 export를
-  읽는다. 리터럴을 두 번 적었다가 조용한 버그가 난 전력이 있다(`events.ts`의 `openSuffix`,
-  `ALL`).
-- **예외는 아이콘 글리프**(`✕ ← → ＋`, 항상 `aria-hidden`)뿐이다.
-- 아직 `HeroSlideshow.astro`에는 카피가 하드코딩돼 있다. 그 파일을 건드릴 때 옮길 것.
+  읽는다(`events.ts`의 `openSuffix`, `ALL`에서 물린 적이 있다).
+- **예외는 아이콘 글리프**(`✕ ← → ↑ ↗`, 항상 `aria-hidden`)뿐이다.
 
 ### 2. 스타일은 전부 `tokens.css`를 거친다
 
 값이 없으면 이름을 붙여 추가한 뒤 그 이름을 쓴다. 리터럴 hex나 매직 픽셀 금지.
 
-1. **그림자 없음.** 모든 경계는 1px 선. 위계는 `--border`(헤어라인)와 `--border-emphasis`
-   (`--ink`) 두 단계뿐.
-2. **액센트 색 없음.** 따뜻한 무채색만. 위계도 심각도도 명도로 표현한다(환불 등급이 그 예).
-   유일한 예외 `--error`는 **폼 검증 전용**이다.
-3. **각진 모서리.** `--radius`는 `2px`. `--radius-full`은 배지·점·원형 마크 전용.
-4. **자간이 구조를 지탱한다.** 한국어는 좁게, 라틴 eyebrow는 넓게. 기본값으로 두지 말 것.
+2026-11 리브랜딩으로 바뀌었다(결정 기록은 `brand/decisions.md`, 서체는 `brand/typography.md`).
+tokens.css는 **BRAND 층**과, 숨김 상태인 `/events`만 쓰는 **LEGACY 층**으로 나뉜다. 새 코드는
+BRAND 층만 쓴다.
+
+1. **코발트가 목소리, 라임은 표시.** `--cobalt` #0526C5, `--lime` #EAFDA1, 바탕 `--page`.
+   그림자는 쓰지 않는다(공지 띠 닫기 버튼의 페이드만 예외).
+2. **모서리는 둥글게.** 사진 `--radius-photo`, 카드 `--radius-card`, 버튼 `--radius-pill`.
+   번호 상자와 엠블럼은 로고 키트(ㅇ ㅣ / ㅁ)라 각지다.
+3. **두 목소리 제목.** 손글씨 한 줄(`.hand`, Gaegu 300) 위에 굵은 고딕(Pretendard 900).
+   손글씨는 제목 한 줄에만 쓴다.
+4. **자간이 구조를 지탱한다.** 한국어 제목은 아주 좁게, 영어는 덜 좁게(`--track-*-en`),
+   라틴 라벨은 넓게.
 5. **유동 타입.** 디스플레이 크기는 `clamp()`. 브레이크포인트별 `font-size` 덮어쓰기 금지.
-
-디스플레이는 세리프(Noto Serif KR 500), 본문·UI는 Pretendard, 모노는 인덱스 숫자 전용.
-
-**헤어라인 그리드** — 모든 카드 그리드의 관용구. 그리드 배경이 곧 테두리 색이고 1px 간격으로
-비쳐 보이게 해서 이중 테두리 없이 내부 구분선을 만든다:
-
-```css
-display: grid; gap: 1px; background: var(--border); border: var(--border-hairline);
-/* 셀에서 background: var(--bg) */
-```
 
 **읽는 폭은 역할마다 하나씩만 쓴다.** 본문·목록·주석·캡션은 `--measure-body`(36자),
 리드는 `--measure-hero-lead`(42자), 디스플레이 제목은 `--measure-display`(24자).
@@ -141,8 +145,8 @@ import**해야 하며, 파일만 넣는 것으로는 아무 일도 일어나지 
 
 ## 대관 요금
 
-`src/data/pricing.ts`가 요금 숫자가 존재하는 **유일한 곳**이고, 소비처 세 곳(홈 `#price` 표,
-`faq.ts` 대관료 답변, `/booking` 요금 줄)이 이 모듈을 읽는다.
+요금 숫자는 `src/data/facts.ts`의 `RATES`에만 있다. 홈 FAQ 표(두 언어), 공지 띠, JSON-LD
+`priceRange`가 이 값을 읽는다.
 
 부가세 포함 · 시간당 · 최소 3시간 · **전체 대관만**(부분 대관 없음):
 
@@ -152,15 +156,11 @@ import**해야 하며, 파일만 넣는 것으로는 아무 일도 일어나지 
 | 주말(금–일)·공휴일 | 170,000원 |
 
 2026-11부터 오픈 기념 특가였던 금액이 정가다. 예전 정상가(280,000 · 340,000원)와 "특가"
-표기는 표와 FAQ에서 내렸다.
+표기는 내렸다.
 
-- 금액은 숫자로 저장하고 모듈이 포맷한다. 최소 시간은 `booking.ts`의 `MIN_HOURS`를 읽으므로
-  폼 검증값과 어긋날 수 없다.
 - **할인을 다시 걸어도 할인율(%)은 화면에 쓰지 않는다.** "50% 할인"이라고 적으면 할인이
   끝날 때 정상가 복귀가 인상으로 읽힌다. 소유자 결정.
-- 금액 열 제목은 데스크톱에선 `<th>`, 모바일에선 `aria-hidden` 인라인 라벨로 보인다.
-  다시 스타일링해도 둘 다 남길 것.
-- `/booking`은 합계를 계산하지 않는다. 최종 금액은 호스트가 확인 후 안내한다.
+- 결제는 네이버 예약에서 한다. 사이트는 합계를 계산하지 않는다.
 
 ---
 
@@ -176,63 +176,32 @@ import**해야 하며, 파일만 넣는 것으로는 아무 일도 일어나지 
 
 목차는 네 그룹으로 묶는데 분류가 아니라 **시점**이다: 도착 및 출입 → 공간 이용 → 퇴실 → 안전.
 
-**사진은 `src/assets/guide/<slug>/NN.jpg`에 두고 명시적으로 import한다.** 행사 사진과 달리
+**사진은 `src/assets/guide/<slug>/NN.jpg`에 두고 `guide-media.ts`에서 한 번만 import한다.** 행사 사진과 달리
 자동 발견이 아니다. 번호는 **문서에 나오는 순서**이지 촬영 순서가 아니다 — 올라온 파일이 카메라
 번호 그대로여서 그냥 썼다면 평면도가 섹션 첫 사진이 될 뻔한 적이 있다. 사진이 아직 없는 자리는
 `src` 없이 `alt`만 두면 해칭과 "사진 준비 중" 캡션으로 렌더되어 빠진 게 페이지에서 보인다.
 
 **비밀번호는 싣지 않는다.** 노션 원문에는 와이파이 ID/PW와 음향실 PC의 PIN이 평문으로 있었지만
 `/guide`는 공개·색인되는 페이지라 둘 다 "공간 내부 안내문과 안내 문자에서 확인"으로 바꿨다.
-현관 비밀번호를 이용 1시간 전 문자로만 보내는 `booking.ts`의 규정과 같은 원칙이다.
+현관 비밀번호를 이용 1시간 전 문자로만 보내는 대관 규정과 같은 원칙이다.
 
-**사이트 안에서 `/guide`로 들어가는 링크는 없다.** 푸터의 주요 안내 목록을 내리면서 끊겼고,
+**사이트 안에서 `/guide`로 들어가는 링크는 없다**(404 목록에도 넣지 않는다). 푸터의 주요 안내 목록을 내리면서 끊겼고,
 의도된 상태다 — 사이트맵에는 남아 있어 URL을 건네거나 검색으로 닿는다.
 
-벽면 부착 규정처럼 대관 규정과 겹치는 문장은 `booking.ts`의 `wallMounting`을 함께 읽는다.
+벽면 부착 규정처럼 대관 규정과 겹치는 문장은 각 언어 `rules.ts`의 `wallMounting`을 함께 읽는다.
 같은 말을 두 번 적었다가 세 곳이 제각각이 된 적이 있다.
 
 ---
 
-## 예약 폼
+## 예약
 
-`/booking`은 구글 로그인을 요구하던 구글 폼을 대체한다. 5단계: 기본 정보 → 이용 규정 동의 →
-추가 옵션 → 개인정보 동의 → 신청 내용 확인. `noindex`이며 사이트맵에서 제외된다.
+예약은 **네이버 예약**(`config/site.ts`의 `bookingUrl`)에서 받는다. 홈 대관 절차 2단계의
+문장 속 링크가 그곳으로 간다(버튼이 아니라 링크 — 소유자 결정, 문의가 먼저다).
 
-```
-브라우저 → POST /api/booking
-             ├─ 허니팟 → Turnstile → 서버 검증   ← 실제로 유효한 검증
-             ├─ 이메일 (Cloudflare Email Routing)   ← 안전망. 실패하면 에러를 돌려준다
-             └─ 시트   (Apps Script → Google Sheets) ← 최선 노력. 실패해도 성공 처리
-```
-
-순서가 중요하다. 받지 않은 것을 받았다고 말하지 않기 위해 이메일이 먼저다.
-
-**`NOTIFY_TO`는 Email Routing에 destination으로 인증된 주소여야 한다.** 인증되지 않은 주소를
-넣으면 발송이 실패하고, 방문자는 접수 대신 "전화로 연락해 달라"는 에러를 본다 — 실제로 한 번
-그 상태로 배포된 적이 있다.
-
-**발신 도메인의 SPF에 Cloudflare를 포함시켜야 한다.** Worker는 `no-reply@isseum.com`으로
-Cloudflare IP에서 보내므로, isseum.com의 SPF가 구글만 허용하고 있으면 인증이 전부 실패해
-지메일이 스팸으로 분류한다(첫 실전 발송이 그랬다). 올바른 값:
-`v=spf1 include:_spf.google.com include:_spf.mx.cloudflare.net ~all` — SPF 레코드는 도메인당
-하나여야 하므로 반드시 기존 레코드를 **수정**한다. Cloudflare는 `send_email`에 DKIM 서명을
-해주지 않으므로 이 경로가 가질 수 있는 인증은 SPF뿐이다.
-
-제약값은 `booking.ts`에 있고(`MIN_HOURS` 3, `MAX_GUESTS` 90, `OPEN_HOUR`/`CLOSE_HOUR` 8–22)
-**클라이언트와 `api/booking.ts` 양쪽이 강제한다.** 클라이언트 검사는 예의일 뿐이다.
-
-시크릿은 `wrangler secret put`으로 넣으며 저장소에 두지 않는다:
-
-| 이름 | 값 |
-|---|---|
-| `TURNSTILE_SECRET` | Turnstile 시크릿 키 (사이트 키 아님 — 생김새가 비슷하다) |
-| `SHEET_WEBHOOK_URL` | Apps Script 웹앱 `/exec` URL |
-| `SHEET_SECRET` | Apps Script `setup()`이 출력하는 `SHARED_SECRET` |
-
-`NOTIFY_TO` / `NOTIFY_FROM`은 `wrangler.jsonc`의 vars다. Turnstile **사이트** 키는 공개 값이라
-`config/site.ts`에 있고, 로컬에서는 테스트 키로 대체된다(`.dev.vars`에
-`TURNSTILE_SECRET="1x0000000000000000000000000000000AA"` 필요, gitignore됨).
-Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로는 아무것도 바뀌지 않는다.
+자체 `/booking` 폼, `/api/booking`, Turnstile, Email Routing 발송, Apps Script 시트 연동은
+2026-11에 삭제했다. 필요하면 `pre-rebrand` 태그에서 꺼낼 것. Cloudflare에 남은 시크릿
+(`TURNSTILE_SECRET` · `SHEET_WEBHOOK_URL` · `SHEET_SECRET`)과 Apps Script 배포는 소유자가
+대시보드에서 정리한다.
 
 ---
 
@@ -243,18 +212,22 @@ Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로
 
 설정은 전부 `wrangler.jsonc`와 `astro.config.mjs`에 있다. 건드릴 때 알아야 할 것:
 
-- **`run_worker_first: ["/api/*"]`** 가 없으면 `/api/booking` POST가 **405**를 받는다.
-- **`assets.directory`는 `./dist/client`.** 어댑터가 출력을 client/server로 나눈다.
-- **`imageService: 'compile'`** 이어야 빌드 타임에 최적화된다. 되돌아가면 `_astro/`에 `.webp`가
-  사라지고 HTML에 `/_image?`가 보인다.
+- **Worker 스크립트가 없다.** 어댑터 없이 정적 빌드(`./dist`)를 에셋으로만 올린다. 서버에서
+  돌아야 하는 기능을 다시 넣으려면 `@astrojs/cloudflare`와 `main`을 되살려야 한다.
+- **`not_found_handling: "404-page"`는 경로에서 가장 가까운 `404.html`을 준다.** 그래서
+  `/en/` 아래 없는 주소는 `en/404.html`을 받는다. Astro는 루트 404만 파일로 내보내므로
+  `astro.config.mjs`의 `localized404` 훅이 `en/404/index.html`을 `en/404.html`로 옮긴다.
+- **로컬 `.wrangler/deploy/config.json`이 남아 있으면 `wrangler deploy`가 옛 `dist/client`를
+  찾다 실패한다.** 어댑터 시절의 산출물이다(gitignore됨). CI는 새로 클론하므로 상관없다.
 - **커스텀 도메인은 `routes`에 선언한다.** 대시보드에서 붙이는 시도는 DNS 레코드를 쓰지 않고
   조용히 실패한 전력이 있다.
 - **의존성을 추가했으면 push 전에 `npm ci --dry-run --os=linux --cpu=x64`.** macOS에서 그냥
   `npm ci`는 검증이 안 된다. 실패하면 `rm -rf node_modules package-lock.json && npm install`
   (sharp의 `@emnapi/*` 때문에 두 번 물렸다).
+- 설정 검증은 `npx wrangler deploy --dry-run`.
 
 배포 확인: 대시보드의 빌드 성공은 증거가 아니다. `curl`로 라이브 HTML의 `/_astro/*.css` 해시를
-로컬 `dist/`와 비교하거나, `POST /api/booking`이 **400**(405 아님)을 돌려주는지 볼 것.
+로컬 `dist/`와 비교하고, `/en`과 없는 주소 `/en/x`가 각각 영어 홈과 영어 404를 주는지 볼 것.
 
 ---
 
@@ -280,17 +253,11 @@ Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로
   붙이는데 `createElement` 노드에는 그 속성이 없다. JS가 만드는 노드는 `<style is:global>`에.
 - **`<dialog>`에 `display:`를 주면 `close()` 후에도 보인다.** 작성자 `display`가 UA의
   `dialog:not([open])` 규칙을 이긴다. 짝이 되는 `:not([open]) { display: none }`이 필요하다.
-- **input `pattern`은 정규식 `v` 플래그로 컴파일되고, 잘못된 패턴은 조용히 무시된다**
-  (검증이 항상 통과한다). `v` 모드 문자 클래스 안의 맨 `-`는 `[\-\s]`로 이스케이프할 것.
-- **앵커 오프셋은 대상의 `padding-top`을 빼야 한다.** `--scroll-offset`이 그래서 음수이며,
-  `--header-h`는 `Header.astro`에서 런타임에 측정한다(모바일 헤더가 더 높다).
+- **앵커는 `scroll-margin-top: var(--header-h)`로 헤더 아래에 맞춘다.** `--header-h`는
+  `Header.astro`가 런타임에 측정한다(모바일 헤더는 메뉴 줄이 따로 있어 더 높다).
 - **잘못된 클래스 이름은 빌드를 실패시키지 않는다.** 레이아웃 변경은 컴파일이 아니라 렌더로
   확인할 것.
 - **`src/assets/` 파일 이름을 바꾸면 import가 깨진다.** `events/` 바깥에는 자동 발견이 없다.
-- **`wrangler types`를 실행하지 말 것.** DOM 타입을 다시 선언해 클라이언트 `<script>`가 전부
-  컴파일되지 않게 된다. `src/cloudflare.d.ts`가 필요한 선언만 갖고 있다.
-- **Turnstile 토큰은 1회용이다.** 실패 후 `turnstile.reset()`을 호출하지 않으면 재시도마다 같은
-  에러가 난다.
 - **TypeScript는 `^6`에 고정.** `@astrojs/check`의 peer가 `^5 || ^6`이라 TS 7을 넣으면
   `npm install`이 깨진다.
 - dev 서버는 데몬이다. `astro.config.mjs`를 바꾸면 재시작해야 한다(핫 리로드 안 됨).
@@ -312,8 +279,8 @@ Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로
 
 차단 요소:
 
-1. **개인정보 동의 문구를 전문가에게 검토받을 것.** 폼이 이미 실제 개인정보를 수집 중이고,
-   `booking.ts`의 문구는 일반적인 PIPA 관행을 따랐을 뿐 변호사가 쓴 것이 아니다.
+1. **새 브랜드의 공유 이미지(`public/og-image.jpg`).** 지금 것은 옛 로고와 세리프다.
+   카카오톡 · 페이스북 미리보기에 그대로 뜬다. 영어판용도 따로 있으면 좋다.
 2. **구글 색인이 아직 0건이다.** `site:isseum.com`이 빈 결과다. 기술적 문제는 없다 —
    Googlebot은 200과 본문 전체를 받고, `robots.txt` · canonical · 사이트맵 모두 정상이며
    apex는 www로 301된다. 구글이 사이트의 존재를 모를 뿐이다. 2026-09-29에 GSC 도메인 속성
@@ -323,8 +290,8 @@ Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로
      링크가 붙어 색인도 같이 빨라진다.
 
    네이버 서치어드바이저는 소유확인 완료. 네이버 플레이스의 홈페이지 필드에는 사이트
-   주소가 들어가 있다(2026-10-13 확인). 인스타그램과 네이버 블로그는 운영하지 않아
-   링크 대상에서 뺐다.
+   주소가 들어가 있다(2026-10-13 확인). 인스타그램(@isseum.space)은 운영 중이지만 아직
+   사이트에 링크하지 않았다.
 3. **행사 사진** — `showEventsPage`가 기다리는 것.
 
 미정 값 — 지어내지 말고 물어볼 것:
@@ -335,21 +302,17 @@ Apps Script는 수정 후 **새 버전 배포**가 필요하다. 저장만으로
    적지만 사이트 어디에도 보증금 근거가 없다(규정에도, 요금에도). 그래서 옮기지 않았다. 실제로
    받는다면 금액과 환불 조건을 규정·요금에 명시해야 하고, 받지 않는다면 노션 원본을 고쳐야 한다.
 
+6. **영어판의 소유자 확인 사항.** 대표자 영문 표기(지금은 한글), 영문 주소, 영어 규정 첫머리의
+   "번역본이며 한국어판이 우선한다" 문장, 이용 안내의 주차기 버튼 영어 풀이(추정 포함).
+
 해두면 좋은 것:
 
-6. **신청자 확인 메일이 없다.** 지금은 소유자만 알림을 받고 신청자는 완료 화면뿐이다.
-   Cloudflare Email Routing은 인증된 destination으로만 보낼 수 있어 이 경로로는 불가능하고,
-   Resend 같은 ESP가 필요하다.
 7. **분석 도구가 없다.** 어디서 이탈하는지, 모바일 비중이 얼마인지 알 수 없다. Cloudflare Web
    Analytics는 쿠키가 없어 개인정보 고지를 건드리지 않는다 — GA를 붙이면 처리위탁처가 늘어
    PIPA 고지를 고쳐야 한다.
-8. **예약 폼 대기 시간.** `/api/booking`이 구글 시트 쓰기를 `await`하는데, 시트는 설계상
-    최선 노력이고 클라이언트는 그 결과를 읽지도 않는다. `ctx.waitUntil`로 넘기면 대기가
-    1~8초에서 0.5~1초로 줄어든다. Apps Script는 `/exec`가 리다이렉트로 답해 왕복이 두 번이고
-    콜드 스타트도 느리다.
-9. **폰트 자체 호스팅·서브셋팅** (현재 CDN, 한국어 웹폰트는 무겁다).
-10. **`drive-download-20260819T100341Z-1-001/`(25 MB)가 저장소 루트에 커밋돼 있다.** 장비 원본
+8. **폰트 자체 호스팅·서브셋팅** (현재 CDN, 한국어 웹폰트는 무겁다).
+9. **`drive-download-20260819T100341Z-1-001/`(25 MB)가 저장소 루트에 커밋돼 있다.** 장비 원본
     내려받기 폴더로 아무것도 import하지 않는다. 저장소 밖으로 옮기고 삭제할 것.
-11. **`src/assets/`가 84 MB다.** 사진을 받을 때마다 긴 변 2000px으로 줄이고 있지만(원본은
+10. **`src/assets/`가 84 MB다.** 사진을 받을 때마다 긴 변 2000px으로 줄이고 있지만(원본은
     4000px으로 들어온다) 계속 커진다. git은 지운 뒤에도 과거 버전을 들고 있으므로, **커밋
     전에** 줄일 것.
