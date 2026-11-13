@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+  "Here, now, together." — three A3 posters (297 × 420 mm), one word each.
+  The logo kit appears piece by piece: Here = ㅇ, now = ㅣ, together = all four
+  pieces assembled into the ISSEUM mark. Open with ?p=1/2/3 and print to PDF.
+  No bleed yet: add 3 mm per side once the final version is approved.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: 297mm 420mm; margin: 0; }
+  :root { --cobalt: #0526c5; --lime: #eafda1; --ink: #111; --paper: #fff; --page: #fafaf8; }
+  html, body { margin: 0; }
+  body { -webkit-font-smoothing: antialiased; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: Pretendard, sans-serif; }
+  .poster { display: none; position: relative; width: 297mm; height: 420mm; overflow: hidden; box-sizing: border-box; }
+  .poster.on { display: block; }
+  .meta, .foot { position: absolute; left: 24mm; right: 24mm; display: flex; justify-content: space-between; font: 700 4.2mm 'Space Grotesk', sans-serif; letter-spacing: .18em; }
+  .meta { top: 22mm; }
+  .foot { bottom: 22mm; letter-spacing: .06em; font-weight: 500; }
+  .word { position: absolute; left: 22mm; bottom: 46mm; margin: 0; font: 700 78mm/0.86 'Space Grotesk', sans-serif; letter-spacing: -0.06em; }
+  .ko { position: absolute; left: 25mm; bottom: 130mm; margin: 0; font: 300 30mm/1 'Gaegu', cursive; }
+  .k { position: absolute; display: block; box-sizing: border-box; }
+
+  /* 01 Here — ㅇ: a single ring, a place to arrive at. */
+  .p1 { background: var(--cobalt); color: var(--paper); }
+  .p1 .meta, .p1 .foot { color: var(--lime); }
+  .p1 .ko { color: var(--lime); }
+  .p1 .ring { left: 64mm; top: 50mm; width: 170mm; height: 170mm; border-radius: 50%; border: 18mm solid var(--paper); }
+
+  /* 02 now — ㅣ: one upright stroke, this moment. */
+  .p2 { background: var(--lime); color: var(--cobalt); }
+  .p2 .meta, .p2 .foot { color: var(--cobalt); }
+  .p2 .ko { color: var(--ink); }
+  .p2 .bar { left: 140mm; top: 40mm; width: 18mm; height: 200mm; background: var(--cobalt); }
+
+  /* 03 together — all four pieces assembled: the ISSEUM mark. */
+  .p3 { background: var(--page); color: var(--ink); }
+  .p3 .meta, .p3 .foot { color: var(--cobalt); }
+  .p3 .ko { color: var(--cobalt); }
+  .p3 .word { font-size: 56mm; }
+  .p3 .mark { left: 104mm; top: 40mm; width: 90mm; height: 202mm; background: var(--cobalt); }
+  .p3 .mark i { position: absolute; display: block; --s: 6.3mm; }
+  .p3 .mark .o { left: 27%; top: 7%; width: 46%; aspect-ratio: 1; border-radius: 50%; border: var(--s) solid var(--paper); box-sizing: border-box; }
+  .p3 .mark .b { left: 46.5%; top: 32%; width: var(--s); height: 16%; background: var(--paper); }
+  .p3 .mark .sl { left: 22%; top: 52%; width: 56%; height: 15%; background: var(--lime); clip-path: polygon(0 74%, 100% 0, 100% 26%, 0 100%); }
+  .p3 .mark .q { left: 25%; top: 74%; width: 50%; height: 17%; border: var(--s) solid var(--paper); box-sizing: border-box; }
+</style>
+</head>
+<body>
+
+<section class="poster p1">
+  <div class="meta"><span>ISSEUM</span><span>01 / 03</span></div>
+  <span class="k ring"></span>
+  <p class="ko">여기,</p>
+  <p class="word">Here,</p>
+  <div class="foot"><span>HERE, NOW, TOGETHER.</span><span>여기, 지금, 함께.</span></div>
+</section>
+
+<section class="poster p2">
+  <div class="meta"><span>ISSEUM</span><span>02 / 03</span></div>
+  <span class="k bar"></span>
+  <p class="ko">지금,</p>
+  <p class="word">now,</p>
+  <div class="foot"><span>HERE, NOW, TOGETHER.</span><span>여기, 지금, 함께.</span></div>
+</section>
+
+<section class="poster p3">
+  <div class="meta"><span>ISSEUM</span><span>03 / 03</span></div>
+  <span class="k mark"><i class="o"></i><i class="b"></i><i class="sl"></i><i class="q"></i></span>
+  <p class="ko">함께.</p>
+  <p class="word">together.</p>
+  <div class="foot"><span>HERE, NOW, TOGETHER.</span><span>여기, 지금, 함께.</span></div>
+</section>
+
+<script>
+  const n = Number(new URLSearchParams(location.search).get('p') || 1);
+  document.querySelectorAll('.poster')[n - 1].classList.add('on');
+</script>
+</body>
+</html>
