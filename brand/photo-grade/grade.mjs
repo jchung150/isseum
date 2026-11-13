@@ -57,7 +57,8 @@ async function main(argv) {
   }
   const out = resolve(argv[outIdx + 1]);
   const size = sizeIdx >= 0 ? argv[sizeIdx + 1].split('x').map(Number) : null;
-  const skip = new Set([outIdx, outIdx + 1, sizeIdx, sizeIdx + 1]);
+  // Flag positions and their values; --size is optional, so only skip it when present.
+  const skip = new Set([outIdx, outIdx + 1, ...(sizeIdx >= 0 ? [sizeIdx, sizeIdx + 1] : [])]);
   const inputs = argv
     .filter((_, i) => !skip.has(i))
     .flatMap((p) => (statSync(p).isDirectory() ? readdirSync(p).map((f) => join(p, f)) : [p]))
