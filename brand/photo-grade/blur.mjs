@@ -13,7 +13,8 @@ for (const [name, { tv, face }] of Object.entries(boxes)) {
   const base = await sharp(src).toBuffer();
   const layers = [];
   const add = async ([x, y, w, h], kind) => {
-    const pad = kind === 'face' ? 0.25 : 0.02;
+    // Faces get a little margin; screens are inset slightly so the TV bezel stays sharp.
+    const pad = kind === 'face' ? 0.12 : -0.03;
     let L = Math.round((x - w * pad) / 100 * W), T = Math.round((y - h * pad) / 100 * H);
     let R = Math.round((x + w * (1 + pad)) / 100 * W), B = Math.round((y + h * (1 + pad)) / 100 * H);
     L = Math.max(0, L); T = Math.max(0, T); R = Math.min(W, R); B = Math.min(H, B);
