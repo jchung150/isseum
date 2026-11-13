@@ -47,11 +47,3 @@ export const business = {
 
 /** 네이버 지도 공유 링크. 구조화 데이터(BaseLayout의 hasMap)만 쓴다. */
 export const naverMapUrl = 'https://naver.me/xRgs5iMX';
-
-
-/**
- * 지난 행사 page — off until there is real event photography. The page still
- * builds (reviewable at /events) but is unlinked, noindexed and out of the
- * sitemap. astro.config.mjs imports this same flag for the sitemap filter.
- */
-export const showEventsPage = false;

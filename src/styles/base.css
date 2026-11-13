@@ -68,7 +68,7 @@ a {
 }
 
 a:hover {
-  color: var(--link-hover);
+  color: var(--cobalt);
 }
 
 button {
@@ -86,10 +86,7 @@ button {
 }
 
 /* Colored surfaces need a ring that stays visible against them. */
-.on-ink :focus-visible {
-  outline-color: var(--lime);
-}
-
+.on-ink :focus-visible,
 .on-cobalt :focus-visible {
   outline-color: var(--lime);
 }
@@ -100,18 +97,18 @@ button {
   top: var(--space-2);
   z-index: 100;
   padding: var(--space-3) var(--space-4);
-  background: var(--ink);
-  color: var(--bg);
-  font-size: var(--text-ui);
-  font-weight: 600;
-  border-radius: var(--radius);
+  background: var(--cobalt);
+  color: var(--paper);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  border-radius: var(--radius-pill);
   transform: translateY(-200%);
   transition: transform var(--transition-fast);
 }
 
 .skip-link:focus-visible {
   transform: none;
-  color: var(--bg);
+  color: var(--paper);
 }
 
 .visually-hidden {
@@ -140,81 +137,6 @@ button {
     scroll-behavior: auto !important;
   }
 }
-
-/* ---------- Layout primitives ---------- */
-
-.container {
-  max-width: var(--container);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-
-.section {
-  padding-top: var(--space-section);
-}
-
-.hairline-grid > * {
-  background: var(--bg);
-}
-
-/* ---------- Type primitives ---------- */
-
-.eyebrow {
-  font-size: var(--eyebrow-size);
-  font-weight: 500;
-  letter-spacing: var(--tracking-eyebrow);
-  color: var(--text-secondary);
-}
-
-.eyebrow--label {
-  letter-spacing: var(--tracking-label);
-}
-
-.display {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-display);
-}
-
-.mono-num {
-  font-family: var(--font-mono);
-  font-size: var(--mono-num);
-  letter-spacing: var(--tracking-mono);
-  color: var(--text-tertiary);
-}
-
-.lead {
-  font-size: var(--text-lead);
-  line-height: var(--leading-compact);
-  color: var(--text-body);
-  letter-spacing: var(--tracking-body);
-}
-
-.prose {
-  font-size: var(--text-base);
-  line-height: var(--leading-body);
-  color: var(--text-body);
-  letter-spacing: var(--tracking-body);
-}
-
-.prose strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-/* ---------- Placeholder ----------
-   Stands in for unshot photography, and remains the missing-image fallback
-   once real assets land. See design/TOKENS.md §9. */
-
-.ph {
-  background-image: repeating-linear-gradient(
-    135deg,
-    var(--placeholder-stripe) 0 10px,
-    var(--surface) 10px 20px
-  );
-}
-
 
 /* ---------- Brand primitives (2026 rebrand) ---------- */
 

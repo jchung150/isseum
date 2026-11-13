@@ -135,7 +135,7 @@ export type Rules = {
   refund: { id: string; title: string; tiers: RefundTier[]; exceptions: PolicyLine[] };
 };
 
-/** 404. `links` paths are language-neutral; the page prefixes /en itself. */
+/** 404. The header menu already offers every way out, so the page only adds a home button. */
 export type NotFound = {
   title: string;
   description: string;
@@ -143,8 +143,6 @@ export type NotFound = {
   heading: string;
   lead: string;
   home: string;
-  linksLabel: string;
-  links: { label: string; path: string }[];
 };
 
 export type Content = { common: Common; home: Home; rules: Rules; guide: Guide; notFound: NotFound };

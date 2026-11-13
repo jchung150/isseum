@@ -1,9 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-// Single source for the flag — keeps the sitemap in step with the nav, footer
-// and noindex meta instead of duplicating the decision here.
-import { showEventsPage } from './src/config/site.ts';
 import { existsSync } from 'node:fs';
 import { mkdir, rename, rmdir } from 'node:fs/promises';
 
@@ -47,9 +44,8 @@ export default defineConfig({
   integrations: [
     localized404,
     sitemap({
-      // /events is hidden until there is real photography. 404 pages (one per
-      // language) are not content.
-      filter: (page) => !/\/404\/?$/.test(page) && (showEventsPage || !page.includes('/events')),
+      // 404 pages (one per language) are not content.
+      filter: (page) => !/\/404\/?$/.test(page),
     }),
   ],
   image: {
