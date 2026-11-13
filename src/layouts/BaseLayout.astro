@@ -40,7 +40,8 @@ const alternates = translated
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 // Absolute URL required — Kakao, Slack and Facebook won't resolve a relative one.
-const ogImage = new URL('/og-image.jpg', Astro.site).href;
+// One per language; source is brand/og/og.html.
+const ogImage = new URL(lang === 'en' ? '/og-image-en.jpg' : '/og-image.jpg', Astro.site).href;
 
 const hhmm = (h: number) => `${String(h).padStart(2, '0')}:00`;
 /** 시간당 요금 범위. facts.ts에서 계산하므로 요금이 바뀌면 따라온다. */

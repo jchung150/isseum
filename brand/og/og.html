@@ -1,0 +1,63 @@
+<!doctype html>
+<!--
+  Share preview (Open Graph) image, 1200×630. Rendered to public/og-image.jpg
+  (Korean) and public/og-image-en.jpg (English): open with ?lang=en for English.
+  Regenerate:
+    python3 -m http.server 8792 --directory .   (from the repo root)
+    Chrome --headless=new --window-size=1200,630 --screenshot=og.png http://localhost:8792/brand/og/og.html[?lang=en]
+  then convert to JPEG (sharp, quality 85). Facts here mirror src/data/facts.ts.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; background: #fafaf8; color: #111; font-family: Pretendard, sans-serif; -webkit-font-smoothing: antialiased; }
+  .og { position: relative; display: grid; grid-template-columns: 1fr 470px; gap: 56px; height: 100%; box-sizing: border-box; padding: 56px 64px; }
+  .copy { display: grid; align-content: space-between; }
+  .logo { font: 300 54px/1 'Gaegu', cursive; letter-spacing: -0.08em; }
+  .hl { justify-self: start; display: inline-block; background: #eafda1; font: 700 17px 'Space Grotesk', sans-serif; letter-spacing: .02em; padding: 5px 12px; margin-bottom: 26px; }
+  h1 { margin: 0; font-size: 92px; font-weight: 900; letter-spacing: -0.065em; line-height: 1.04; }
+  h1 .hand { display: block; font: 300 1.12em/0.92 'Gaegu', cursive; letter-spacing: -0.01em; margin-bottom: .04em; }
+  :lang(en) h1 { font-size: 74px; letter-spacing: -0.035em; }
+  .facts { font-size: 22px; font-weight: 500; color: #44443e; letter-spacing: -0.01em; }
+  .facts b { color: #0526c5; }
+  .photo { position: relative; border-radius: 44px; overflow: hidden; background: #eeeeea; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .emb { position: absolute; left: calc(100% - 470px - 64px - 30px); bottom: 92px; width: 84px; aspect-ratio: 232/520; background: #0526c5; --s: 5.9px; }
+  .emb i { position: absolute; display: block; }
+  .emb .o { left: 27%; top: 7%; width: 46%; aspect-ratio: 1; border-radius: 50%; border: var(--s) solid #fff; box-sizing: border-box; }
+  .emb .bar { left: 46.5%; top: 32%; width: var(--s); height: 16%; background: #fff; }
+  .emb .sl { left: 22%; top: 52%; width: 56%; height: 15%; background: #fff; clip-path: polygon(0 74%, 100% 0, 100% 26%, 0 100%); }
+  .emb .sq { left: 25%; top: 74%; width: 50%; height: 17%; border: var(--s) solid #fff; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div class="og">
+  <div class="copy">
+    <div class="logo" data-t="logo">이씀</div>
+    <div>
+      <p class="hl">MULTI CULTURAL SPACE IN SEOUL</p>
+      <h1><span class="hand" data-t="hand">이야기가</span><span data-t="rest">피어나는 곳</span></h1>
+    </div>
+    <p class="facts" data-t="facts">홍대입구역 5분 · 약 60평 · <b>최대 90인</b></p>
+  </div>
+  <div class="photo"><img src="../../src/assets/isseum_main-hall_01.jpg" alt=""></div>
+  <span class="emb"><i class="o"></i><i class="bar"></i><i class="sl"></i><i class="sq"></i></span>
+</div>
+<script>
+  if (new URLSearchParams(location.search).get('lang') === 'en') {
+    document.documentElement.lang = 'en';
+    const t = {
+      logo: 'ISSEUM',
+      hand: 'A place where',
+      rest: 'stories bloom',
+      facts: 'Near Hongik Univ. Station · 198㎡ · <b>Up to 90 guests</b>',
+    };
+    document.querySelectorAll('[data-t]').forEach((el) => { el.innerHTML = t[el.dataset.t]; });
+  }
+</script>
+</body>
+</html>
