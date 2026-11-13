@@ -1,0 +1,52 @@
+---
+/** Breadcrumb row with a "back to list" pill at its right end. */
+interface Props {
+  label: string;
+  trail: { href: string; title: string }[];
+  current: string;
+  back: { href: string; label: string };
+}
+const { label, trail, current, back } = Astro.props;
+---
+
+<nav class="crumb" aria-label={label}>
+  {
+    trail.map((step) => (
+      <>
+        <a href={step.href}>{step.title}</a>
+        <span aria-hidden="true">/</span>
+      </>
+    ))
+  }
+  <span aria-current="page">{current}</span>
+  <a class="crumb__back" href={back.href}><span aria-hidden="true">←</span> {back.label}</a>
+</nav>
+
+<style>
+  .crumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding-top: clamp(16px, 2vw, 28px);
+    color: var(--muted);
+    font-size: var(--type-meta);
+  }
+
+  a {
+    color: var(--cobalt);
+    font-weight: 700;
+  }
+
+  .crumb__back {
+    margin-left: auto;
+    padding: 6px var(--space-4);
+    border: var(--rule-strong) solid var(--cobalt);
+    border-radius: var(--radius-pill);
+  }
+
+  .crumb__back:hover {
+    background: var(--lime);
+    color: var(--cobalt);
+  }
+</style>

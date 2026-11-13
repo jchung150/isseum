@@ -1,0 +1,244 @@
+---
+/**
+ * 대관 규정 page, shared by /rules and /en/rules. Sticky table of contents on the
+ * left, numbered rules on the right. Numbers are derived from array order.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from './PageHead.astro';
+import { kakaoChannelUrl, naverTalkUrl } from '../../config/site';
+import { content } from '../../data';
+import { pad2, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { rules, common } = content[lang];
+
+let n = 0;
+const groups = rules.groups.map((group) => ({
+  ...group,
+  items: group.items.map((item) => ({ ...item, num: pad2(++n) })),
+}));
+---
+
+<BaseLayout lang={lang} title={rules.page.title} description={rules.page.description} translated>
+  <div class="wrap" id="top">
+    <PageHead
+      id="rules-title"
+      eyebrow={rules.page.eyebrow}
+      title={rules.page.heading}
+      lead={rules.page.lead}
+      chip={rules.page.revised}
+    />
+
+    <div class="rules">
+      <nav aria-label={rules.page.tocLabel}>
+        <ol class="toc">
+          {
+            groups.map((group) => (
+              <li>
+                <b>{group.title}</b>
+                <ol>
+                  {group.items.map((item) => (
+                    <li>
+                      <a href={`#r${item.num}`}>
+                        <span aria-hidden="true">{item.num}</span>
+                        {item.title}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div>
+        {
+          groups.map((group) => (
+            <section class="group" aria-labelledby={`g-${group.id}`}>
+              <h2 id={`g-${group.id}`}>{group.title}</h2>
+              {group.items.map((item) => (
+                <article class="rule" id={`r${item.num}`}>
+                  <span class="sqn" aria-hidden="true">{item.num}</span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    {item.lines && (
+                      <ul class="items">
+                        {item.lines.map((line) => (
+                          <li>
+                            <b>{line.label.replace(/ — $/, '')}</b> — {line.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {item.body && (
+                      <ul class="items">
+                        <li>{item.body}</li>
+                      </ul>
+                    )}
+                    {item.refund && (
+                      <>
+                        <table class="vtable">
+                          <caption class="visually-hidden">{rules.refund.title}</caption>
+                          <tbody>
+                            {rules.refund.tiers.map((tier) => (
+                              <tr>
+                                <th scope="row">{tier.when}</th>
+                                <td>{tier.rate}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <ul class="items">
+                          {rules.refund.exceptions.map((line) => (
+                            <li>
+                              <b>{line.label.replace(/ — $/, '')}</b> — {line.text}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </section>
+          ))
+        }
+
+        <div class="cta">
+          <a class="pill pill--solid" href={naverTalkUrl} target="_blank" rel="noopener"
+            >{rules.page.inquire.naverTalk}<span class="visually-hidden">{common.channels.newWindow}</span></a
+          >
+          {
+            kakaoChannelUrl && (
+              <a class="pill" href={kakaoChannelUrl} target="_blank" rel="noopener">
+                {rules.page.inquire.kakao}
+                <span class="visually-hidden">{common.channels.newWindow}</span>
+              </a>
+            )
+          }
+        </div>
+        <div class="pager">
+          <a class="pill pill--sm" href="#top"><span aria-hidden="true">↑</span>&nbsp;{rules.page.toTop}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .rules {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-bottom: var(--space-band);
+  }
+
+  @media (min-width: 900px) {
+    .rules {
+      grid-template-columns: 280px 1fr;
+      align-items: start;
+      gap: clamp(40px, 6vw, 96px);
+    }
+  }
+
+  .toc {
+    position: sticky;
+    top: calc(var(--header-h, 100px) + var(--space-3));
+    display: grid;
+    gap: 22px;
+    font-size: var(--type-table);
+  }
+
+  @media (max-width: 899px) {
+    .toc {
+      position: static;
+      padding: var(--space-5);
+      border-radius: var(--radius-card);
+      background: var(--paper);
+    }
+  }
+
+  .toc b {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .toc ol {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 2px 0;
+  }
+
+  .toc a:hover {
+    color: var(--cobalt);
+  }
+
+  .toc span {
+    flex: none;
+    width: 20px;
+    padding-top: 3px;
+    color: var(--cobalt);
+    font: 700 var(--type-label) var(--font-latin);
+  }
+
+  .group + .group {
+    margin-top: clamp(40px, 5vw, 64px);
+  }
+
+  h2 {
+    padding-bottom: var(--gap-desc);
+    border-bottom: 2px solid var(--ink);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 900;
+    letter-spacing: var(--track-title);
+  }
+
+  :lang(en) h2,
+  :lang(en) h3 {
+    letter-spacing: var(--track-title-en);
+  }
+
+  .rule {
+    display: flex;
+    gap: clamp(16px, 2.4vw, 28px);
+    padding-block: 28px;
+    border-bottom: var(--rule) solid var(--mist);
+    scroll-margin-top: calc(var(--header-h, 100px) + var(--space-3));
+  }
+
+  .rule > div {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  h3 {
+    padding-top: 10px;
+    font-size: clamp(19px, 1.8vw, 22px);
+    font-weight: 900;
+    letter-spacing: var(--track-q);
+  }
+
+  .vtable + .items {
+    margin-top: var(--space-1);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 36px;
+  }
+</style>

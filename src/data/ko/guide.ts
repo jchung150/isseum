@@ -7,142 +7,28 @@
  * **공개 페이지다.** 현관 비밀번호와 와이파이 비밀번호는 여기 적지 않는다. 지금처럼
  * 이용 1시간 전 문자로만 전달한다 — booking.ts의 규정도 그렇게 약속한다.
  *
- * 사진은 `src/assets/guide/<slug>/NN.jpg`에 있고 명시적으로 import한다. 아직 받지
+ * 사진은 guide-media.ts가 import한다. 아직 받지
  * 못한 사진은 `src` 없이 `alt`만 둔다. 그 자리는 플레이스홀더 해칭으로 렌더되므로
  * 빠진 사진이 페이지에서 눈에 보인다.
  */
 
-import type { ImageMetadata } from "astro";
+import { business, kakaoChannelUrl } from "../../config/site";
+import { PARKING_SPACES } from "../facts";
+import { shots } from "../guide-media";
+import type { Guide, GuidePage } from "../guide-tree";
+import { wallMounting } from "./rules";
 
-import { wallMounting } from "./booking";
-import { kakaoChannelUrl } from "../config/site";
-
-import route01 from "../assets/guide/route/01.jpg";
-import route02 from "../assets/guide/route/02.jpg";
-import route03 from "../assets/guide/route/03.jpg";
-import route04 from "../assets/guide/route/04.jpg";
-import route05 from "../assets/guide/route/05.jpg";
-import entry01 from "../assets/guide/entry/01.jpg";
-import parking01 from "../assets/guide/parking/01.jpg";
-import parking02 from "../assets/guide/parking/02.jpg";
-import parking03 from "../assets/guide/parking/03.jpg";
-import parking04 from "../assets/guide/parking/04.jpg";
-import parking05 from "../assets/guide/parking/05.jpg";
-import parking06 from "../assets/guide/parking/06.jpg";
-import parking07 from "../assets/guide/parking/07.jpg";
-import parking08 from "../assets/guide/parking/08.jpg";
-import parking10 from "../assets/guide/parking/10.jpg";
-import tv01 from "../assets/guide/tv/01.png";
-import tv02 from "../assets/guide/tv/02.png";
-import tv03 from "../assets/guide/tv/03.jpg";
-import tv04 from "../assets/guide/tv/04.jpg";
-import tv05 from "../assets/guide/tv/05.png";
-import tv06 from "../assets/guide/tv/06.jpg";
-import tv07 from "../assets/guide/tv/07.jpg";
-import light01 from "../assets/guide/lighting/01.jpg";
-import light02 from "../assets/guide/lighting/02.jpg";
-import light03 from "../assets/guide/lighting/03.jpg";
-import light04 from "../assets/guide/lighting/04.jpg";
-import sound01 from "../assets/guide/sound/01.jpg";
-import sound02 from "../assets/guide/sound/02.jpg";
-import sound03 from "../assets/guide/sound/03.jpg";
-import sound04 from "../assets/guide/sound/04.jpg";
-import sound05 from "../assets/guide/sound/05.jpg";
-import sound06 from "../assets/guide/sound/06.jpg";
-import sound07 from "../assets/guide/sound/07.jpg";
-import sound08 from "../assets/guide/sound/08.jpg";
-import bar01 from "../assets/guide/bar/01.jpg";
-import bar02 from "../assets/guide/bar/02.jpg";
-import bar03 from "../assets/guide/bar/03.jpg";
-import hvac01 from "../assets/guide/hvac/01.jpg";
-import hvac02 from "../assets/guide/hvac/02.png";
-import hvac03 from "../assets/guide/hvac/03.jpg";
-import recycle01 from "../assets/guide/recycling/01.jpg";
-import recycle02 from "../assets/guide/recycling/02.jpg";
-import recycle03 from "../assets/guide/recycling/03.jpg";
-import layout01 from "../assets/guide/layout/01.jpg";
-import safety01 from "../assets/guide/safety/01.jpg";
-import safety02 from "../assets/guide/safety/02.jpg";
-import safety03 from "../assets/guide/safety/03.jpg";
-import safety04 from "../assets/guide/safety/04.jpg";
-
-export type GuideShot = { src?: ImageMetadata; alt: string; caption?: string };
-
-export type GuideLine = {
-  /** 굵게 표시되는 앞머리. 저장소 관례대로 `— `로 끝낸다. */
-  label?: string;
-  text: string;
-  /** 있으면 `text`가 새 창으로 여는 링크가 된다. */
-  href?: string;
-  /** 한 단계 들여쓴 보조 설명. */
-  details?: string[];
-  /** 그 줄에 딸린 사진. 조작 단계처럼 글과 사진이 1:1로 붙는 곳에 쓴다. */
-  shots?: GuideShot[];
-};
-
-export type GuideBlock =
-  | { kind: "heading"; text: string }
-  | { kind: "text"; body: string }
-  | { kind: "bullets"; items: GuideLine[] }
-  | { kind: "steps"; items: GuideLine[] }
-  | { kind: "note"; title?: string; body: string[] }
-  | { kind: "figure"; src?: ImageMetadata; alt: string; caption?: string }
-  | { kind: "link"; label: string; href: string; lines: GuideLine[] }
-  /** 하위 페이지로 들어가는 카드. `to`는 현재 페이지 기준 한 토막. */
-  | { kind: "pagelink"; to: string; label: string; note: string }
-  /** 퇴실 전처럼 하나씩 짚어 가며 확인하는 목록. */
-  | { kind: "checklist"; items: string[] };
-
-export type GuidePage = {
-  /** 부모 기준 한 토막. 전체 경로는 조상들을 이어 만든다. */
-  slug: string;
-  title: string;
-  /** 목차 카드에 붙는 한 줄 설명. */
-  summary: string;
-  blocks: GuideBlock[];
-  /** 한 단계 더 들어가는 하위 페이지. */
-  children?: GuidePage[];
-};
-
-/** 트리를 평탄화해 경로와 조상 목록을 만든다. 라우트와 목차가 같은 함수를 쓴다. */
-export type GuideEntry = {
-  path: string;
-  page: GuidePage;
-  /** 루트(이용 안내)를 제외한 조상들. 빵부스러기가 이걸 읽는다. */
-  trail: { path: string; title: string }[];
-};
-
-export function flatten(
-  pages: GuidePage[],
-  base = "/guide",
-  trail: GuideEntry["trail"] = [],
-): GuideEntry[] {
-  return pages.flatMap((page) => {
-    const path = `${base}/${page.slug}`;
-    const entry: GuideEntry = { path, page, trail };
-    const childTrail = [...trail, { path, title: page.title }];
-    return [entry, ...flatten(page.children ?? [], path, childTrail)];
-  });
-}
-
-export const page = {
+const page: Guide["page"] = {
   title: "이용 안내",
   description:
     "이씀 대관 이용 안내. 출입 방법과 공간 동선, 조명 · 음향 · 냉난방 기기 사용법, 주차와 화물 반입, 퇴실 정리까지 사진과 함께 안내합니다.",
   eyebrow: "GUIDE",
   heading: "이용 안내",
   lead: "출입과 동선부터 기기 사용법과 퇴실 정리까지, 공간을 이용하시는 데 필요한 안내를 사진과 함께 담았습니다.",
-  /** 빵부스러기의 뿌리이자 목차 페이지의 이름. */
-  rootLabel: "이용 안내",
   breadcrumbLabel: "현재 위치",
-  /** 빵부스러기 줄 오른쪽 끝, 한 단계 위(부모 페이지)로 가는 링크. */
-  upLabel: "뒤로가기",
-  /** 각 페이지 하단에서 목차로 돌아가는 링크. */
-  backLabel: "목차로 돌아가기",
-  /** 하위 페이지로 들어가는 카드의 화살표 대체 텍스트는 두지 않는다(aria-hidden). */
-  tocLabel: "목차",
-  /** 아직 사진이 들어오지 않은 자리에 붙는 캡션 접두어. */
+  backLabel: "목록으로",
   pendingPrefix: "사진 준비 중 — ",
+  pagerLabel: "이전 · 다음 안내",
 };
 
 /* ═══════════════  도착 및 출입  ═══════════════ */
@@ -159,7 +45,7 @@ const arrivalPages: GuidePage[] = [
         kind: "bullets",
         items: [
           {
-            text: "대관 시 건물 뒷편 기계식 주차장에 기본 5대까지 주차 가능합니다.",
+            text: `대관 시 건물 뒷편 기계식 주차장에 기본 ${PARKING_SPACES}대까지 주차 가능합니다.`,
           },
           {
             text: "단, 규격 제한으로 인해 SUV 등 일부 대형 · RV 차량은 입고가 불가한 점 양해 부탁드립니다.",
@@ -174,7 +60,7 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: parking01,
+        src: shots.parking01,
         alt: "제어반과 규격 제한 안내판이 붙어 있는 건물 뒷편 기계식 주차장 입구",
       },
       {
@@ -243,7 +129,7 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: parking10,
+        src: shots.parking10,
         alt: "건물 1층 정문 옆, 붉은 타원으로 표시된 화물 하차용 임시 정차 공간",
       },
     ],
@@ -255,7 +141,7 @@ const arrivalPages: GuidePage[] = [
         blocks: [
           {
             kind: "figure",
-            src: parking02,
+            src: shots.parking02,
             alt: "스테인리스 함체 안에 터치스크린과 비상정지 버튼이 달린 기계식 주차장 제어반",
           },
           {
@@ -265,7 +151,7 @@ const arrivalPages: GuidePage[] = [
                 text: "제어반 키패드에서 [조작설명] 버튼을 누릅니다.",
                 shots: [
                   {
-                    src: parking03,
+                    src: shots.parking03,
                     alt: "제어반 화면 오른쪽에 세로로 놓인 운전화면 · 이상화면 · 조작설명 버튼",
                   },
                 ],
@@ -275,11 +161,11 @@ const arrivalPages: GuidePage[] = [
                 text: "화면 우측의 [게이트 닫힘대기 ON](파란색 버튼)을 5초 이상 길게 눌러 수동 조작 모드로 전환합니다.",
                 shots: [
                   {
-                    src: parking04,
+                    src: shots.parking04,
                     alt: "조작설명을 눌러 열린 조작방법 안내 화면. 오른쪽에 파란색 게이트 닫힘대기 ON 버튼이 있다",
                   },
                   {
-                    src: parking05,
+                    src: shots.parking05,
                     alt: "붉은 원으로 표시된 파란색 게이트 닫힘대기 ON 버튼 확대",
                   },
                 ],
@@ -289,7 +175,7 @@ const arrivalPages: GuidePage[] = [
                 text: "메인 화면으로 돌아와 하단의 [출입문 열림(상)] 버튼을 눌러 문을 엽니다.",
                 shots: [
                   {
-                    src: parking06,
+                    src: shots.parking06,
                     alt: "붉은 원으로 표시된 출입문 열림(상) 버튼 확대",
                   },
                 ],
@@ -299,7 +185,7 @@ const arrivalPages: GuidePage[] = [
                 text: "[출고] 버튼을 누르고, 키패드(우측 숫자 버튼)로 출고할 차량의 번호 4자리를 입력한 뒤 [운전시작] 버튼을 누릅니다. 기계가 작동하며 차량이 출차구로 이동하니 안전하게 대기해 주세요.",
                 shots: [
                   {
-                    src: parking07,
+                    src: shots.parking07,
                     alt: "입고 · 출고 · 취소 · 운전시작 버튼과 숫자 키패드가 있는 출고 화면",
                   },
                 ],
@@ -309,7 +195,7 @@ const arrivalPages: GuidePage[] = [
                 text: "하단의 [출입문 닫힘(하)] 버튼을 눌러 문을 닫습니다.",
                 shots: [
                   {
-                    src: parking08,
+                    src: shots.parking08,
                     alt: "붉은 원으로 표시된 출입문 닫힘(하) 버튼 확대",
                   },
                 ],
@@ -336,7 +222,7 @@ const arrivalPages: GuidePage[] = [
       { kind: "heading", text: "입실 방법" },
       {
         kind: "figure",
-        src: entry01,
+        src: shots.entry01,
         alt: "지하 1층 현관의 흰색 양개 방화문과 가운데 설치된 디지털 도어락",
       },
       {
@@ -387,7 +273,7 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: route01,
+        src: shots.route01,
         alt: "소파와 회의 테이블, 벽걸이 TV가 놓인 프로젝트룸 겸 대기실",
       },
       {
@@ -396,7 +282,7 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: route02,
+        src: shots.route02,
         alt: "책상과 의자를 강의식으로 배치하고 정면에 대형 TV를 둔 메인 홀",
       },
       {
@@ -410,7 +296,7 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: route03,
+        src: shots.route03,
         alt: "원목 카운터와 냉장고, 싱크대를 갖춘 바 공간",
       },
       {
@@ -424,13 +310,13 @@ const arrivalPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: route04,
+        src: shots.route04,
         alt: "화장실로 이어지는 지하 복도와 벽에 걸린 층별 안내판",
       },
       { kind: "heading", text: "동선 안내 (주 출입문 진입 시)" },
       {
         kind: "figure",
-        src: route05,
+        src: shots.route05,
         alt: "주 출입문에서 메인 홀과 프로젝트룸으로 이어지는 동선을 화살표로 표시한 지하 1층 평면도",
       },
     ],
@@ -509,7 +395,7 @@ const usePages: GuidePage[] = [
       { kind: "heading", text: "메인 홀 TV" },
       {
         kind: "figure",
-        src: tv01,
+        src: shots.tv01,
         alt: "메인 홀 무대 정면에 설치된 100인치 삼성 스마트 TV",
       },
       {
@@ -522,16 +408,16 @@ const usePages: GuidePage[] = [
         items: [
           {
             text: "음향실 PC에 접속합니다. 잠금 해제 비밀번호는 공간 내부 안내문에서 확인해 주세요.",
-            shots: [
-              {
-                src: tv02,
-                alt: "음향 · PC 컨트롤 존 책상에 놓인 모니터와 본체, 키보드",
-              },
-            ],
+            shots: [{ src: shots.tv02, alt: "음향 · PC 컨트롤 존 책상에 놓인 모니터와 본체, 키보드", },],
           },
           {
             text: "구비된 리모컨으로 TV를 켭니다.",
-            shots: [{ src: tv03, alt: "메인 홀에 비치된 삼성 TV 리모컨" }],
+            shots: [{ src: shots.tv03, alt: "메인 홀에 비치된 삼성 TV 리모컨" }],
+          },
+          {
+            text: "리모컨의 홈(Home) 버튼을 눌러 화면 좌측 메뉴에서 [연결된 기기]로 들어간 뒤 [HDMI3]을 선택합니다.",
+            shots: [{ src: shots.tv08, alt: "연결된 기기 메뉴" }],
+
           },
         ],
       },
@@ -541,22 +427,20 @@ const usePages: GuidePage[] = [
         items: [
           {
             label: "허브 위치 — ",
-            text: "개인 노트북을 쓰시려면 메인 홀 TV를 왼쪽으로 살짝 돌려 주세요(옆으로 돌아갑니다). TV 우측 뒷편에 멀티 허브가 있습니다.",
+            text: "개인 노트북 사용을 원하시면 메인 홀 TV를 왼쪽으로 살짝 돌려주세요. (옆으로 돌아갑니다.) TV 우측 뒷편에 아래 사진처럼 생긴 멀티 허브가 있습니다.",
+            shots: [{ src: shots.tv04, alt: "TV 뒷면에 연결된 멀티 허브와 HDMI 포트" }],
           },
         ],
-      },
-      {
-        kind: "figure",
-        src: tv04,
-        alt: "TV 뒷면에 연결된 멀티 허브와 HDMI 포트",
       },
       {
         kind: "steps",
         items: [
           { label: "전원 켜기 — ", text: "구비된 리모컨으로 TV를 켭니다." },
           {
-            label: "노트북 연결 — ",
-            text: "TV 우측 뒷편 HDMI 허브의 포트에 케이블을 연결한 뒤, 리모컨에서 외부 입력을 변경해 주세요.",
+            label: "노트북 연결 — ", text: "케이블 연결: TV 우측 뒷편 멀티 허브의 HDMI2 포트에 케이블을 연결하고, 반대쪽을 개인 노트북에 꽂습니다.",
+          },
+          {
+            label: "외부 입력 선택 — ", text: "리모컨의 홈(Home) 버튼을 누르고 화면 좌측 [연결된 기기] 메뉴에서 연결된 허브 포트(HDMI2)를 선택합니다.",
           },
         ],
       },
@@ -564,7 +448,7 @@ const usePages: GuidePage[] = [
       { kind: "heading", text: "프로젝트룸 TV" },
       {
         kind: "figure",
-        src: tv05,
+        src: shots.tv05,
         alt: "프로젝트룸 벽면에 설치된 스마트 TV",
       },
       {
@@ -573,12 +457,12 @@ const usePages: GuidePage[] = [
           {
             label: "전원 켜기 — ",
             text: "구비된 리모컨으로 TV를 켭니다.",
-            shots: [{ src: tv06, alt: "프로젝트룸에 비치된 TV 리모컨" }],
+            shots: [{ src: shots.tv06, alt: "프로젝트룸에 비치된 TV 리모컨" }],
           },
           {
             label: "노트북 연결 — ",
             text: "TV에 HDMI 선이 구비되어 있습니다. 개인 노트북에 연결한 뒤 리모컨에서 외부 입력을 변경해 주세요.",
-            shots: [{ src: tv07, alt: "TV 뒷면 HDMI 단자에 꽂혀 있는 케이블" }],
+            shots: [{ src: shots.tv07, alt: "TV 뒷면 HDMI 단자에 꽂혀 있는 케이블" }],
           },
         ],
       },
@@ -606,12 +490,12 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: light01,
+        src: shots.light01,
         alt: "음향실 문 옆 벽면에 설치된 메인 홀 조명 스위치판",
       },
       {
         kind: "figure",
-        src: light02,
+        src: shots.light02,
         alt: "음향 · 원통 · T7 · 무대 · 간접 · 흡기 · 배기로 이름이 붙은 스위치 열",
         caption: "스위치마다 이름이 붙어 있습니다.",
       },
@@ -641,7 +525,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: light03,
+        src: shots.light03,
         alt: "바 공간 싱크대 오른쪽 벽면의 조명 스위치",
       },
       { kind: "heading", text: "프로젝트 룸" },
@@ -656,7 +540,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: light04,
+        src: shots.light04,
         alt: "프로젝트룸 화장대 공간 오른쪽 벽면의 조명 스위치",
       },
     ],
@@ -674,12 +558,12 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: sound01,
+        src: shots.sound01,
         alt: "바 공간 측면에 마련된 음향 · PC 컨트롤 존",
       },
       {
         kind: "figure",
-        src: sound02,
+        src: shots.sound02,
         alt: "믹서와 무선 마이크 수신기, 파워 앰프가 들어 있는 음향 랙",
       },
       { kind: "heading", text: "전원 켜기" },
@@ -691,7 +575,7 @@ const usePages: GuidePage[] = [
             text: "컨트롤 존의 메인 PC 전원을 가장 먼저 켭니다.",
             shots: [
               {
-                src: sound03,
+                src: shots.sound03,
                 alt: "컨트롤 존 책상 아래 놓인 PC 본체의 전원 버튼",
               },
             ],
@@ -701,17 +585,17 @@ const usePages: GuidePage[] = [
             text: "랙 상단의 믹서 전원과 중단의 무선 마이크 수신기 전원을 켭니다. 마이크와 음원 신호를 먼저 활성화하는 순서입니다.",
             shots: [
               {
-                src: sound04,
+                src: shots.sound04,
                 alt: "랙 상단에 설치된 야마하 MGP16X 믹서",
                 caption: "상단 믹서 (YAMAHA MGP16X)",
               },
               {
-                src: sound05,
+                src: shots.sound05,
                 alt: "믹서 뒷면 오른쪽의 전원 스위치",
                 caption: "믹서 전원 스위치 — 상단 랙 우측 후면",
               },
               {
-                src: sound06,
+                src: shots.sound06,
                 alt: "중단 랙 전면의 무선 마이크 수신기와 전원 버튼 두 개",
                 caption: "무선 마이크 수신기 (EWI SRD3U) — 전원 버튼 2개",
               },
@@ -722,11 +606,11 @@ const usePages: GuidePage[] = [
             text: "하단의 파란색 프레임 파워 앰프 1, 2의 전원 버튼을 켭니다. 스피커 충격음과 고장을 막기 위해 가장 마지막입니다.",
             shots: [
               {
-                src: sound07,
+                src: shots.sound07,
                 alt: "랙 하단에 설치된 파란색 프레임의 파워 앰프 두 대",
               },
               {
-                src: sound08,
+                src: shots.sound08,
                 alt: "파워 앰프 전면의 전원 스위치",
                 caption: "파워 앰프 1, 2 (YAMAHA PX3 / PX5) — 각 전원 스위치",
               },
@@ -791,7 +675,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: hvac01,
+        src: shots.hvac01,
         alt: "천장에 매립된 시스템 에어컨 송풍구",
       },
       {
@@ -803,11 +687,11 @@ const usePages: GuidePage[] = [
           },
         ],
       },
-      { kind: "figure", src: hvac02, alt: "메인 홀 한쪽에 놓인 제습기" },
+      { kind: "figure", src: shots.hvac02, alt: "메인 홀 한쪽에 놓인 제습기" },
       { kind: "heading", text: "에어컨 사용법" },
       {
         kind: "figure",
-        src: hvac03,
+        src: shots.hvac03,
         alt: "바 공간에 비치된 시스템 에어컨 리모컨",
       },
       {
@@ -861,7 +745,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: route03,
+        src: shots.route03,
         alt: "냉장고와 정수기, 싱크대를 갖춘 바 공간",
       },
       {
@@ -875,7 +759,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: bar01,
+        src: shots.bar01,
         alt: "바 테이블 아래 수납장에 정리된 일회용 컵과 접시, 수저",
       },
       { kind: "heading", text: "사용 후 정리 수칙" },
@@ -892,7 +776,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: bar02,
+        src: shots.bar02,
         alt: "엘리베이터 옆에 나란히 놓인 분리배출용 쓰레기통",
       },
       {
@@ -905,7 +789,7 @@ const usePages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: bar03,
+        src: shots.bar03,
         alt: "건물 1층 스타벅스 매장 옆에 비치된 음식물 쓰레기통",
       },
     ],
@@ -932,13 +816,13 @@ const exitPages: GuidePage[] = [
       { kind: "heading", text: "강의형 · 세미나형" },
       {
         kind: "figure",
-        src: route02,
+        src: shots.route02,
         alt: "책상과 의자를 강의식으로 배치한 메인 홀 기본 세팅",
       },
       { kind: "heading", text: "북토크 · 강연형" },
       {
         kind: "figure",
-        src: layout01,
+        src: shots.layout01,
         alt: "책상 없이 의자만 무대를 향해 배치한 북토크 형태의 메인 홀",
       },
     ],
@@ -962,7 +846,7 @@ const exitPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: recycle01,
+        src: shots.recycle01,
         alt: "엘리베이터 옆에 종류별로 놓인 쓰레기통",
       },
       { kind: "heading", text: "실내 휴지통" },
@@ -970,8 +854,8 @@ const exitPages: GuidePage[] = [
         kind: "bullets",
         items: [{ text: "공간 실내 휴지통에는 일반쓰레기만 배출해 주세요." }],
       },
-      { kind: "figure", src: recycle02, alt: "메인 홀에 비치된 실내 휴지통" },
-      { kind: "figure", src: recycle03, alt: "바 공간에 비치된 실내 휴지통" },
+      { kind: "figure", src: shots.recycle02, alt: "메인 홀에 비치된 실내 휴지통" },
+      { kind: "figure", src: shots.recycle03, alt: "바 공간에 비치된 실내 휴지통" },
       { kind: "heading", text: "대량 쓰레기" },
       {
         kind: "bullets",
@@ -992,7 +876,7 @@ const exitPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: bar03,
+        src: shots.bar03,
         alt: "건물 1층 스타벅스 매장 옆에 비치된 음식물 쓰레기통",
       },
     ],
@@ -1062,7 +946,7 @@ const safetyPages: GuidePage[] = [
       {
         kind: "bullets",
         items: [
-          { label: "비상 연락처 — ", text: "운영 매니저 010-6899-4417" },
+          { label: "비상 연락처 — ", text: `운영 매니저 ${business.phone}` },
           // 긴급 상황에 쓰라고 적어 둔 연락처라, 채널이 닫히면(null) 줄째로 뺀다.
           ...(kakaoChannelUrl
             ? [{ label: "카카오톡 — ", text: "이씀 복합문화공간 채널", href: kakaoChannelUrl }]
@@ -1078,9 +962,9 @@ const safetyPages: GuidePage[] = [
           },
         ],
       },
-      { kind: "figure", src: safety01, alt: "프로젝트룸 앞에 비치된 소화기" },
-      { kind: "figure", src: safety02, alt: "프로젝트룸 안에 비치된 소화기" },
-      { kind: "figure", src: safety03, alt: "화장실 복도 앞에 비치된 소화기" },
+      { kind: "figure", src: shots.safety01, alt: "프로젝트룸 앞에 비치된 소화기" },
+      { kind: "figure", src: shots.safety02, alt: "프로젝트룸 안에 비치된 소화기" },
+      { kind: "figure", src: shots.safety03, alt: "화장실 복도 앞에 비치된 소화기" },
       { kind: "heading", text: "구급상자" },
       {
         kind: "bullets",
@@ -1092,7 +976,7 @@ const safetyPages: GuidePage[] = [
       },
       {
         kind: "figure",
-        src: safety04,
+        src: shots.safety04,
         alt: "바 공간 오른쪽 수납장에 보관된 구급상자",
       },
     ],
@@ -1119,15 +1003,13 @@ const safetyPages: GuidePage[] = [
   },
 ];
 
-/** 목차에서 묶어 보여주는 단위. 도착 → 이용 → 퇴실 순으로, 안전은 상시 참고용이다.
-    URL은 평평하게 유지한다(/guide/<slug>). */
-export const guideGroups = [
-  { title: "도착 및 출입", pages: arrivalPages },
-  { title: "공간 이용", pages: usePages },
-  { title: "퇴실", pages: exitPages },
-  { title: "안전", pages: safetyPages },
-];
-
-export const guidePages: GuidePage[] = guideGroups.flatMap(
-  (group) => group.pages,
-);
+/** 목차에서 묶어 보여주는 단위. 도착 → 이용 → 퇴실 순으로, 안전은 상시 참고용이다. */
+export const guide: Guide = {
+  page,
+  groups: [
+    { title: "도착 및 출입", pages: arrivalPages },
+    { title: "공간 이용", pages: usePages },
+    { title: "퇴실", pages: exitPages },
+    { title: "안전", pages: safetyPages },
+  ],
+};

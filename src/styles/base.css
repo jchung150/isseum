@@ -302,3 +302,100 @@ button {
 :lang(en) .band__title {
   letter-spacing: var(--track-section-en);
 }
+
+/* ---------- Sub-page primitives (rules, guide) ---------- */
+
+/* A kit square holding a number or letter. */
+.sqn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 9px solid var(--cobalt);
+  background: var(--paper);
+  color: var(--cobalt);
+  font: 700 var(--type-meta) var(--font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.sqn--sm {
+  width: 36px;
+  height: 36px;
+  border-width: 6px;
+  font-size: var(--type-badge);
+}
+
+/* Lines with a bold lead-in, marked by the kit's -31° slash. */
+.items {
+  display: grid;
+  gap: 14px;
+}
+
+.items > li {
+  position: relative;
+  padding-left: 20px;
+  color: var(--body);
+}
+
+.items > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 8px;
+  height: 3px;
+  background: var(--cobalt);
+  transform: rotate(-31deg);
+}
+
+.items b {
+  color: var(--ink);
+}
+
+/* Two-column table of labels and values (rates, refund tiers). */
+.vtable {
+  max-width: 460px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: var(--rule) solid var(--mist);
+  border-radius: var(--radius-table);
+  overflow: hidden;
+  font-size: var(--type-table);
+  font-variant-numeric: tabular-nums;
+}
+
+.vtable th,
+.vtable td {
+  padding: 10px var(--space-4);
+  background: var(--paper);
+  font-weight: 400;
+  text-align: left;
+}
+
+.vtable td {
+  color: var(--ink);
+  font-weight: 700;
+  text-align: right;
+}
+
+.vtable tr + tr > * {
+  border-top: var(--rule) solid var(--mist);
+}
+
+/* Bottom row of a sub-page: back / previous / next. */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: clamp(40px, 5vw, 64px);
+  padding-top: 28px;
+  border-top: var(--rule) solid var(--mist);
+}
+
+.pager__pn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

@@ -5,7 +5,7 @@
  *   media.ts   사진 파일
  *   ko/  en/   그 위에 얹는 문장. 두 폴더의 같은 이름 모듈은 같은 타입(types.ts)이다.
  *
- * 아직 옮기지 않은 페이지(/rules, /guide, /booking, /events, 404)는 src/data/의 기존
+ * 아직 옮기지 않은 페이지(/booking, /events, 404)는 src/data/의 기존
  * 한국어 모듈을 그대로 읽는다. 옮길 때 이 표에 더할 것.
  */
 
@@ -13,10 +13,14 @@ import type { Lang } from './i18n';
 import type { Content } from './types';
 import { common as koCommon } from './ko/common';
 import { home as koHome } from './ko/home';
+import { rules as koRules } from './ko/rules';
+import { guide as koGuide } from './ko/guide';
 import { common as enCommon } from './en/common';
 import { home as enHome } from './en/home';
+import { rules as enRules } from './en/rules';
+import { guide as enGuide } from './en/guide';
 
 export const content: Record<Lang, Content> = {
-  ko: { common: koCommon, home: koHome },
-  en: { common: enCommon, home: enHome },
+  ko: { common: koCommon, home: koHome, rules: koRules, guide: koGuide },
+  en: { common: enCommon, home: enHome, rules: enRules, guide: enGuide },
 };

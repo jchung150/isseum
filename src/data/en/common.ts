@@ -54,6 +54,6 @@ export const common: Common = {
       address: { term: 'Address', value: 'B1, 22 World Cup buk-ro, Mapo-gu, Seoul, Korea' },
       registration: { term: 'Business reg. no.' },
     },
-    rulesLink: 'Rental terms (Korean)',
+    rulesLink: 'Rental terms',
   },
 };

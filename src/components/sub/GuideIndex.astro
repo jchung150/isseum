@@ -1,0 +1,160 @@
+---
+/** /guide and /en/guide: the four phases as columns on a cobalt track. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Crumb from './Crumb.astro';
+import PageHead from './PageHead.astro';
+import { content } from '../../data';
+import { flatten } from '../../data/guide-tree';
+import { localePath, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { guide } = content[lang];
+const entries = flatten(guide).filter((entry) => entry.trail.length === 0);
+const home = localePath(lang);
+---
+
+<BaseLayout lang={lang} title={guide.page.title} description={guide.page.description} translated>
+  <div class="wrap">
+    <Crumb
+      label={guide.page.breadcrumbLabel}
+      trail={[]}
+      current={guide.page.heading}
+      back={{ href: home, label: guide.page.backLabel }}
+    />
+    <PageHead id="guide-title" eyebrow={guide.page.eyebrow} title={guide.page.heading} lead={guide.page.lead} />
+
+    <div class="flow">
+      {
+        guide.groups.map((group, gi) => (
+          <section class="col" aria-labelledby={`gg${gi}`}>
+            <p class="step" aria-hidden="true">{gi + 1}</p>
+            <h2 id={`gg${gi}`}>{group.title}</h2>
+            <ul>
+              {entries
+                .filter((entry) => entry.group === group.title)
+                .map((entry) => (
+                  <li>
+                    <a class="gl" href={localePath(lang, entry.path)}>
+                      <span class="gl__n" aria-hidden="true">{entry.num}</span>
+                      <span class="gl__t">{entry.page.title}</span>
+                      <span class="gl__a" aria-hidden="true">→</span>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <div class="pager">
+      <a class="pill pill--sm" href={home}><span aria-hidden="true">←</span>&nbsp;{guide.page.backLabel}</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  @media (min-width: 1100px) {
+    .flow {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    .flow::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 27px;
+      height: 6px;
+      background: var(--cobalt);
+    }
+  }
+
+  .col {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+  }
+
+  .step {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border: 11px solid var(--cobalt);
+    background: var(--page);
+    color: var(--cobalt);
+    font: 700 17px var(--font-latin);
+  }
+
+  .col:first-child .step {
+    background: var(--cobalt);
+    color: var(--lime);
+  }
+
+  h2 {
+    font-size: clamp(24px, 2.4vw, 30px);
+    font-weight: 900;
+    letter-spacing: var(--track-title);
+  }
+
+  :lang(en) h2 {
+    letter-spacing: var(--track-title-en);
+  }
+
+  ul {
+    border-top: 2px solid var(--ink);
+  }
+
+  .gl {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: 14px 0;
+    border-bottom: var(--rule) solid var(--mist);
+    font-weight: 500;
+  }
+
+  .gl:hover {
+    color: var(--cobalt);
+  }
+
+  .gl__n {
+    flex: none;
+    width: 20px;
+    color: var(--cobalt);
+    font: 700 var(--type-label) var(--font-latin);
+  }
+
+  .gl__t {
+    flex: 1;
+  }
+
+  .gl__a {
+    color: var(--cobalt);
+    transition: transform var(--transition-fast);
+  }
+
+  .gl:hover .gl__a {
+    transform: translateX(4px);
+  }
+
+  .pager {
+    margin-bottom: var(--space-band);
+  }
+</style>

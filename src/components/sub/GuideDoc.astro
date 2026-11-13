@@ -1,0 +1,425 @@
+---
+/**
+ * One guide section, rendered from the block tree. Shared by /guide/<slug> and
+ * /en/guide/<slug>. Headings get kit-square letters (A, B, C…), steps get
+ * numbers. Photos show their description as a caption, since this is a manual
+ * people read on site; the image itself then carries an empty alt so screen
+ * readers do not hear the same sentence twice.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Crumb from './Crumb.astro';
+import PageHead from './PageHead.astro';
+import { content } from '../../data';
+import type { GuideEntry, GuideShot } from '../../data/guide-tree';
+import { flatten } from '../../data/guide-tree';
+import { localePath, pad2, type Lang } from '../../data/i18n';
+
+interface Props {
+  lang: Lang;
+  entry: GuideEntry;
+}
+
+const { lang, entry } = Astro.props;
+const { guide, common } = content[lang];
+const { page: doc, path, trail } = entry;
+const at = (p: string) => localePath(lang, p);
+
+const root = { href: at('/guide'), title: guide.page.heading };
+const crumbs = [root, ...trail.map((t) => ({ href: at(t.path), title: t.title }))];
+// Back goes to the parent page, not browser history, so it works from a shared link.
+const parent = crumbs[crumbs.length - 1];
+
+// Previous / next run through the top-level sections only; sub-pages just go back.
+const top = flatten(guide).filter((e) => e.trail.length === 0);
+const i = trail.length === 0 ? top.findIndex((e) => e.path === path) : -1;
+const prev = i > 0 ? top[i - 1] : undefined;
+const next = i >= 0 && i < top.length - 1 ? top[i + 1] : undefined;
+
+let letter = 0;
+const nextLetter = () => String.fromCharCode(65 + letter++);
+const caption = (shot: GuideShot) => shot.caption ?? shot.alt;
+---
+
+<BaseLayout lang={lang} title={`${doc.title} | ${guide.page.title}`} description={doc.summary} translated>
+  <div class="wrap">
+    <Crumb label={guide.page.breadcrumbLabel} trail={crumbs} current={doc.title} back={{ href: parent.href, label: guide.page.backLabel }} />
+    <PageHead id="doc-title" eyebrow={`${entry.num} · ${entry.group}`} title={doc.title} lead={doc.summary} />
+
+    <article class="doc">
+      {
+        doc.blocks.map((block) => {
+          if (block.kind === 'heading')
+            return (
+              <h2>
+                <span class="sqn" aria-hidden="true">{nextLetter()}</span>
+                {block.text}
+              </h2>
+            );
+
+          if (block.kind === 'text') return <p class="txt">{block.body}</p>;
+
+          if (block.kind === 'bullets' || block.kind === 'steps') {
+            const steps = block.kind === 'steps';
+            const Tag = steps ? 'ol' : 'ul';
+            return (
+              <Tag class={steps ? 'gsteps' : 'items'}>
+                {block.items.map((line, li) => (
+                  <li>
+                    {steps && <span class="sqn sqn--sm" aria-hidden="true">{pad2(li + 1)}</span>}
+                    <div>
+                      {line.label && <><b>{line.label.replace(/ — $/, '')}</b> — </>}
+                      {line.href ? (
+                        <a class="ilink" href={line.href} target="_blank" rel="noopener">
+                          {line.text}<span class="visually-hidden">{common.channels.newWindow}</span>
+                        </a>
+                      ) : (
+                        line.text
+                      )}
+                      {line.details && (
+                        <ul class="sub">
+                          {line.details.map((d) => <li>{d}</li>)}
+                        </ul>
+                      )}
+                      {line.shots && (
+                        <div class="shots">
+                          {line.shots.map((shot) => (
+                            <figure class="fig fig--sm">
+                              {shot.src ? (
+                                <Image src={shot.src} alt="" widths={[400, 700]} sizes="(min-width: 640px) 360px, 100vw" loading="lazy" />
+                              ) : (
+                                <div class="hatch" />
+                              )}
+                              <figcaption>{shot.src ? caption(shot) : `${guide.page.pendingPrefix}${caption(shot)}`}</figcaption>
+                            </figure>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </Tag>
+            );
+          }
+
+          if (block.kind === 'note')
+            return (
+              <div class="note">
+                {block.title && <b>{block.title}</b>}
+                {block.body.map((p) => <p>{p}</p>)}
+              </div>
+            );
+
+          if (block.kind === 'figure')
+            return (
+              <figure class="fig">
+                {block.src ? (
+                  <Image src={block.src} alt="" widths={[600, 900, 1300]} sizes="(min-width: 860px) 820px, 100vw" loading="lazy" />
+                ) : (
+                  <div class="hatch" />
+                )}
+                <figcaption>
+                  {block.src ? (block.caption ?? block.alt) : `${guide.page.pendingPrefix}${block.caption ?? block.alt}`}
+                </figcaption>
+              </figure>
+            );
+
+          if (block.kind === 'link')
+            return (
+              <div class="place">
+                <h3>
+                  <a href={block.href} target="_blank" rel="noopener">
+                    {block.label} <span aria-hidden="true">↗</span>
+                    <span class="visually-hidden">{common.channels.newWindow}</span>
+                  </a>
+                </h3>
+                <dl>
+                  {block.lines.map((line) => (
+                    <>
+                      <dt>{line.label?.replace(/ — $/, '')}</dt>
+                      <dd>{line.text}</dd>
+                    </>
+                  ))}
+                </dl>
+              </div>
+            );
+
+          if (block.kind === 'pagelink')
+            return (
+              <a class="sublink" href={at(`${path}/${block.to}`)}>
+                <div>
+                  <b>{block.label}</b>
+                  <span>{block.note}</span>
+                </div>
+                <span class="sublink__a" aria-hidden="true">→</span>
+              </a>
+            );
+
+          if (block.kind === 'checklist')
+            return (
+              <ul class="check">
+                {block.items.map((item) => (
+                  <li>
+                    <label>
+                      <input type="checkbox" />
+                      <span class="box" aria-hidden="true" />
+                      {item}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            );
+
+          return null;
+        })
+      }
+
+      <nav class="pager" aria-label={guide.page.pagerLabel}>
+        <a class="pill pill--solid pill--sm" href={parent.href}><span aria-hidden="true">←</span>&nbsp;{guide.page.backLabel}</a>
+        <div class="pager__pn">
+          {prev && <a class="pill pill--sm" href={at(prev.path)}>← {prev.num} {prev.page.title}</a>}
+          {next && <a class="pill pill--sm" href={at(next.path)}>{next.num} {next.page.title} →</a>}
+        </div>
+      </nav>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .doc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 820px;
+    padding-bottom: var(--space-band);
+  }
+
+  .doc > :global(* + *) {
+    margin-top: var(--gap-desc);
+  }
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: clamp(40px, 5vw, 64px) !important;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--ink);
+    font-size: clamp(24px, 2.6vw, 32px);
+    font-weight: 900;
+    letter-spacing: var(--track-title);
+  }
+
+  h2:first-child {
+    margin-top: 0 !important;
+  }
+
+  :lang(en) h2 {
+    letter-spacing: var(--track-title-en);
+  }
+
+  h2 .sqn {
+    width: 40px;
+    height: 40px;
+    border-width: 7px;
+    font-size: var(--type-label);
+  }
+
+  .txt {
+    color: var(--body);
+  }
+
+  .sub {
+    display: grid;
+    gap: var(--space-1);
+    padding-top: var(--space-2);
+  }
+
+  .sub li {
+    position: relative;
+    padding-left: 14px;
+    font-size: var(--type-small);
+  }
+
+  .sub li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 6px;
+    height: 2px;
+    background: var(--muted);
+  }
+
+  .ilink {
+    color: var(--cobalt);
+    font-weight: 700;
+  }
+
+  .gsteps {
+    display: grid;
+    gap: 22px;
+  }
+
+  .gsteps > li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    color: var(--body);
+  }
+
+  .gsteps > li > div {
+    flex: 1;
+    min-width: 0;
+    padding-top: var(--space-1);
+  }
+
+  .gsteps b {
+    color: var(--ink);
+  }
+
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .fig :global(img) {
+    width: auto;
+    max-width: 100%;
+    max-height: 640px;
+    border-radius: var(--radius-photo);
+  }
+
+  .fig--sm :global(img) {
+    max-height: 360px;
+    border-radius: 16px;
+  }
+
+  figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: var(--type-meta);
+  }
+
+  .hatch {
+    aspect-ratio: 4 / 3;
+    max-width: 520px;
+    border-radius: var(--radius-card);
+    background: repeating-linear-gradient(-31deg, var(--mist) 0 10px, var(--paper) 10px 20px);
+  }
+
+  .sublink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 22px var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--lime);
+  }
+
+  .sublink b {
+    display: block;
+    font-size: var(--type-channel);
+    font-weight: 900;
+    letter-spacing: var(--track-q);
+  }
+
+  .sublink span {
+    color: var(--body);
+    font-size: var(--type-table);
+  }
+
+  .sublink .sublink__a {
+    color: var(--cobalt);
+    font-size: 22px;
+  }
+
+  .sublink:hover {
+    background: var(--cobalt);
+    color: var(--paper);
+  }
+
+  .sublink:hover span {
+    color: var(--paper);
+  }
+
+  .place {
+    display: grid;
+    gap: 14px;
+    padding: var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+  }
+
+  .place h3 {
+    font-size: var(--type-channel);
+    font-weight: 900;
+    letter-spacing: var(--track-q);
+  }
+
+  .place h3 a {
+    color: var(--cobalt);
+  }
+
+  .place dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px var(--gap-desc);
+    font-size: var(--type-small);
+  }
+
+  .place dt {
+    color: var(--muted);
+  }
+
+  .note {
+    display: grid;
+    gap: 6px;
+    padding: var(--space-4) var(--space-5);
+    border-left: 6px solid var(--cobalt);
+    border-radius: 0 16px 16px 0;
+    background: var(--paper);
+    font-size: var(--type-small);
+  }
+
+  .check {
+    display: grid;
+    gap: 10px;
+  }
+
+  .check label {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: var(--space-4) var(--gap-desc);
+    border-radius: 16px;
+    background: var(--paper);
+    cursor: pointer;
+  }
+
+  .check input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .check .box {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    border: 5px solid var(--cobalt);
+  }
+
+  .check input:checked + .box {
+    background: var(--cobalt);
+    box-shadow: inset 0 0 0 3px var(--paper);
+  }
+
+  .check input:focus-visible + .box {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+</style>

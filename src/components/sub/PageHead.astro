@@ -1,0 +1,62 @@
+---
+/** Sub-page heading: lime eyebrow, big title, lead, optional outlined chip. */
+interface Props {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  chip?: string;
+}
+const { id, eyebrow, title, lead, chip } = Astro.props;
+---
+
+<section class="page-head" aria-labelledby={id}>
+  <p class="page-head__eyebrow">{eyebrow}</p>
+  <h1 id={id}>{title}</h1>
+  {lead && <p class="page-head__lead">{lead}</p>}
+  {chip && <p class="page-head__chip">{chip}</p>}
+</section>
+
+<style>
+  .page-head {
+    display: grid;
+    gap: var(--gap-desc);
+    padding-block: var(--space-hero-top) var(--space-band);
+  }
+
+  .page-head__eyebrow {
+    justify-self: start;
+    padding: var(--space-1) 10px;
+    background: var(--lime);
+    font: 700 var(--type-meta) var(--font-latin);
+    letter-spacing: 0.02em;
+  }
+
+  h1 {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 900;
+    letter-spacing: var(--track-hero);
+    line-height: var(--lead-hero);
+    text-wrap: balance;
+  }
+
+  :lang(en) h1 {
+    letter-spacing: var(--track-hero-en);
+  }
+
+  .page-head__lead {
+    max-width: 40em;
+    color: var(--body);
+    font-size: var(--type-lead);
+  }
+
+  .page-head__chip {
+    justify-self: start;
+    padding: var(--space-1) var(--space-3);
+    border: var(--rule-strong) solid var(--cobalt);
+    border-radius: var(--radius-pill);
+    color: var(--cobalt);
+    font-size: 13px;
+    font-weight: 700;
+  }
+</style>

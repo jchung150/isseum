@@ -7,7 +7,7 @@
 import Emblem from './Emblem.astro';
 import { business, kakaoChannelUrl, naverTalkUrl } from '../config/site';
 import { content } from '../data';
-import type { Lang } from '../data/i18n';
+import { localePath, type Lang } from '../data/i18n';
 
 interface Props {
   lang: Lang;
@@ -21,8 +21,7 @@ const chats = [
   { ...cards.naverTalk, href: naverTalkUrl },
   ...(kakaoChannelUrl ? [{ ...cards.kakao, href: kakaoChannelUrl }] : []),
 ];
-// The rental terms exist in Korean only for now; the English footer says so.
-const rulesHref = '/rules';
+const rulesHref = localePath(lang, '/rules');
 ---
 
 <footer class="contact on-cobalt" id="contact" aria-labelledby="contact-title">
@@ -66,7 +65,7 @@ const rulesHref = '/rules';
         <dt>{biz.registration.term}</dt><dd>{business.registrationNumber}</dd>
       </dl>
       <p class="links">
-        <a href={rulesHref} hreflang={lang === 'ko' ? undefined : 'ko'}>{footer.rulesLink}</a>
+        <a href={rulesHref}>{footer.rulesLink}</a>
       </p>
     </div>
   </div>

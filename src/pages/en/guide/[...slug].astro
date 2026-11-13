@@ -1,0 +1,26 @@
+---
+/**
+ * English guide sections. The tree must mirror the Korean one slug for slug,
+ * because the language switch maps /guide/x to /en/guide/x. The build fails
+ * loudly if they drift instead of shipping a dead link.
+ */
+import GuideDoc from '../../../components/sub/GuideDoc.astro';
+import { content } from '../../../data';
+import { flatten, type GuideEntry } from '../../../data/guide-tree';
+
+export function getStaticPaths() {
+  const ko = flatten(content.ko.guide).map((e) => e.path).join();
+  const en = flatten(content.en.guide);
+  if (en.map((e) => e.path).join() !== ko) {
+    throw new Error('en/guide.ts slugs no longer match ko/guide.ts');
+  }
+  return en.map((entry) => ({
+    params: { slug: entry.path.replace('/guide/', '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: GuideEntry };
+---
+
+<GuideDoc lang="en" entry={entry} />

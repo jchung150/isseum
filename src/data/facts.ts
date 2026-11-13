@@ -59,3 +59,6 @@ export const REFUND_TIERS = [
 ] as const;
 
 export type RefundTierFact = (typeof REFUND_TIERS)[number];
+
+/** 대관 규정 최종 개정일. 규정 문장을 고치면 함께 바꾼다. */
+export const RULES_REVISED = { year: 2026, month: 10, day: 24 } as const;

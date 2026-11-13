@@ -3,6 +3,7 @@
  * 한쪽에만 문구를 더하면 빌드(astro check)가 다른 쪽이 빠졌다고 알려 준다.
  */
 
+import type { Guide } from './guide-tree';
 import type { PhotoId } from './media';
 
 /** 모든 페이지에 걸리는 문구: 문서 정보, 헤더, 푸터, 문의 채널. */
@@ -91,4 +92,39 @@ export type Home = {
   faq: { title: string; desc: string; items: FaqItem[] };
 };
 
-export type Content = { common: Common; home: Home };
+
+/* ───────── 대관 규정 (/rules, 그리고 /booking 2단계) ───────── */
+
+export type PolicyLine = { label: string; text: string };
+
+export type PolicyItem = {
+  title: string;
+  lines?: PolicyLine[];
+  body?: string;
+  /** 이 자리에 환불 등급표와 예외 조항이 들어간다(Rules.refund). */
+  refund?: boolean;
+};
+
+/** 번호는 저장하지 않는다. 배열 순서에서 계산하므로 항목을 더하거나 빼도 어긋나지 않는다. */
+export type PolicyGroup = { id: string; title: string; items: PolicyItem[] };
+
+export type RefundTier = { when: string; rate: string };
+
+export type Rules = {
+  page: {
+    title: string;
+    description: string;
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    /** '최종 개정 2026. 10. 24.' — 날짜는 facts.ts의 RULES_REVISED에서 만든다. */
+    revised: string;
+    tocLabel: string;
+    inquire: { naverTalk: string; kakao: string };
+    toTop: string;
+  };
+  groups: PolicyGroup[];
+  refund: { id: string; title: string; tiers: RefundTier[]; exceptions: PolicyLine[] };
+};
+
+export type Content = { common: Common; home: Home; rules: Rules; guide: Guide };

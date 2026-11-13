@@ -17,7 +17,7 @@ import {
   PROJECT_ROOM_MAX,
   RATES,
 } from '../facts';
-import { refundSection } from '../booking';
+import { refundSection } from './rules';
 import { grouped, pad2 } from '../i18n';
 import type { Home } from '../types';
 import { channelPhrase } from './common';
