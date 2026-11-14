@@ -52,7 +52,7 @@ export const heroPhotos: { src: ImageMetadata; focus: string }[] = [
   { src: hero2, focus: '50%' },
   { src: hero1, focus: '12%' },
   { src: hero5, focus: '50%' },
-  { src: hero6, focus: '50%' },
+  { src: hero6, focus: '68%' },
 ];
 
 /**
