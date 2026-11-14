@@ -22,3 +22,10 @@ text, letters, numbers, logo, gradient, glossy, 3D, shadow, perspective, outline
 
 - 로고 키트를 넣고 싶을 때: `Replace the small black square with a thick cobalt ring and add one tall black vertical bar.`
 - 더 가볍게: `Replace both black squares with cobalt outline squares (thick stroke, no fill).`
+
+## 2026-11-13 · 적용
+
+소유자가 위 프롬프트로 만든 그림을 P1에 넣었다(`p1-shapes.png`, 1024×1024). 원본 종이색이 (253,253,249)로
+포스터 바탕(#FAFAF8)보다 살짝 노래서, 채널별로 끌어올려 종이를 순백으로 만든 뒤 보드에서
+`mix-blend-mode: multiply`로 얹었다. 그래서 사각형 테두리 없이 바탕에 녹는다.
+보드에서는 폭 1188px(가득), top 380px. 캔버스 에셋 `/_blob/3123c41e8e25344c88ff18c8eb1ba8b0`.

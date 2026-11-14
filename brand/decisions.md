@@ -617,3 +617,7 @@
 ## 2026-11-13 · P6 그림을 Recraft 일러스트로
 
 - **결정(시안)**: 코드로 그린 막대 인물 대신 소유자가 Recraft로 만든 그림(긴 테이블의 여섯 사람, 찻잔, 이야기 카드, 꽃)을 P6 라임 패널에 넣었다. 흰 바탕을 투명하게 하고 선을 코발트로 맞췄다. 파일은 brand/posters/p6-program/story-table.png.
+
+## 2026-11-13 · P1 도형을 Recraft 그림으로
+
+- **결정(시안)**: P1의 CSS 도형을 소유자가 Recraft로 만든 같은 구성의 그림(리소 질감, 겹친 곳이 잉크처럼 섞임)으로 바꿨다. 글자 isseum / here, now, together.는 보드에 그대로. 파일은 brand/posters/p1-form/p1-shapes.png.
