@@ -64,12 +64,6 @@ export const home: Home = {
       powder: 'Powder room with a lit vanity mirror and chairs',
       bar: 'Open bar area with a wooden counter and sink',
       control: 'Sound booth with audio equipment',
-      eventFull: 'A seminar with the main hall full of attendees',
-      eventQa: 'An attendee asking a question at a seminar in the main hall',
-      eventRoom: 'People meeting over laptops in the project room',
-      eventGroups: 'A workshop with people seated in groups at each table',
-      eventBar: 'Coffee and snacks laid out on the bar counter',
-      eventTalk: 'A speaker with a microphone lecturing in front of the large TV screen',
     },
   },
   process: {

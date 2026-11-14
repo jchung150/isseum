@@ -60,12 +60,6 @@ export const home: Home = {
       powder: '조명이 둘러진 화장 거울과 의자가 놓인 파우더 룸',
       bar: '우드 카운터와 싱크대를 갖춘 오픈 바 영역',
       control: '음향 장비가 있는 음향실',
-      eventFull: '참석자로 가득 찬 메인 홀 세미나',
-      eventQa: '메인 홀 세미나에서 참석자가 질문하는 장면',
-      eventRoom: '프로젝트 룸에서 노트북을 펴고 회의하는 사람들',
-      eventGroups: '테이블별로 모여 앉은 워크숍',
-      eventBar: '바 카운터에 차려진 커피와 다과',
-      eventTalk: '대형 TV 화면 앞에서 마이크를 들고 강의하는 연사',
     },
   },
   process: {

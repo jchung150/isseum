@@ -134,7 +134,7 @@ const STEP = 5;
   }
 
   /* Each overlay fades in over ~1s, holds, fades out; staggered STEP apart. The
-     percentages assume six photos (16.67% each) — retune them if heroPhotos changes length.
+     percentages assume four photos (25% each) — retune them if heroPhotos changes length.
      The first photo stays underneath, so it shows between them and when motion is off. */
   .hero__photo :global(img + img) {
     opacity: 0;
@@ -143,9 +143,9 @@ const STEP = 5;
 
   @keyframes hero-fade {
     0% { opacity: 0; }
-    3.5% { opacity: 1; }
-    16.67% { opacity: 1; }
-    20.17% { opacity: 0; }
+    5% { opacity: 1; }
+    25% { opacity: 1; }
+    30% { opacity: 0; }
     100% { opacity: 0; }
   }
 
