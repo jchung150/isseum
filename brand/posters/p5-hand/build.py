@@ -24,19 +24,15 @@ SK = {
 }
 WIDTH = {'I': 70, 'W': 230, 'O': 190, 'D': 180, 'G': 190, 'A': 200, 'Y': 180, 'N': 196, 'E': 176}
 ROWS = ['SLOW', 'DOWN', 'YOU', 'ARE', 'DOING', 'FINE']
-X0, W, TOP, ROW_H, GAP, STROKE = 0, 1188, 0, 222, -10, 46
-STEP = 186   # rows bite into each other: STEP < ROW_H
-SIZE = 0.96  # one size for every row, so line lengths stay ragged
+X0, W, TOP, ROW_H, GAP, STROKE = 170, 848, 214, 204, 6, 46
 
-TOP = (1680 - (STEP * (len(ROWS) - 1) + ROW_H)) // 2 - 40
 rnd = random.Random(int(sys.argv[1]) if len(sys.argv) > 1 else 21)
-y = TOP
-out = []
+out, y = [], TOP
 for word in ROWS:
     ws = [WIDTH.get(c, 168) * rnd.uniform(0.9, 1.12) for c in word]
-    scale = SIZE
+    scale = min(1.55, (W - GAP * (len(word) - 1)) / sum(ws))
     ws = [w * scale for w in ws]
-    x = X0 + (W - sum(ws) - GAP * (len(word) - 1)) / 2 + rnd.uniform(-14, 14)
+    x = X0 + (W - sum(ws) - GAP * (len(word) - 1)) / 2 + rnd.uniform(-10, 10)
     for c, w in zip(word, ws):
         h = ROW_H * rnd.uniform(0.86, 1.12)
         dy = rnd.uniform(-12, 12)
@@ -49,5 +45,5 @@ for word in ROWS:
             f'translate({-bw/2:.1f} {-bh/2:.1f}) scale({bw/100:.3f} {bh/100:.3f})">'
             f'<path d="{SK[c]}" vector-effect="non-scaling-stroke"/></g>')
         x += w + GAP
-    y += STEP
-print(json.dumps({'svg': ''.join(out), 'bottom': round(y - STEP + ROW_H)}))
+    y += ROW_H - 4
+print(json.dumps({'svg': ''.join(out), 'bottom': round(y)}))
