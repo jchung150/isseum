@@ -63,8 +63,6 @@ export const home: Home = {
       eventFull: '참석자로 가득 찬 메인 홀 세미나',
       eventQa: '메인 홀 세미나에서 참석자가 질문하는 장면',
       eventRoom: '프로젝트 룸에서 노트북을 펴고 회의하는 사람들',
-      eventPodium: '강연대 앞에서 발표하는 연사',
-      eventLaptops: '노트북을 펴고 강의를 듣는 참석자들',
       eventGroups: '테이블별로 모여 앉은 워크숍',
       eventBar: '바 카운터에 차려진 커피와 다과',
       eventTalk: '대형 TV 화면 앞에서 마이크를 들고 강의하는 연사',

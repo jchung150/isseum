@@ -7,7 +7,7 @@ import { Image } from 'astro:assets';
 import Emblem from '../Emblem.astro';
 import { content } from '../../data';
 import type { Lang } from '../../data/i18n';
-import { heroPhotos, photos } from '../../data/media';
+import { heroPhotos } from '../../data/media';
 
 interface Props {
   lang: Lang;
@@ -33,15 +33,15 @@ const STEP = 5;
     <div class="hero__vis">
       <div class="hero__photo" role="img" aria-label={hero.photosLabel} style={`--cycle: ${heroPhotos.length * STEP}s`}>
         {
-          heroPhotos.map((id, i) => (
+          heroPhotos.map(({ src, focus }, i) => (
             <Image
-              src={photos[id]}
+              src={src}
               alt=""
               widths={[600, 900, 1200]}
               sizes="(min-width: 1200px) 560px, (min-width: 900px) 46vw, 100vw"
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchpriority={i === 0 ? 'high' : undefined}
-              style={i > 0 ? `animation-delay: ${i * STEP}s` : undefined}
+              style={`object-position: ${focus} 50%` + (i > 0 ? `; animation-delay: ${i * STEP}s` : '')}
             />
           ))
         }
@@ -134,9 +134,8 @@ const STEP = 5;
   }
 
   /* Each overlay fades in over ~1s, holds, fades out; staggered STEP apart. The
-     percentages assume five photos (20% each) — retune them if heroPhotos changes length.
-     The
-     first photo stays underneath, so it shows between them and when motion is off. */
+     percentages assume six photos (16.67% each) — retune them if heroPhotos changes length.
+     The first photo stays underneath, so it shows between them and when motion is off. */
   .hero__photo :global(img + img) {
     opacity: 0;
     animation: hero-fade var(--cycle) ease-in-out infinite backwards;
@@ -144,9 +143,9 @@ const STEP = 5;
 
   @keyframes hero-fade {
     0% { opacity: 0; }
-    4% { opacity: 1; }
-    20% { opacity: 1; }
-    24% { opacity: 0; }
+    3.5% { opacity: 1; }
+    16.67% { opacity: 1; }
+    20.17% { opacity: 0; }
     100% { opacity: 0; }
   }
 
