@@ -627,3 +627,7 @@
 - **실험**: 소유자가 준 타이포 포스터(거대한 한 줄 획 글자가 기울어 화면을 채우고, 밑줄 친 작은 안내 블록이 틈에 놓이는 구성)를 참조. 라임 바탕에 코발트 한 색. 큰 글자는 ISSEUM(IS / SE / UM).
 - **안내 블록은 지어낸 예시**: OPEN STUDIO DAY, SAT 05.12 14H–20H, 프로그램 세 개. 주소(22 World Cup-buk-ro, Mapo-gu, Seoul)는 실제.
 - Recraft 프롬프트와 스크립트는 brand/posters/p7-loops/.
+
+## 2026-11-13 · P7 글자를 Recraft 그림으로
+
+- **결정(시안)**: 소유자가 Recraft로 만든 ISSEUM 글자를 P7에 넣었다. 노랑 · 남색을 라임 · 코발트로 다시 칠하고, I와 S 사이의 남는 막대(IIS로 읽힘)를 지웠다. 안내 블록은 글자 안쪽 빈 곳(I, U, m의 아치, 지운 막대 자리)으로 옮겼다. 파일은 brand/posters/p7-loops/p7-letters.png.
