@@ -621,3 +621,9 @@
 ## 2026-11-13 · P1 도형을 Recraft 그림으로
 
 - **결정(시안)**: P1의 CSS 도형을 소유자가 Recraft로 만든 같은 구성의 그림(리소 질감, 겹친 곳이 잉크처럼 섞임)으로 바꿨다. 글자 isseum / here, now, together.는 보드에 그대로. 파일은 brand/posters/p1-form/p1-shapes.png.
+
+## 2026-11-13 · P7 고리 글자 (실험)
+
+- **실험**: 소유자가 준 타이포 포스터(거대한 한 줄 획 글자가 기울어 화면을 채우고, 밑줄 친 작은 안내 블록이 틈에 놓이는 구성)를 참조. 라임 바탕에 코발트 한 색. 큰 글자는 ISSEUM(IS / SE / UM).
+- **안내 블록은 지어낸 예시**: OPEN STUDIO DAY, SAT 05.12 14H–20H, 프로그램 세 개. 주소(22 World Cup-buk-ro, Mapo-gu, Seoul)는 실제.
+- Recraft 프롬프트와 스크립트는 brand/posters/p7-loops/.
