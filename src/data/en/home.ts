@@ -185,8 +185,8 @@ export const home: Home = {
       {
         q: 'It is underground. Is it stuffy?',
         a: [
-          'A supply and exhaust ventilation system keeps out the stuffiness and damp you might expect underground.',
-          'The main hall and project room each have their own climate control, so the air stays fresh throughout your event.',
+          'Although the space is underground, an advanced HVAC system carefully manages indoor air quality, temperature and humidity.',
+          'The main hall and project room each run on their own independent HVAC system, so the space stays comfortable even through large events and long meetings.',
         ],
       },
       {
