@@ -32,3 +32,6 @@ worker-configuration.d.ts
 
 # local Worker vars — never commit
 .dev.vars
+
+# Poster print PDFs (~22 MB each); rebuild with brand/posters/print/make.py
+brand/posters/print/pdf/

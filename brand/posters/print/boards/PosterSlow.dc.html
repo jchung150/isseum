@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>P5 · 손으로 쓴 글자</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1188px; height: 1680px; overflow: hidden; background: #fafaf8; color: #0526c5; font-family: 'Space Grotesk', sans-serif; isolation: isolate;">
+  <svg role="img" aria-label="Slow down, you are doing fine." width="1188" height="1680" style="position: absolute; inset: 0;">
+    <defs><filter id="hand" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="3" result="wob"/>
+        <feDisplacementMap in="SourceGraphic" in2="wob" scale="7" xChannelSelector="R" yChannelSelector="G" result="ink"/>
+        <feGaussianBlur in="ink" stdDeviation="5" result="soft"/>
+        <feComponentTransfer in="soft" result="round"><feFuncA type="linear" slope="10" intercept="-4.8"/></feComponentTransfer>
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.4 1.75" result="crayon"/>
+        <feComposite in="round" in2="crayon" operator="in"/>
+      </filter></defs>
+    <g filter="url(#hand)" fill="none" stroke="#0526c5" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(249.9 323.4) rotate(0.1) translate(-62.6 -85.7) scale(1.252 1.715)"><path d="M82 18C66 2 26 6 24 26C22 44 50 46 60 50C80 56 88 72 78 86C66 100 26 96 14 80" vector-effect="non-scaling-stroke"/></g><g transform="translate(437.6 309.7) rotate(-5.0) translate(-73.1 -78.1) scale(1.463 1.562)"><path d="M24 12L24 72Q24 88 40 88L82 88" vector-effect="non-scaling-stroke"/></g><g transform="translate(647.2 318.0) rotate(-4.3) translate(-84.5 -74.6) scale(1.690 1.491)"><path d="M50 12C92 12 92 88 50 88C8 88 8 12 50 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(886.5 309.6) rotate(-2.7) translate(-102.8 -85.8) scale(2.056 1.715)"><path d="M10 14L24 78Q28 94 37 80L50 52L63 80Q72 94 76 78L90 14" vector-effect="non-scaling-stroke"/></g><g transform="translate(253.7 511.9) rotate(-0.0) translate(-58.4 -65.6) scale(1.167 1.312)"><path d="M22 12L22 88L44 88C94 88 94 12 44 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(446.8 526.8) rotate(-1.3) translate(-82.7 -67.8) scale(1.655 1.356)"><path d="M50 12C92 12 92 88 50 88C8 88 8 12 50 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(680.0 523.6) rotate(-3.8) translate(-98.5 -68.8) scale(1.969 1.377)"><path d="M10 14L24 78Q28 94 37 80L50 52L63 80Q72 94 76 78L90 14" vector-effect="non-scaling-stroke"/></g><g transform="translate(913.9 514.9) rotate(0.5) translate(-83.4 -89.3) scale(1.669 1.787)"><path d="M20 88L20 18Q20 8 27 18L73 82Q80 92 80 82L80 12" vector-effect="non-scaling-stroke"/></g><g transform="translate(308.0 709.6) rotate(2.8) translate(-113.1 -87.7) scale(2.261 1.754)"><path d="M14 12Q32 46 50 54M86 12Q68 46 50 54L50 88" vector-effect="non-scaling-stroke"/></g><g transform="translate(598.3 727.3) rotate(3.9) translate(-125.2 -70.3) scale(2.505 1.405)"><path d="M50 12C92 12 92 88 50 88C8 88 8 12 50 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(875.0 722.3) rotate(0.8) translate(-99.5 -84.7) scale(1.991 1.695)"><path d="M20 12L20 58C20 94 80 94 80 58L80 12" vector-effect="non-scaling-stroke"/></g><g transform="translate(339.3 926.2) rotate(3.9) translate(-139.8 -70.1) scale(2.796 1.401)"><path d="M12 88L41 24Q50 6 59 24L88 88M28 62L72 62" vector-effect="non-scaling-stroke"/></g><g transform="translate(627.6 912.8) rotate(-0.5) translate(-96.5 -75.6) scale(1.930 1.512)"><path d="M22 88L22 12L48 12C86 12 86 54 48 54L22 54M46 54L82 88" vector-effect="non-scaling-stroke"/></g><g transform="translate(888.8 927.9) rotate(-1.1) translate(-112.7 -75.0) scale(2.254 1.499)"><path d="M80 12L40 12Q22 12 22 30L22 70Q22 88 40 88L80 88M22 50L64 50" vector-effect="non-scaling-stroke"/></g><g transform="translate(251.5 1122.0) rotate(-2.8) translate(-58.6 -79.3) scale(1.173 1.586)"><path d="M22 12L22 88L44 88C94 88 94 12 44 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(426.7 1117.4) rotate(1.2) translate(-64.6 -80.9) scale(1.291 1.617)"><path d="M50 12C92 12 92 88 50 88C8 88 8 12 50 12Z" vector-effect="non-scaling-stroke"/></g><g transform="translate(557.3 1108.1) rotate(-1.5) translate(-14.1 -69.5) scale(0.282 1.390)"><path d="M50 10L50 90" vector-effect="non-scaling-stroke"/></g><g transform="translate(710.1 1112.3) rotate(1.0) translate(-86.7 -89.3) scale(1.735 1.786)"><path d="M20 88L20 18Q20 8 27 18L73 82Q80 92 80 82L80 12" vector-effect="non-scaling-stroke"/></g><g transform="translate(921.8 1106.5) rotate(-4.3) translate(-73.0 -72.9) scale(1.460 1.457)"><path d="M84 26C70 6 18 8 16 48C14 92 72 96 84 68L84 54L56 54" vector-effect="non-scaling-stroke"/></g><g transform="translate(292.2 1327.0) rotate(-0.9) translate(-95.7 -88.6) scale(1.914 1.771)"><path d="M80 12L40 12Q22 12 22 30L22 88M22 50L64 50" vector-effect="non-scaling-stroke"/></g><g transform="translate(466.1 1327.1) rotate(0.9) translate(-26.1 -91.0) scale(0.522 1.819)"><path d="M50 10L50 90" vector-effect="non-scaling-stroke"/></g><g transform="translate(647.3 1315.8) rotate(-1.2) translate(-103.1 -88.1) scale(2.062 1.763)"><path d="M20 88L20 18Q20 8 27 18L73 82Q80 92 80 82L80 12" vector-effect="non-scaling-stroke"/></g><g transform="translate(900.4 1325.0) rotate(-3.4) translate(-98.1 -71.3) scale(1.961 1.426)"><path d="M80 12L40 12Q22 12 22 30L22 70Q22 88 40 88L80 88M22 50L64 50" vector-effect="non-scaling-stroke"/></g></g>
+  </svg>
+  <p style="position: absolute; left: 0; right: 0; top: 1498px; margin: 0; text-align: center; font-weight: 500; font-size: 30px; line-height: 1; letter-spacing: 0.12em;">ISSEUM</p>
+
+  <svg aria-hidden="true" width="1188" height="1680" style="position: absolute; inset: 0; mix-blend-mode: multiply; opacity: 0.22; pointer-events: none;">
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.2 -0.1"></feColorMatrix></filter>
+    <rect width="100%" height="100%" filter="url(#grain)"></rect>
+  </svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1188,"height":1680}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
