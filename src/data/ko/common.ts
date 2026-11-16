@@ -1,14 +1,15 @@
 /** 모든 한국어 페이지에 걸리는 문구. 모양은 types.ts의 Common. */
 
 import { business, kakaoChannelUrl } from '../../config/site';
+import { AREA } from '../facts';
 import type { Common } from '../types';
 
 export const common: Common = {
   site: {
     name: '이씀',
     description:
-      '홍대입구역 인근 동교동에 위치한 약 60평 규모의 가변형 복합문화공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.',
-    tagline: '홍대 복합문화공간 대관',
+      `홍대입구역 인근 동교동에 위치한 약 ${AREA.pyeong}평 규모의 가변형 모임 공간. 워크숍, 북토크, 팝업스토어, 팬미팅 등 모든 형태의 행사를 지원합니다.`,
+    tagline: '홍대 모임 공간 대관',
   },
   skipLink: '본문으로 건너뛰기',
   header: {

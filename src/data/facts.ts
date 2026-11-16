@@ -31,7 +31,11 @@ export const PARKING_SPACES = 5;
 /** 이용 매뉴얼을 보내는 시점(이용 시작 몇 시간 전). */
 export const MANUAL_LEAD_HOURS = 1;
 
-export const AREA = { sqm: 198, pyeong: 60 } as const;
+/**
+ * 공간 면적. 평은 소유자가 정한 홍보 기준(2026-11-16)이고, ㎡는 그 환산값(1평 = 3.3058㎡)이지
+ * 실측이 아니다. 한국어 페이지는 평만, 영어 페이지는 ㎡만 보여준다.
+ */
+export const AREA = { sqm: 298, pyeong: 90 } as const;
 
 /**
  * 시간당 요금(부가세 포함, 전체 대관). 금요일은 주말 요금이다 — 대관 수요가

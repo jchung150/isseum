@@ -1,6 +1,7 @@
 ---
 /**
- * Hero: two-voice heading (handwritten line over heavy sans), lead, two CTAs,
+ * Hero: two-voice heading (handwritten line over heavy sans), lead, two CTAs
+ * (inquiry, and Naver booking for people who already have a date confirmed),
  * and a rounded photo that crossfades through the event shots.
  */
 import { Image } from 'astro:assets';
@@ -8,12 +9,14 @@ import Emblem from '../Emblem.astro';
 import { content } from '../../data';
 import type { Lang } from '../../data/i18n';
 import { heroPhotos } from '../../data/media';
+import { bookingUrl } from '../../config/site';
 
 interface Props {
   lang: Lang;
 }
 
 const { hero } = content[Astro.props.lang].home;
+const { channels } = content[Astro.props.lang].common;
 /** Seconds each photo holds before the next fades in. Matches the keyframes below. */
 const STEP = 3;
 ---
@@ -26,7 +29,10 @@ const STEP = 3;
       <p class="hero__lead">{hero.lead}</p>
       <div class="hero__cta">
         <a class="pill pill--solid" href="#contact">{hero.primary}</a>
-        <a class="pill" href="#space">{hero.secondary}</a>
+        <a class="pill" href={bookingUrl} target="_blank" rel="noopener">
+          {hero.secondary}
+          <span class="visually-hidden">{channels.newWindow}</span>
+        </a>
       </div>
     </div>
 

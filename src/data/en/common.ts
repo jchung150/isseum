@@ -5,13 +5,14 @@
  * restated. The romanised name and address were confirmed by the owner (2026-11-12).
  */
 
+import { AREA } from '../facts';
 import type { Common } from '../types';
 
 export const common: Common = {
   site: {
     name: 'ISSEUM',
     description:
-      'A flexible event space of about 198㎡ near Hongik Univ. Station in Seoul, for workshops, book talks, pop-up stores, fan meetings and every other kind of gathering.',
+      `A flexible event space of about ${AREA.sqm}㎡ near Hongik Univ. Station in Seoul, for workshops, book talks, pop-up stores, fan meetings and every other kind of gathering.`,
     tagline: 'Event space rental in Hongdae, Seoul',
   },
   skipLink: 'Skip to content',

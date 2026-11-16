@@ -29,16 +29,16 @@ const askAnywhere = `${kakaoChannelUrl ? '톡톡, 카카오톡' : '톡톡'}, 전
 export const home: Home = {
   title: '홈',
   hero: {
-    eyebrow: 'MULTI CULTURAL SPACE IN SEOUL',
+    eyebrow: 'GATHERING SPACE IN SEOUL',
     hand: '이야기가',
     rest: '피어나는 곳',
-    lead: `이씀은 홍대입구역 근처에 위치한 약 ${AREA.pyeong}평 규모의 가변형 복합문화공간입니다. 아이디어를 나누는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드와 팬이 만나는 팝업스토어와 팬미팅까지. 모든 형태의 이야기를, 이곳에서 자유롭게 펼쳐보세요.`,
+    lead: `이씀은 홍대입구역 근처에 위치한 약 ${AREA.pyeong}평 규모의 가변형 모임 공간입니다. 아이디어를 나누는 워크숍부터 작가와 독자가 교감하는 북토크, 브랜드와 팬이 만나는 팝업스토어와 팬미팅까지. 모든 형태의 이야기를, 이곳에서 자유롭게 펼쳐보세요.`,
     primary: '대관 문의하기',
-    secondary: '공간 둘러보기',
+    secondary: '네이버 예약 바로가기',
     photosLabel: '이씀에서 열린 세미나와 워크숍 장면',
   },
   stats: [
-    { value: `${AREA.sqm}㎡ (약 ${AREA.pyeong}평)`, label: '메인 홀 면적' },
+    { value: `약 ${AREA.pyeong}평`, label: '공간 면적' },
     { value: `최대 ${MAX_GUESTS}인`, label: '동시 수용 인원' },
     { value: '4개 영역', label: '메인 홀 · 프로젝트 룸 · 파우더 룸 · 바' },
     { value: `${pad2(OPEN_HOUR)}–${CLOSE_HOUR}시`, label: '대관 가능 시간' },

@@ -33,16 +33,16 @@ const clock = (h: number) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
 export const home: Home = {
   title: 'Home',
   hero: {
-    eyebrow: 'MULTI CULTURAL SPACE IN SEOUL',
+    eyebrow: 'GATHERING SPACE IN SEOUL',
     hand: 'A place where',
     rest: 'stories bloom',
     lead: `ISSEUM is a flexible multipurpose venue of about ${AREA.sqm}㎡, a short walk from Hongik Univ. Station. From workshops where ideas are shared and book talks that bring authors and readers together, to pop-up stores and fan meetings where brands meet their fans: bring every kind of story here and tell it your way.`,
     primary: 'Send an inquiry',
-    secondary: 'Explore the space',
+    secondary: 'Book on Naver',
     photosLabel: 'Seminars and workshops held at ISSEUM',
   },
   stats: [
-    { value: `${AREA.sqm}㎡`, label: 'Main hall floor area' },
+    { value: `${AREA.sqm}㎡`, label: 'Floor area' },
     { value: `Up to ${MAX_GUESTS}`, label: 'Guests at once' },
     { value: '4 areas', label: 'Main hall · Project room · Powder room · Bar' },
     { value: `${clock(OPEN_HOUR)}–${clock(CLOSE_HOUR)}`, label: 'Rental hours' },
