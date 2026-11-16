@@ -40,7 +40,13 @@ export const business = {
   companyName: '영준피엠씨(YOUNGJUN PMC)',
   representative: '정용철',
   address: '서울특별시 마포구 월드컵북로 22, 지하 1층',
+  /** 운영 매니저 직통. 대관 중 비상 연락처(이용 안내)에만 쓴다. */
   phone: '010-6899-4417',
+  /**
+   * 네이버 스마트콜. 공개 연락처(푸터, 구조화 데이터)는 이 번호로 받는다 — 네이버
+   * 플레이스에 걸린 번호와 같아야 검색에서 한 업체로 묶인다.
+   */
+  publicPhone: '0507-1452-4417',
   email: 'hello@isseum.com',
   registrationNumber: '105-04-11192',
 } as const;

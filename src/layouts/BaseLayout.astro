@@ -57,7 +57,7 @@ const jsonLd = {
   description: site.description,
   url: new URL(localePath(lang), Astro.site).href,
   image: ogImage,
-  telephone: business.phone,
+  telephone: business.publicPhone,
   email: business.email,
   address: {
     '@type': 'PostalAddress',
