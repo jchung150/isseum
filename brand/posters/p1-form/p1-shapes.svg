@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Overlapping shapes: a periwinkle circle, a black square, a cobalt circle, a lime square, a periwinkle quarter circle and a small black square" viewBox="0 0 1024 1024" width="1188" height="1188" style="position: absolute; left: 0; top: 380px;">
+  <defs>
+    <clipPath id="p1-cobalt"><circle cx="483" cy="476" r="213"></circle></clipPath>
+    <clipPath id="p1-quarter"><rect x="496" y="745" width="260" height="193"></rect></clipPath>
+  </defs>
+  <circle cx="300" cy="291" r="209" fill="#c9d0f2"></circle>
+  <rect x="436" y="86" width="502" height="494" fill="#111111"></rect>
+  <circle cx="483" cy="476" r="213" fill="#0526c5"></circle>
+  <g clip-path="url(#p1-cobalt)">
+    <circle cx="300" cy="291" r="209" fill="#c9d0f2" fill-opacity="0.18"></circle>
+    <rect x="436" y="86" width="502" height="494" fill="#0a1a8a"></rect>
+  </g>
+  <rect x="84" y="611" width="329" height="326" fill="#eafda1" style="mix-blend-mode: multiply;"></rect>
+  <circle cx="496" cy="696" r="242" fill="#c9d0f2" clip-path="url(#p1-quarter)"></circle>
+  <rect x="806" y="808" width="132" height="130" fill="#111111"></rect>
+</svg>
