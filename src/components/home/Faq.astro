@@ -114,6 +114,11 @@ const { faq } = content[Astro.props.lang].home;
     color: var(--body);
   }
 
+  /* Each array entry is a paragraph; a \n inside one is a plain line break. */
+  .a p {
+    white-space: pre-line;
+  }
+
   .tbl {
     max-width: 420px;
     border-collapse: separate;

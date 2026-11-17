@@ -158,7 +158,9 @@ export const home: Home = {
       {
         q: 'Can I hold a photo or video shoot?',
         a: [
-          `Yes. Shoots may need special cleaning depending on the crew, equipment and set, so the rate can differ from a regular rental. Tell us the date, what you plan to shoot and how many people via ${askAnywhere}, and we will quote you a price.`,
+          'Yes, of course!',
+          'Tell us the date, what you plan to shoot, how many people are coming and how much equipment and set you will bring. We will check whether the shoot needs extra cleanup or professional cleaning and let you know.',
+          `Feel free to reach us via ${askAnywhere}.`,
         ],
       },
       {
@@ -170,8 +172,8 @@ export const home: Home = {
       {
         q: 'Can I bring food?',
         a: [
-          'Packaged drinks and snacks are welcome. Please do not cook on site or bring soups and other liquid dishes.',
-          'Please take away all leftover food and waste yourself.',
+          'Packaged snacks, simple delivery food and finger food are welcome, and you can eat in the space.',
+          'To keep the space pleasant, please avoid food that needs cooking on site and soups or other liquid dishes.\nAfter eating, please tidy up around you and put leftover food and rubbish in the designated places.',
         ],
       },
       {
